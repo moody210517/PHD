@@ -1,0 +1,260 @@
+/*
+Custom css
+*/
+
+/* 25aae1 */
+
+
+:root{
+    --phd_device_color:#25aae1;    
+    --text_background:#e9ecef;
+}
+
+.text-black{
+    color:#000;
+}
+
+
+input:focus {
+    border-color: red !important;
+}
+select:focus{
+    border-color:red !important;
+}
+
+.img_login{
+    width:360px;
+    height:200px;
+}
+/* content:url("http://imgur.com/SZ8Cm.jpg"); */
+.menu_icon{
+    content: url("images/menu.png");
+}
+
+@media (max-width: 568px){
+    .menu_icon{
+        content: url("images/menu2.png");
+    }
+}
+@media (max-width: 768px){
+    .img_login{
+        width:180px;
+        height:100px;
+    }      
+}
+
+span.payment_text{
+    color:#00A1CB;
+    font-size:18px;
+}
+
+.green-color{
+    color:#05bc14 !important;
+}
+.yellow-color{
+    color:#FFFF00 !important;
+}
+.orange-color{
+    color:#FFA500 !important;
+}
+.red-color{
+    color:#FF0000 !important;
+}
+
+
+.blue-border{    
+    outline: 1.5px solid black;
+    outline-offset: -3px;
+
+}
+
+.row_padding{
+    display: flex;
+    flex-wrap: wrap;
+    margin-right: -13px;
+    margin-left: -13px;
+}
+.row_nopadding{
+    display: flex;
+    flex-wrap: wrap;
+    margin-right: -5px;
+    margin-left: -5px;
+    margin-bottom: 5px;
+}
+
+.report_title{
+    text-align: center;
+    background: black; 
+    padding-top: 0.5rem;
+    padding-bottom: 0.5rem;
+    color:white !important;
+    /* padding-right: 1px;
+    padding-left: 1px; */
+}
+.report_title h5{
+    color:white;
+}
+.reset{
+    font-size: 1.5rem;
+    margin-top: -10px !important;
+    padding-top: 0 !important;
+}
+.status{    
+    font-size: 1.125rem;
+    font-weight: 600;
+    background: black;
+    margin-left: -12px;
+    margin-right: -12px;
+    padding-bottom: 2px;
+    padding-top: 2px;
+}
+.reading{
+    background: white;
+    margin-left: -12px;
+    margin-right: -12px;
+    margin-bottom: -17px;
+    padding-bottom: 3px;
+    padding-top: 3px;
+}
+
+.report_sub_title{
+    color:white;
+    background: var(--phd_device_color);    
+    width: 100%;
+    margin-top: 3px;
+    width: calc(100% + 24px);    
+    margin-left: -12px;
+    text-align: center;
+}
+.report_sub_title h6{
+
+    color:white;
+}
+
+.canvas_container{
+    background: #eee ;
+    z-index: 0;
+    margin-right: 3px;
+    margin-left: 3px;    
+    margin-bottom: 3px;
+    border-radius: 0rem;
+}
+
+.scale_label{
+    margin-top: -5px;
+    display: flex;
+    text-align: left;
+    margin-right: 9%;
+    margin-left: 12%;
+}
+.scale_label_right{
+    flex: 1;
+    text-align: right;
+    float: right;
+}
+
+
+.scale_label2{
+    margin-top: -5px;
+    display: flex;
+    text-align: left;
+    margin-right: 8%;
+    margin-left: 11%;
+}
+
+
+.first_title{    
+    font-size: 15px;    
+    margin-top: 0.5rem;
+    flex:1;
+}
+.second_title{
+    color:black;
+    font-size: 15px;    
+    margin-right: 20px;
+    margin-top: 0.5rem;
+}
+.third_title{
+    color: var(--phd_device_color);
+    font-size: 15px;   
+    margin-right: 10px;
+    margin-top: 0.5rem; 
+}
+
+.grey-control{
+    margin-top: 5px;
+    background-color: var(--text_background);
+    border-color: rgba(135, 150, 165, 0.15);
+    display: flex;
+    flex-direction:row;    
+}
+
+.item_row{
+    background-color: white;
+    padding-bottom: 3px;
+    padding-top: 3px;
+    padding-left: 10px;
+    padding-right: 10px;
+    display: flex;
+    flex-direction: row;    
+}
+.item_row_small{
+    background-color: white;
+    padding-bottom: 3px;
+    padding-top: 3px;
+    padding-left: 5px;
+    padding-right: 5px;
+    display: flex;
+    flex-direction: row;    
+}
+
+
+.item_title{    
+    color: black;    
+    flex: 1;
+    text-align: left;
+}
+.item_value{
+    width: 58px;
+    color: #11ee03;    
+    padding: 2px 8px 2px 8px ;
+    background-color: black;
+}
+.item_row h2{
+    flex: 1;
+    color:black;
+    font-size: 14px;
+    text-align: left;
+}
+  
+.item_row h3{
+    background-color: black;
+    color:green;
+    font-size: 14px;
+    padding: 10 !important;
+}
+
+
+#customers {
+    font-family: "Trebuchet MS", Arial, Helvetica, sans-serif;
+    border-collapse: collapse;
+    width: 100%;
+  }
+  
+  #customers td, #customers th {
+    border: 1px solid #ddd;
+    padding: 6px;
+  }
+  
+  #customers tr:nth-child(even){background-color: #f2f2f2;}
+  
+  #customers tr:hover {background-color: #ddd;}
+  
+  #customers th {
+    padding-top: 12px;
+    padding-bottom: 12px;
+    text-align: left;
+    background-color: #4CAF50;
+    color: white;
+  }
+  

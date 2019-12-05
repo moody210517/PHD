@@ -278,22 +278,28 @@ class DoctorController extends BaseController
     }
 
 
-
-
     public function getSteps( $id = '' , Request $request = null ){
         
         $patient_id = $request->input('pid');
         $visit_form_id = $request->input('visit_form_id');
-        $diabet_risk_id = $request->input('diabet_risk_id');
-
+        $diabet_risk_id = $request->input('diabet_risk_id');        
         $allocation = Allocation::where('administer_num', Session::get('user_id'))
         ->where('user_num', $patient_id)
         ->where('is_allocated','1')->get(); // for saving old session.
-
         $user_type = UserType::where('user_type_name','Patient')->get();
         $patients = Users::where('user_type_id',$user_type->first()->auto_num)->where('company_id', Session::get('company_id'))->get();
         $devices = Device::where('company_id', Session::get('company_id'))->get();
         $patient = Users::where('id', $patient_id)->get();
+
+        $gsr = false;
+        $visit_form = AllocationVisitForm::where('id', $visit_form_id)->get();
+        if($visit_form->first()){
+            $treatment = $visit_form->first()->treatment;
+            if (strpos($treatment, '51') !== false) {
+                $gsr = true;
+            }
+            
+        }
 
         if($patient->first()){
             return view('doctor.test.steps')
@@ -303,6 +309,7 @@ class DoctorController extends BaseController
             ->with('patient_id', $patient_id)
             ->with('visit_form_id', $visit_form_id)
             ->with('allocation', $allocation)
+            ->with('gsr', $gsr)
             ->with('diabet_risk_id', $diabet_risk_id);
 
         }else{

@@ -15,9 +15,14 @@
         </div>
 
 
-
         <div class="padding pt-1 ">
-            <div class="table-responsive">                
+            <div class="table-responsive">        
+                <div class="pt-0 pb-1 py-2 text-right">
+                    <button id="cancelTest" class="btn btn-primary w-xs " data-toggle="modal" data-target="#m" >Cancel</button>
+                </div>
+
+                
+            
                 <table id="datatable" class="table table-theme table-row v-middle" data-plugin="dataTable" style="margin-top: -15px;">
                 <!-- <table class="table table-theme v-middle" data-plugin="bootstrapTable"
                     id="table"
@@ -33,28 +38,28 @@
                     >-->
                     <thead>
                         <tr>                            
-                            <th class="">                                
-                                <!-- <label class="ui-check m-0 ">                               
+                            <!-- <th class="">                                
+                                <label class="ui-check m-0 ">                               
                                     <input  type="checkbox" class="group-checkable"/>
                                     <i></i>
-                                </label>    -->                                
-                            </th>
+                                </label>                                   
+                            </th> -->
 
                             <th><span class="text-muted">Date of Exam</span></th>
                             <th><span class="text-muted">Time of Exam</span></th>                                                        
-                            <!-- <th><span class="text-muted">Action</span></th> -->
+                            <th><span class="text-muted">Action</span></th>
                         </tr>
                     </thead>
                     <tbody>
                         @foreach ($allocations as $user)
                             <tr>
                                 
-                                <td>
+                                <!-- <td>
                                     <label class="ui-check m-0 ">                               
                                     <input id="{{$user->auto_num}}" type="radio" class="checkboxes" name="id"  value="{{$user->auto_num}}"/>
                                     <i></i>
-                                    </label>                                 
-                                </td>
+                                    </label>                          
+                                </td> -->
 
                                 <td>
                                 {{ substr($user->created_at, 0, 10) }}
@@ -62,7 +67,9 @@
                                 <td>
                                 {{ substr($user->created_at, 10 , 9) }}
                                 </td>
-
+                                <td>
+                                    <button onClick="editTest({{$user->auto_num}})" class="btn btn-primary w-xs mx-3" data-toggle="modal">Edit</button>
+                                </td>
                             </tr>
                         
                         @endforeach
@@ -72,14 +79,15 @@
             </div>
         </div>
 
-        
+      
+
         <div class="padding pt-0">
             <span id="alert_choose" class="text-danger" style=" display: none;">Please select a test date to edit</span>
         </div>
         
         <div class="padding pt-0 text-center">
-            <button id="cancelTest" class="btn btn-primary w-xs " data-toggle="modal" data-target="#m" >Cancel</button>
-            <button id="editTest" class="btn btn-primary w-xs mx-3" data-toggle="modal">Edit</button>
+            <!-- <button id="cancelTest" class="btn btn-primary w-xs " data-toggle="modal" data-target="#m" >Cancel</button> -->
+            <!-- <button id="editTest" class="btn btn-primary w-xs mx-3" data-toggle="modal">Edit</button> -->
         </div>
 
     </div>
@@ -135,6 +143,10 @@
         }        
     });
     
+    function editTest(id){
+        $("#allocation_id").val(id);
+        document.getElementById("editTestForm").submit();   
+    }
         
     var allocation_id ;
     $(document).on('click', '.group-checkable', function () {        

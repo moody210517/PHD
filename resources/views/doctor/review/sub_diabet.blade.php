@@ -126,7 +126,7 @@
 
 
 				<div class="page-title padding pb-0 ">
-					<h2 class="text-md mb-0"> Type II Risk - Score Based on Finish Diabets Risk Score </h2>
+					<h2 class="text-md mb-0"> Type II Risk - Score Based on Finish Diabetes Risk Score </h2>
 				</div>
 
 
@@ -178,7 +178,7 @@
 							</div>							
 							<div class="col-md-6">
 								<div class="form-control grey-control">
-									<label class="first_title" > Family history of diabets: </label>
+									<label class="first_title" > Family history of diabetes: </label>
 									<label class="second_title" >   {{ $family[0] == 0? "No" : "YES"}}  </label>
 									<label class="third_title" > +{{$family[1]}} </label>
 								</div>								
@@ -228,12 +228,8 @@
 									<label class="first_title" > 10-year risk of developing Type 2 Diabetes: </label>									
 									<label class="second_title" > {{$year_risk}}  </label>
 								</div>								
-							</div>	
-						</div>
-
-
-
-
+							</div>
+						</div>						
 				</div>
 				
 				

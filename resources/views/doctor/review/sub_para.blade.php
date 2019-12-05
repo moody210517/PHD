@@ -9,7 +9,7 @@
 			<div class="bg-white pt-4 pb-5">
 
 				<div class="page-title padding pb-0 ">
-					<h2 class="text-md mb-0">Type II Risk Assessment </h2>
+					<h2 class="text-md mb-0"> Parasympathetic Results </h2>
 				</div>
 								
 				<form data-plugin="parsley" data-option="{}"  method="post" action="{{ url('doctor/prestep3') }}" enctype="multipart/form-data">
@@ -104,13 +104,13 @@
 
 					<div class="col-md-4">						
 						<div class="col-md-12 blue-border">
-							<label class="col-form-label report_sub_title"> <h6 class="mb-0"> Overall Blood Pressure </h6> </label>
+							<label class="col-form-label report_sub_title"> <h6 class="mb-0"> Parasympathetic Results </h6> </label>
 							<div class="row" >
 								<div class="form-control text-center no-border pt-3 pb-3 canvas_container" >	
 									<div id="preview">
 										<canvas width="380" height="170" id="canvas-preview0"></canvas>						
 									</div>
-									<div class="scale_label"> <div>0% &nbsp &nbsp 0</div>  <div class="scale_label_right"> 26 &nbsp  100% </div>  </div>
+									<div class="scale_label"> <div>0% &nbsp &nbsp 0</div>  <div class="scale_label_right"> 3 &nbsp  100% </div>  </div>
 									<div id="preview-textfield0" class="reset" style="display:none;">1</div>
 									<div class="reset">  {{$para[0]}} </div>
 									<div id="status1" class="status {{$para[3]}}">  {{$para[2]}} </div>
@@ -124,7 +124,7 @@
 
 
 				<div class="page-title padding pb-0 ">
-					<h2 class="text-md mb-0"> Overall Blood Pressure Results </h2>
+					<h2 class="text-md mb-0"> Parasympathetic Results </h2>
 				</div>
 
 
@@ -142,7 +142,7 @@
 										<div id="preview">
 											<canvas width="380" height="170" id="canvas-preview1"></canvas>						
 										</div>
-										<div class="scale_label"> <div>0% &nbsp &nbsp 0</div>  <div class="scale_label_right"> 30 &nbsp  100% </div>  </div>
+										<div class="scale_label"> <div>0% &nbsp &nbsp 0</div>  <div class="scale_label_right"> 1 &nbsp  100% </div>  </div>
 										<div id="preview-textfield1" class="reset" style="display:none;"></div>
 										
 										<div id="status2" class="status {{$EIR[3]}} ">  {{$EIR[2]}}  </div>
@@ -172,7 +172,7 @@
 										<div id="preview">
 											<canvas width="380" height="170" id="canvas-preview2"></canvas>						
 										</div>
-										<div class="scale_label"> <div>0% &nbsp &nbsp 0</div>  <div class="scale_label_right"> 30 &nbsp  100% </div>  </div>
+										<div class="scale_label"> <div>0% &nbsp &nbsp 0</div>  <div class="scale_label_right"> 1 &nbsp  100% </div>  </div>
 										<div id="preview-textfield2" class="reset" style="display:none;"></div>
 
 										<div id="status2" class="status {{$VRC4[3]}}"> {{$VRC4[2]}} </div>
@@ -201,7 +201,7 @@
 										<div id="preview">
 											<canvas width="380" height="170" id="canvas-preview3"></canvas>						
 										</div>
-										<div class="scale_label"> <div>0% &nbsp &nbsp 0</div>  <div class="scale_label_right"> 30 &nbsp  100% </div>  </div>
+										<div class="scale_label"> <div>0% &nbsp &nbsp 0</div>  <div class="scale_label_right"> 1 &nbsp  100% </div>  </div>
 										<div id="preview-textfield3" class="reset" style="display:none;"></div>
 										
 										<div id="status2" class="status {{$VRC6[3]}}"> {{$VRC6[2]}} </div>
@@ -277,15 +277,16 @@
 
 		var paraLabel =  {
 				font: "10px sans-serif",
-				labels: [0, 23, 50, 77, 100],
+				labels: [0, 33.3, 66.6, 100],
 				fractionDigits: 0
 			};
 		var paraZones = [
-				{strokeStyle: "#008000", min: 0, max: 23},
-				{strokeStyle: "#FFFF00", min: 23, max: 50},
-				{strokeStyle: "#FFA500", min: 50, max: 77},
-				{strokeStyle: "#FF0000", min: 77, max: 100}
+				{strokeStyle: "#008000", min: 0, max: 33.3},
+				{strokeStyle: "#FFFF00", min: 33.3, max: 66.6},		
+				{strokeStyle: "#FF0000", min: 66.6, max: 100}
 			];
+
+
 
 		var commonLabel =  {
 				font: "10px sans-serif",

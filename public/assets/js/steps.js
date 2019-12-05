@@ -331,7 +331,7 @@ var initChart = function(){
                 options: {
                     title: {
                         display: true,
-                        text: 'Pluse Oximeter'
+                        text: 'Pulse Oximeter'
                     },
                     scales: {
                         xAxes:[

@@ -56,6 +56,55 @@
 
 
 
+    function getLevelBoodValsa($allocation_id, $step){                      
+        $allocation_id = 139;
+        $blood = Blood::where('allocation_id', $allocation_id)
+        ->where('step_id', $step)
+        ->get();           
+        $n = 0; $sys = 0; $dia = 0; $bpm = 0;
+        $max_tmp = 0; $min_tmp = 0; $max = 0; $min = 0;
+        foreach($blood as $item){            
+            $value  = json_decode($item["raw_data"], true);
+            foreach($value as $v){                      
+                $sys = $sys + $v["systolic"];
+                $dia = $dia + $v["diastolic"];
+                $bpm = $bpm + $v["bpm"];
+                
+                if($n == 0){
+                    $min_tmp = $v["bpm"];
+                }
+
+                if($max_tmp < $v["bpm"]){
+                    $max_tmp = $v["bpm"];
+                }
+                if($min_tmp > $v["bpm"]){
+                    $min_tmp = $v["bpm"];
+                }
+                $n++;
+            }
+        }
+
+        $avg_systolic = 0; $avg_diastolic = 0; $avg_bpm = 0;
+        if($n != 0){
+            $avg_systolic = $sys/$n;
+            $avg_diastolic = $dia/$n;
+            $avg_bpm = $bpm/$n;
+        }
+        $overview_score = 0;
+        if($avg_systolic > 160 && $avg_diastolic < 169 && $avg_diastolic < 120){
+            $overview_score = $overview_score + 1;
+        }else if( ($avg_systolic > 170 && $avg_diastolic < 179) || ($avg_diastolic > 120 && $avg_diastolic < 129) ){
+            $overview_score = $overview_score + 3;
+        }else if( ($avg_systolic > 180 && $avg_diastolic < 219) || ($avg_diastolic > 130 && $avg_diastolic < 159) ){
+            $overview_score = $overview_score + 4;
+        }else if($avg_systolic >= 220 || $avg_diastolic >= 160){
+            $overview_score = $overview_score + 5;
+        }
+        return [$overview_score, $avg_systolic, $avg_diastolic, $avg_bpm, $min_tmp, $max_tmp];
+    }
+
+
+
     function getRR($allocation_id, $step){
         
         $allocation_id = 139;

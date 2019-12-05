@@ -110,7 +110,7 @@
 									<div id="preview">
 										<canvas width="380" height="170" id="canvas-preview1"></canvas>						
 									</div>
-									<div class="scale_label"> <div>0% &nbsp &nbsp 0</div>  <div class="scale_label_right"> 26 &nbsp  100% </div>  </div>
+									<div class="scale_label"> <div>0% &nbsp &nbsp 0</div>  <div class="scale_label_right"> 18 &nbsp  100% </div>  </div>
 									<div id="preview-textfield1" class="reset" style="display:none;">1</div>
 									<div class="reset"> {{ $ans[0] }}</div>
 									<div id="status1" class="status {{$ans[3]}}">{{$ans[2]}}</div>
@@ -140,7 +140,7 @@
 										<div id="preview">
 											<canvas width="380" height="170" id="canvas-preview2"></canvas>						
 										</div>
-										<div class="scale_label"> <div>0% &nbsp &nbsp 0</div>  <div class="scale_label_right"> 30 &nbsp  100% </div>  </div>
+										<div class="scale_label"> <div>0% &nbsp &nbsp 0</div>  <div class="scale_label_right"> 5 &nbsp  100% </div>  </div>
 										<div id="preview-textfield2" class="reset" style="display:none;"></div>
 										
 										<div id="status2" class="status {{$heart_rate[4]}}">{{$heart_rate[3]}}</div>
@@ -165,21 +165,21 @@
 
 
 							<div class="col-md-4 blue-border">
-								<label class="col-form-label report_sub_title"> <h6 class="mb-0"> Standard Diviation RR Interval </h6> </label>
+								<label class="col-form-label report_sub_title"> <h6 class="mb-0"> Standard Deviation RR Interval </h6> </label>
 								<div class="row">
 									<div class="form-control text-center  pt-3 pb-3 canvas_container">
 										
 										<div id="preview">
 											<canvas width="380" height="170" id="canvas-preview3"></canvas>						
 										</div>
-										<div class="scale_label"> <div>0% &nbsp &nbsp 0</div>  <div class="scale_label_right"> 30 &nbsp  100% </div>  </div>
+										<div class="scale_label"> <div>0% &nbsp &nbsp 0</div>  <div class="scale_label_right"> 3 &nbsp  100% </div>  </div>
 										<div id="preview-textfield3" class="reset" style="display:none;"></div>
 										
 										<div id="status2" class="status {{$SDNN[4]}}">{{$SDNN[3]}}</div>
 										
 										<div class="reading">
 										<div class="item_row"> 
-											<div class="item_title"> Standard Diviation RR Interval </div>
+											<div class="item_title"> Standard Deviation RR Interval </div>
 											<div class="item_value {{$SDNN[4]}}"> {{ $SDNN[0] }} </div>
 										</div>
 										<div class="item_row"> 
@@ -187,23 +187,21 @@
 											<div class="item_value {{$SDNN[4]}}"> {{ $SDNN[1] }} </div>
 										</div>
 										</div>
-										
-										
-
+																				
 									</div>
 								</div>							
 							</div>
 
 
 							<div class="col-md-4 blue-border">
-								<label class="col-form-label report_sub_title"> <h6 class="mb-0">  Root Mean Square, Succcessive Diff. </h6> </label>
+								<label class="col-form-label report_sub_title"> <h6 class="mb-0">  Root Mean Square, Successive Diff. </h6> </label>
 								<div class="row">
 									<div class="form-control text-center  pt-3 pb-3 canvas_container">
 										
 										<div id="preview">
 											<canvas width="380" height="170" id="canvas-preview4"></canvas>						
 										</div>
-										<div class="scale_label"> <div>0% &nbsp &nbsp 0</div>  <div class="scale_label_right"> 30 &nbsp  100% </div>  </div>
+										<div class="scale_label"> <div>0% &nbsp &nbsp 0</div>  <div class="scale_label_right"> 3 &nbsp  100% </div>  </div>
 										<div id="preview-textfield4" class="reset" style="display:none;"></div>
 										
 										<div id="status2" class="status {{$RMSSD[4]}}">{{$RMSSD[3]}}</div>
@@ -240,7 +238,7 @@
 										<div id="preview">
 											<canvas width="380" height="170" id="canvas-preview5"></canvas>						
 										</div>
-										<div class="scale_label"> <div>0% &nbsp &nbsp 0</div>  <div class="scale_label_right"> 30 &nbsp  100% </div>  </div>
+										<div class="scale_label"> <div>0% &nbsp &nbsp 0</div>  <div class="scale_label_right"> 3 &nbsp  100% </div>  </div>
 										<div id="preview-textfield5" class="reset" style="display:none;"></div>
 										
 										<div id="status2" class="status {{$AVG_RR[4]}}">{{$AVG_RR[3]}}</div>
@@ -271,7 +269,7 @@
 										<div id="preview">
 											<canvas width="380" height="170" id="canvas-preview6"></canvas>						
 										</div>
-										<div class="scale_label"> <div>0% &nbsp &nbsp 0</div>  <div class="scale_label_right"> 30 &nbsp  100% </div>  </div>
+										<div class="scale_label"> <div>0% &nbsp &nbsp 0</div>  <div class="scale_label_right"> 3 &nbsp  100% </div>  </div>
 										<div id="preview-textfield6" class="reset" style="display:none;"></div>
 										
 										<div id="status2" class="status {{$More50[4]}}">{{$More50[3]}}</div>
@@ -301,7 +299,7 @@
 										<div id="preview">
 											<canvas width="380" height="170" id="canvas-preview7"></canvas>						
 										</div>
-										<div class="scale_label"> <div>0% &nbsp &nbsp 0</div>  <div class="scale_label_right"> 30 &nbsp  100% </div>  </div>
+										<div class="scale_label"> <div>0% &nbsp &nbsp 0</div>  <div class="scale_label_right"> 1 &nbsp  100% </div>  </div>
 										<div id="preview-textfield7" class="reset" style="display:none;"></div>
 										
 										<div id="status2" class="status {{$SPO2[4]}}">{{$SPO2[3]}}</div>
@@ -414,16 +412,14 @@
 			];
 
 
-		var standingLabel =  {
+		var plusLabel =  {
 				font: "10px sans-serif",
-				labels: [0, 1, 2, 3, 4, 5],
+				labels: [0, 50, 100],
 				fractionDigits: 0
 			};
-		var standingZone = [								
-				{strokeStyle: "#008000", min: 0, max: 2}, // green
-				{strokeStyle: "#FFFF00", min: 2, max: 3}, // yellow
-				{strokeStyle: "#FFA500", min: 3, max: 4}, // orange
-				{strokeStyle: "#FF0000", min: 4, max: 5} //red
+		var pluseZone = [								
+				{strokeStyle: "#008000", min: 0, max: 50}, // green			
+				{strokeStyle: "#FF0000", min: 50, max: 100} //red
 			];
 
 		
@@ -435,7 +431,7 @@
 		myInit("canvas-preview4", "preview-textfield4", "{{$RMSSD[1]}}" , commonLabel, commonZone, 100);
 		myInit("canvas-preview5", "preview-textfield5", "{{$AVG_RR[1]}}" , commonLabel, commonZone, 100);
 		myInit("canvas-preview6", "preview-textfield6", "{{$More50[1]}}" , commonLabel, commonZone, 100);
-		myInit("canvas-preview7", "preview-textfield7", "{{$SPO2[1]}}" , commonLabel, commonZone, 100);
+		myInit("canvas-preview7", "preview-textfield7", "{{$SPO2[1]}}" , plusLabel, pluseZone, 100);
 
 	});
 

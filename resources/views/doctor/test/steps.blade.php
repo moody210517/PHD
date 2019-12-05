@@ -260,14 +260,14 @@
                                       <div class="checkbox">
                                           <label class="ui-check">
                                             <input type="checkbox"  id="oxymeter" <?php $data = $allocation->first(); if($data){ if(strpos($data->tracking, '1') !== false) {echo "checked";} } ?> >
-                                            <i class="dark-white"></i>
-                                            Pluse Oxymeter
+                                            <i class="dark-white"></i>                                            
+                                            Pulse Oximeter
                                           </label>
                                       </div>
 
                                        <div class="checkbox">
                                           <label class="ui-check">
-                                            <input type="checkbox" id="blood"  <?php $data = $allocation->first(); if($data){ if(strpos($data->tracking, '2') !== false) {echo "checked";} } ?> >
+                                            <input type="checkbox" id="blood"  <?php $data = $allocation->first(); if($data){ if(strpos($data->tracking, '2') !== false) {echo "checked";} } ?>  >
                                             <i class="dark-white"></i>
                                             Blood Pressure
                                           </label>
@@ -276,7 +276,12 @@
 
                                        <div class="checkbox">
                                           <label class="ui-check">
-                                            <input type="checkbox" id="gsr"   <?php $data = $allocation->first(); if($data){ if(strpos($data->tracking, '3') !== false) {echo "checked";} } ?> >
+                                            <input type="checkbox" id="gsr"  
+                                             <?php                                              
+                                              $data = $allocation->first();
+                                              if($gsr){echo "checked disabled";}
+                                              if($data){ if(strpos($data->tracking, '3') !== false) {echo "checked";} }                                             
+                                             ?> >
                                             <i class="dark-white"></i>
                                             GSR
                                           </label>

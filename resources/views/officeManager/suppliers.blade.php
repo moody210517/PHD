@@ -85,7 +85,7 @@
 													<span class="text-muted">Includes:</span>	
 												</div>
 												<div class="">
-												<span class="text-muted">1 - Bluetooth Pluse Oximeter</span>
+												<span class="text-muted">1 - Bluetooth Pulse Oximeter</span>
 												</div>												
 												
 												<div class="mt-1" style="width:26%;margin:auto;">

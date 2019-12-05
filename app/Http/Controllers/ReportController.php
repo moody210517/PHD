@@ -117,7 +117,7 @@ class ReportController extends Controller
             //    $AVG_Diastolic_Standing = $step6Data[Config::get('constants.options.avg_diastolic')];
 
                 $StandingResponseScore = getSPRS_DPRS_Score($SPRS, $DPRS); // Get SPRS, DPRS Score 
-                $overall_blood_score += $StandingResponseScore;
+                $overall_blood_score += $StandingResponseScore[0];
                       
                $step4Data =  getLevelBood($allocation_id, 4);       
                $SPRV = ($step3Data[Config::get('constants.options.avg_systolic')] - $step4Data[ Config::get('constants.options.avg_systolic') ]);

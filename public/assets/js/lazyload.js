@@ -84,6 +84,7 @@ var lazyload = lazyload || {};
 		};
 
 		var head = document.getElementsByTagName("head")[0]
+		console.log(head);
 		head.insertBefore(style, head.firstChild);
 		loaded[href] = deferred;
 

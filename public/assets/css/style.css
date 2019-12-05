@@ -213,7 +213,18 @@ span.payment_text{
     color: black;    
     flex: 1;
     text-align: left;
+    align-items: center;
 }
+
+.item_title span{    
+    color: white;
+    background: black;
+    padding: 2px 10px 2px 10px ;
+    margin-left: 10px;
+    margin-right: 10px;
+    margin-bottom: 0px;
+}
+
 .item_value{
     width: 58px;
     color: #11ee03;    

@@ -44,40 +44,6 @@
 						</div>                    
 					</div>
 
-					<div class="row px-3 ">	
-						<div class="col-md-3 pt-2">
-							<label class="col-form-label"> Patient Height </label>
-						</div>						
-						<div class="col-md-4 pt-2">
-							<input type="text" id="ft" name="ft" value="{{ floor($patient->user_height/12).' ft' }}" class="form-control"  disabled>
-						</div>      																			  
-						<div class="col-md-4 pt-2">
-							<input type="text" id="inche" name="inche" value="{{($patient->user_height - 12 * floor($patient->user_height/12)).' inches'}}" class="form-control"  disabled>
-						</div>					
-					</div>
-					
-
-					<div class="row px-3 pt-2">
-						<div class="col-md-3">
-							<label class="col-form-label"> Patient Weight </label>
-						</div>
-						
-						<div class="col-md-9">
-							<input type="text" id="weight" name="weight" value="{{$patient->weight.' lbs'}}" class="form-control"  disabled>
-						</div>                    
-					</div>
-
-
-					<div class="row px-3 pt-2">
-						<div class="col-md-3">
-							<label class="col-form-label"> Patient Age </label>
-						</div>							
-						<div class="col-md-9">
-							<input type="text" id="age" name="age" value="{{$patient->age}}" class="form-control"  disabled>
-						</div>                    
-					</div>
-
-					
 					<div class="row px-3 pt-2">
 						<div class="col-md-3">
 							<label class="col-form-label"> BMI </label>
@@ -223,7 +189,7 @@
 										<div id="preview">
 											<canvas width="380" height="170" id="canvas-preview6"></canvas>	
 										</div>
-										<div class="scale_label2"> <div>0% &nbsp  0</div>  <div class="scale_label_right"> 38   100% </div>  </div>
+										<div class="scale_label2"> <div>0% &nbsp  0</div>  <div class="scale_label_right"> 35   100% </div>  </div>
 										<div id="preview-textfield6" class="reset" style="display:none;">1,250</div>
 										<div class="reset">{{$adrenergic[0]}}</div>
 										<div id="status6" class="status {{$adrenergic[3]}}">{{$adrenergic[2]}}</div>
@@ -241,7 +207,7 @@
 										<div id="preview">
 											<canvas width="380" height="170" id="canvas-preview7"></canvas>						
 										</div>
-										<div class="scale_label2"> <div>0% &nbsp  0</div>  <div class="scale_label_right"> 30   100% </div>  </div>
+										<div class="scale_label2"> <div>0% &nbsp  0</div>  <div class="scale_label_right"> 3   100% </div>  </div>
 										<div id="preview-textfield7" class="reset" style="display:none;">1,250</div>
 										<div class="reset">{{$para[0]}}</div>
 										<div id="status7" class="status {{$para[3]}}">{{$para[2]}}</div>
@@ -436,14 +402,13 @@
 
 		var paraLabel =  {
 				font: "10px sans-serif",
-				labels: [0, 23, 50, 77, 100],
+				labels: [0, 33.3, 66.6, 100],
 				fractionDigits: 0
 			};
 		var paraZones = [
-				{strokeStyle: "#008000", min: 0, max: 23},
-				{strokeStyle: "#FFFF00", min: 23, max: 50},
-				{strokeStyle: "#FFA500", min: 50, max: 77},
-				{strokeStyle: "#FF0000", min: 77, max: 100}
+				{strokeStyle: "#008000", min: 0, max: 33.3},
+				{strokeStyle: "#FFFF00", min: 33.3, max: 66.6},		
+				{strokeStyle: "#FF0000", min: 66.6, max: 100}
 			];
 
 

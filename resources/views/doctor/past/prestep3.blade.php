@@ -7,7 +7,7 @@
 			<div class="bg-white pt-4 pb-5">
 
 				<div class="page-title padding pb-0 ">
-					<h2 class="text-md mb-0">TEST FOR NEW PATIONT <br> Patient Visit Purpose </h2>
+					<h2 class="text-md mb-0">TEST FOR NEW PATIENT <br> Patient Visit Purpose </h2>
 				</div>
 				
 				<form data-plugin="parsley" data-option="{}"  method="post" action="{{ url('doctor/prestep4') }}" enctype="multipart/form-data">
@@ -24,61 +24,11 @@
 							
 							<div class="col-md-9">
 								<input type="text" name="first_name" class="form-control" value="{{$patient->first_name.' '.$patient->last_name}}" placeholder="First Name" disabled>
-							</div>                    
+							</div> 
+							                   
 						</div>
 
-						<div class="row px-3 pt-2">
-							<div class="col-md-3">
-								<label class="col-form-label"> Date of Exam</label>
-							</div>
-							
-							<div class="col-md-9">
-								<input type="date" id="date" name="date" class="form-control"  disabled>
-							</div>                    
-						</div>
-
-
-						<div class="row px-3 pt-2">
-							<div class="col-md-3">
-								<label class="col-form-label"> Time of Exam</label>
-							</div>
-							
-							<div class="col-md-9">
-								<input type="time" id="time" name="time" class="form-control"  disabled>
-							</div>                    
-						</div>
-
-						<div class="row px-3 ">	
-							<div class="col-md-3 pt-2">
-								<label class="col-form-label"> Patient Height </label>
-							</div>						
-							<div class="col-md-4 pt-2">
-								<input type="text" id="ft" name="ft" value="{{ floor($patient->user_height/12).' ft' }}" class="form-control"  disabled>
-							</div>      																			  
-							<div class="col-md-4 pt-2">
-								<input type="text" id="inche" name="inche" value="{{($patient->user_height - 12 * floor($patient->user_height/12)).' inches'}}" class="form-control"  disabled>
-							</div>					
-						</div>
 						
-
-						<div class="row px-3 pt-2">
-							<div class="col-md-3">
-								<label class="col-form-label"> Patient Weight </label>
-							</div>
-							
-							<div class="col-md-9">
-								<input type="text" id="weight" name="weight" value="{{$patient->weight.' lbs'}}" class="form-control"  disabled>
-							</div>                    
-						</div>
-
-						<div class="row px-3 pt-2">
-							<div class="col-md-3">
-								<label class="col-form-label"> Patient Age </label>
-							</div>							
-							<div class="col-md-9">
-								<input type="text" id="age" name="age" value="{{$patient->age}}" class="form-control"  disabled>
-							</div>                    
-						</div>
 
 						
 						<div class="row px-3 pt-2" id="div_activity_level">
@@ -101,7 +51,7 @@
 									<input type="radio" name="a" <?php if($visit_form->daily_activity == '2') { echo 'checked';} ?>  class="activity_level">
 									<i class="dark-white"></i>
 									Very light activity/Office activity
-									</label>								
+									</label>				
 								</div>
 
 								<div class="radio">
@@ -181,16 +131,12 @@
 								<label class="col-form-label"> Symptoms </label>
 							</div>				
 
-							<div class="col-md-9 mt-2" >													
-								@foreach($symptoms as $item)
-								<div class="checkbox">
-									<label class="ui-check ui-check-md">
-									<input type="checkbox" value="{{$item->id}}" class="visit_symptoms"  <?php $items = explode(":", $visit_form->symptoms); if( in_array($item->id, $items) ) { echo "checked"; }  ?> />
-									<i class="dark-white"></i>
-									{{$item->title}}
-									</label>
-								</div>
-								@endforeach								
+							<div class="col-md-9 mt-2" >	
+								<select class="form-control visit_symptoms" id="ddd" multiple data-plugin="select2" data-option="{}" data-allow-clear="true" style="width:100% !important;">
+									@foreach($symptoms as $item)
+										<option value="{{$item->id}}" <?php $items = explode(":", $visit_form->symptoms); if( in_array($item->id, $items) ) { echo "selected"; }  ?>   >{{$item->title}}</option>								
+									@endforeach			
+								</select>											
 								<span id="alert_symptoms" class="text-danger" style=" display: none;"> Please select at least one option. </span>
 
 							</div>                    
@@ -202,18 +148,12 @@
 								<label class="col-form-label"> Disease </label>
 							</div>
 
-							<div class="col-md-9 row  mt-2">													
-								@foreach($disease as $item)
-								<div class="col-md-6"> 
-									<div class="checkbox">
-										<label class="ui-check ui-check-md">
-										<input type="checkbox" value="{{$item->id}}" class="visit_disease" <?php $items = explode(":", $visit_form->disease); if( in_array($item->id, $items) ) { echo "checked"; }  ?>>
-										<i class="dark-white"></i>
-										{{$item->title}}
-										</label>
-									</div>
-								</div>								
-								@endforeach																
+							<div class="col-md-9 row  mt-2">	
+								<select class="form-control visit_disease" multiple data-plugin="select2" data-option="{}" data-allow-clear="true" style="width:100% !important;">
+									@foreach($disease as $item)
+										<option value="{{$item->id}}" <?php $items = explode(":", $visit_form->disease); if( in_array($item->id, $items) ) { echo "selected"; }  ?>  >{{$item->title}}</option>								
+									@endforeach			
+								</select>																								
 							</div>
 							<div class="col-md-3"></div>
 							<div class="col-md-9">
@@ -227,16 +167,14 @@
 								<label class="col-form-label"> Treatment </label>
 							</div>				
 
-							<div class="col-md-9  mt-2">													
-								@foreach($treatment as $item)
-								<div class="checkbox">
-									<label class="ui-check ui-check-md">
-									<input type="checkbox" value="{{$item->id}}" class="visit_treatment" <?php $items = explode(":", $visit_form->treatment); if( in_array($item->id, $items) ) { echo "checked"; }  ?> >
-									<i class="dark-white"></i>
-									{{$item->title}}
-									</label>
-								</div>
-								@endforeach																
+							<div class="col-md-9  mt-2">	
+
+								<select class="form-control visit_treatment"  multiple data-plugin="select2" data-option="{}" data-allow-clear="true" style="width:100% !important;">
+									@foreach($treatment as $item)
+										<option value="{{$item->id}}"  <?php $items = explode(":", $visit_form->treatment); if( in_array($item->id, $items) ) { echo "selected"; }  ?>  >{{$item->title}}</option>
+									@endforeach			
+								</select>
+
 							</div>
 							<div class="col-md-3"></div>
 							<div class="col-md-9">
@@ -462,17 +400,17 @@
 		if(page_index != 0){
 			var pre = getVisitInfoByPageNumber(page_index -1);
 			if(pre == 0){
-				if(!isSelected(".visit_symptoms")){
+				if( $('.visit_symptoms').val() == null || $('.visit_symptoms').val() == ''){
 					$("#alert_symptoms").show();
 					return true;
 				}
 			}else if(pre == 1){
-				if(!isSelected(".visit_disease")){
+				if( $('.visit_disease').val() == null || $('.visit_disease').val() == ''){
 					$("#alert_disease").show();
 					return true;
 				}
 			}else if(pre == 2){
-				if(!isSelected(".visit_treatment")){
+				if( $('.visit_treatment').val() == null || $('.visit_treatment').val() == ''){
 					$("#alert_treatment").show();
 					return true;
 				}
@@ -492,51 +430,40 @@
 
 					var index = 0;
 					if(symptoms){
-						$('.visit_symptoms').each(function(){
-							var checked = $(this).is(":checked");
-							if(checked){							
-								if(index == 0){
-									symptoms_value = this.value;	
-								}else{
-									symptoms_value = symptoms_value + ":" + this.value;
-								}	
-								index++;									
-							}		
-						
-						});
+						var symptoms = $(".visit_symptoms").val();
+						for (var i=0, iLen=symptoms.length; i<iLen; i++) {
+							if(i == 0){
+								symptoms_value = symptoms[i];	
+							}else{
+								symptoms_value = symptoms_value + ":" + symptoms[i];
+							}	
+						}						
 					}
 					
 					 
 					var index2 = 0;
 					if(disease){
-						$('.visit_disease').each(function(){
-							var checked = $(this).is(":checked");
-							if(checked){
-								if(index2 == 0){
-									disease_value = this.value;
-								}else{
-									disease_value = disease_value + ":" + this.value;
-								}		
-								index2++;					
-							}
-							
-						});
+						var diseases = $(".visit_disease").val();
+						for (var i=0, iLen=diseases.length; i<iLen; i++) {
+							if(i == 0){
+								disease_value = diseases[i];	
+							}else{
+								disease_value = disease_value + ":" + diseases[i];
+							}	
+						}	
 					}
 					
 
 					var index3 = 0;
 					if(treatment){
-						$('.visit_treatment').each(function(){
-							var checked = $(this).is(":checked");
-							if(checked){
-								if(index3 == 0){
-									treatment_value = this.value;
-								}else{
-									treatment_value = treatment_value + ":" + this.value;
-								}	
-								index3++;						
-							}							
-						});
+						var treatments = $(".visit_treatment").val();
+						for (var i=0, iLen=treatments.length; i<iLen; i++) {
+							if(i == 0){
+								treatment_value = treatments[i];	
+							}else{
+								treatment_value = treatment_value + ":" + treatments[i];
+							}	
+						}
 					}
 
 					var patient_id = $("#patient_id").val();

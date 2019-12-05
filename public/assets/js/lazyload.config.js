@@ -141,7 +141,7 @@ var MODULE_CONFIG = {
                     ],
     select2:        [
                       '../libs/select2/dist/css/select2.min.css',
-                      '../libs/select2/dist/js/select2.min.js',
+                      '../libs/select2/dist/js/select2.js',
                       '../assets/js/plugins/select2.js'
                     ],
     newselect2:     [

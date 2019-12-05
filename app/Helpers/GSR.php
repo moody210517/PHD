@@ -19,23 +19,39 @@
 
     function getSPRS_DPRS_Score($SPRS, $DPRS){
         $StandingResponseScore = 0;
+        $SPRS_SCORE = 0;
+        $DPRS_SCORE = 0;
+        $color = "green-color";
         if($SPRS >= 10 && $SPRS < 20){            
             $StandingResponseScore += 2;
+            $SPRS_SCORE += 2;
+            $color = "yellow-color";
         }else if($SPRS >= 20 && $SPRS < 30){            
             $StandingResponseScore += 3;
+            $SPRS_SCORE += 3;
+            $color = "orange-color";
         }else if($SPRS >= 30){            
             $StandingResponseScore += 4;
+            $SPRS_SCORE += 4;
+            $color = "red-color";
         }
 
+        $color2 = "green-color";
         if($DPRS >= 5 && $DPRS < 10){            
             $StandingResponseScore += 2;
+            $DPRS_SCORE += 2;
+            $color2 = "yellow-color";
         }else if($DPRS >= 10 && $DPRS < 20){            
             $StandingResponseScore += 3;
+            $DPRS_SCORE += 3;
+            $color2 = "orange-color";
         }else if($DPRS >= 20){            
             $StandingResponseScore += 4;
-        }    
+            $DPRS_SCORE += 4;
+            $color2 = "red-color";
+        }
 
-        return $StandingResponseScore;
+        return [$StandingResponseScore, $color, $color2 , $SPRS_SCORE, $DPRS_SCORE];
     }
 
     function getFemaleHandScore($age, $GSR){

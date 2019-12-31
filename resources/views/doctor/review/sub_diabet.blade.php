@@ -110,7 +110,7 @@
 									<div id="preview">
 										<canvas width="380" height="170" id="canvas-preview1"></canvas>						
 									</div>
-									<div class="scale_label"> <div>0% &nbsp &nbsp 0</div>  <div class="scale_label_right"> 26 &nbsp  100% </div>  </div>
+									<!-- <div class="scale_label"> <div>0% &nbsp &nbsp 0</div>  <div class="scale_label_right"> 26 &nbsp  100% </div>  </div> -->
 									<div id="preview-textfield1" class="reset" style="display:none;">1</div>
 									<div class="reset"> {{ $diabet_risk_score }}</div>
 									<div id="status1" class="status {{$diabet_risk_color}}">{{$diabet_risk_name}}</div>
@@ -284,17 +284,17 @@
     $(document).ready(function() {		
 		var diabetLabel =  {
 				font: "10px sans-serif",
-				labels: [0, 12, 31, 46, 77, 100],
+				labels: [0, 3, 8, 12, 20, 26],
 				fractionDigits: 0
 			};
 		var diabetZone = [								
-				{strokeStyle: "#008000", min: 0, max: 31}, // green
-				{strokeStyle: "#FFFF00", min: 31, max: 46}, // yellow
-				{strokeStyle: "#FFA500", min: 46, max: 77}, // orange
-				{strokeStyle: "#FF0000", min: 77, max: 100} //red
+				{strokeStyle: "#008000", min: 0, max: 8}, // green
+				{strokeStyle: "#FFFF00", min: 8, max: 12}, // yellow
+				{strokeStyle: "#FFA500", min: 12, max: 20}, // orange
+				{strokeStyle: "#FF0000", min: 20, max: 26} //red
 			];
 
-		myInit("canvas-preview1", "preview-textfield1", "{{$diabet_risk_percent}}" , diabetLabel, diabetZone);
+		myInit("canvas-preview1", "preview-textfield1", "{{$diabet_risk_score}}" , diabetLabel, diabetZone);
 	});
 	 
 
@@ -337,7 +337,7 @@
 		var target = document.getElementById(id); // your canvas element	
 		var gauge = new Gauge(target).setOptions(opts); // create sexy gauge!
 		gauge.setTextField(document.getElementById(text));
-		gauge.maxValue = 100; // set max gauge value
+		gauge.maxValue = 26; // set max gauge value
 		gauge.setMinValue(0);  // set min value
 		gauge.set(value); // set actual value
 	}

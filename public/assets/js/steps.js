@@ -81,6 +81,12 @@ var resetAllocation = function (){
     });
 }
 
+var allocateDevice = function(){
+    updateStep(1); 
+}
+
+
+
 var updateStep = function (stepV){         
 
     var patient_id = $("#patient_id").val();
@@ -118,11 +124,15 @@ var updateStep = function (stepV){
             var res = result.results;
             if(res == 200){ 
 
-                var id = result.id;
-                $("#allocation_id").val(id);        
-                clearData();                
-                $("#abort").show();   
-                initButtons(PAGE_STATUS, STEP);    
+                if(stepV == 1){
+                    location.reload();
+                }else{
+                    var id = result.id;
+                    $("#allocation_id").val(id);        
+                    clearData();                
+                    $("#abort").show();   
+                    initButtons(PAGE_STATUS, STEP);    
+                }                
 
             }else{
                 alert("Failed");

@@ -2,9 +2,11 @@
 @section('content')     
     <div class="page-container-1" id="page-container">
         <div class="page-title padding pb-0 ">
-            <h2 class="text-md mb-0" style="padding-bottom: 35px;">User          
+            <h2 class="text-md mb-0" style="padding-bottom: 35px;">
             @if($type == 'edit')            
+                Edit Patient
             @elseif($type == 'delete') 
+                Delete Patient
             @elseif($type == 'add') 
                 
             @else
@@ -41,6 +43,12 @@
                                     <input type="checkbox" class="group-checkable" />
                                 </th>
                             @endif
+                            @if($type == 'edit')
+                                <th class="table-checkbox hidden">
+                                    <input type="checkbox" class="group-checkable" />
+                                </th>
+                            @endif
+
                             <th><span class="text-muted">Name</span></th>
                             <th><span class="text-muted">Email</span></th>
                             <th><span class="text-muted">User Type</span></th>
@@ -61,6 +69,12 @@
                                         <input id="{{$user->id}}" type="checkbox" class="checkboxes" name="id"  value="{{$user->id}}"/>
                                         <i></i>
                                         </label>                                 
+                                    </td>
+                                    
+                                @endif
+                                @if($type == 'edit')
+                                    <td>
+                                        <input id="{{$user->id}}" type="checkbox" class="checkboxes hidden" name="id"  value="{{$user->id}}"/>                                        
                                     </td>
                                 @endif
                                 

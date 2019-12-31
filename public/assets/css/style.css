@@ -130,14 +130,22 @@ span.payment_text{
 
     color:white;
 }
-
-.canvas_container{
+.canvas_container_overall{
     background: #eee ;
     z-index: 0;
     margin-right: 3px;
     margin-left: 3px;    
     margin-bottom: 3px;
     border-radius: 0rem;
+    cursor: pointer;
+}
+.canvas_container{
+    background: #eee ;
+    z-index: 0;
+    margin-right: 3px;
+    margin-left: 3px;    
+    margin-bottom: 3px;
+    border-radius: 0rem;    
 }
 
 .scale_label{

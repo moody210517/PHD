@@ -27,19 +27,21 @@ var ICON_STATUS = [
 ];
 
 var BUTTON_START = [
-    "btn w-sm mb-1 btn-rounded btn-outline-info disabled",
-    "btn w-sm mb-1 btn-rounded btn-outline-info"
+    "btn  mb-1 btn-rounded btn-outline-info disabled",
+    "btn  mb-1 btn-rounded btn-info"
 ];
 var BUTTON_STOP = [
-    "btn w-sm mb-1 btn-rounded btn-outline-danger disabled",
-    "btn w-sm mb-1 btn-rounded btn-outline-danger"
+    "btn  mb-1 btn-rounded btn-outline-danger  disabled",
+    "btn  mb-1 btn-rounded btn-danger"
 ];
 var BUTTON_RESET = [
-    "btn w-sm mb-1 btn-rounded btn-outline-warning disabled",
-    "btn w-sm mb-1 btn-rounded btn-outline-warning"
+    "btn  mb-1 btn-rounded btn-outline-warning  disabled",
+    "btn  mb-1 btn-rounded btn-warning"
 ];
 
 var BUTTON_NEXT = [
+    "btn  mb-1 button-next btn-rounded btn-outline-success  disabled",
+    "btn  mb-1 button-next btn-rounded btn-success",
     "btn btn-white button-next i-con-h-a disabled",
     "btn btn-white button-next i-con-h-a"
 ];
@@ -73,10 +75,14 @@ var initButtons = function(PAGE_STATUS, STEP){
         // $("#btn_next").off('click');
         // $("#btn_next").disabled = true;
         document.getElementById("btn_next").className = BUTTON_NEXT[0];
+        document.getElementById("btn_next").disabled = true;
+
     }else if(PAGE_STATUS == 1){
 
         //element.className.replace
-        document.getElementById("btn_start").className = BUTTON_START[0];
+        document.getElementById("btn_start").className = BUTTON_START[0];  
+        $('#btn_start').removeClass('hover');       
+
         document.getElementById("btn_stop").className = BUTTON_STOP[1];
         document.getElementById("btn_reset").className = BUTTON_RESET[0];
         // $("#btn_start").addClass(BUTTON_START[0]);
@@ -86,6 +92,7 @@ var initButtons = function(PAGE_STATUS, STEP){
         document.getElementById("btn_stop").disabled = false;
         document.getElementById("btn_reset").disabled = true;        
         document.getElementById("btn_next").className = BUTTON_NEXT[0];
+        document.getElementById("btn_next").disabled = true;
     }else{
         
         document.getElementById("btn_start").className = BUTTON_START[0];
@@ -95,7 +102,8 @@ var initButtons = function(PAGE_STATUS, STEP){
         document.getElementById("btn_start").disabled = true;
         document.getElementById("btn_stop").disabled = true;
         document.getElementById("btn_reset").disabled = false;            
-        document.getElementById("btn_next").className = BUTTON_NEXT[1];        
+        document.getElementById("btn_next").className = BUTTON_NEXT[1];       
+        document.getElementById("btn_next").disabled = false; 
     }
 }
 

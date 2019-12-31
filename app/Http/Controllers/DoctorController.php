@@ -35,6 +35,12 @@ class DoctorController extends BaseController
 {
     use AuthorizesRequests, DispatchesJobs, ValidatesRequests;
 
+    private $BASELINE = 3;
+    private $VALSA = 4;
+    private $DEEPBREADING = 5;
+    private $STANDING = 6;
+    private $HANDGRIP = 7;
+
     public function getDashboard()
     {
        // get patient
@@ -56,7 +62,6 @@ class DoctorController extends BaseController
            $data['start_date'] = date('Y-m-d');
            $data['end_date'] = date('Y-m-d');
        }
-
        // get error data
       
        $allocation = Allocation::where('company_id', Session::get('company_id'))->get();
@@ -186,8 +191,8 @@ class DoctorController extends BaseController
             return view('doctor.prestep.prestep2')->with('patient', $patient);
         }       
     }
-            
 
+    
     public function getPasttest(){
         $user_type = UserType::where('user_type_name','Patient')->get();
         $patients = Users::where('user_type_id',$user_type->first()->auto_num)
@@ -214,7 +219,6 @@ class DoctorController extends BaseController
         return view('doctor.past.testlists')
             ->with('patient', $patient)
             ->with('allocations', $allocations);
-
     }
     
 
@@ -228,7 +232,6 @@ class DoctorController extends BaseController
         $diabet_risk_id = Allocation::where('auto_num', $allocation_id)->get()->first()->diabet_risk_id;
         $diabet_form =UserDiabet::where('id', $diabet_risk_id)->get();
 
-
         if($diabet_form->first()){              
             return view('doctor.past.prestep2')
             ->with('patient', $patient)            
@@ -240,16 +243,25 @@ class DoctorController extends BaseController
             return redirect()->back();
         }   
     }
-    
-    
+        
     public function getEditvisitform($id = '' , Request $request = null){
         $user_type = $request->input('user_type');
         $patient_id = $request->input('patient_id');
         $allocation_id = $request->input('allocation_id');
 
+        
         // check if there is uncompleted test.
         $tester_id = Session::get("user_id");
+
+        DB::table('tbl_user_diabet')
+            ->where('user_id', $patient_id)
+            ->update(['waist' => $request->input('waist')
+            ,'bpmeds' => $request->input('bpmeds')
+            ,'glucose' => $request->input('glucose')
+            ,'vegetable' => $request->input('vegetable')            
+            ,'family' => $request->input('family') ]);
         
+
         $visit_form_id = Allocation::where('auto_num', $allocation_id)->get()->first()->visit_form_id;
         
         $visit_form = AllocationVisitForm::where('id', $visit_form_id)->get();
@@ -319,7 +331,7 @@ class DoctorController extends BaseController
 
     public function getLevelBood($allocation_id, $step){
         
-        $allocation_id = 139;
+       // $allocation_id = 139;
         $blood = Blood::where('allocation_id', $allocation_id)
         ->where('step_id', $step)
         ->get();           
@@ -465,10 +477,9 @@ class DoctorController extends BaseController
                 $diabet_risk_name = $overall_blood[1];
                 $diabet_risk_color = $overall_blood[2];
             
-                //Overall Blood Pressure
-                $allocation_id = "139";                
-               $step3Data =  $this->getLevelBood($allocation_id, 3);
-               $step6Data =  $this->getLevelBood($allocation_id, 6);
+                //Overall Blood Pressure                
+               $step3Data =  $this->getLevelBood($allocation_id, $this->BASELINE);
+               $step6Data =  $this->getLevelBood($allocation_id, $this->STANDING);
 
                $SPRS = abs($step3Data[Config::get('constants.options.avg_systolic')] - $step6Data[Config::get('constants.options.avg_systolic')]);
                $DPRS = abs($step3Data[Config::get('constants.options.avg_diastolic')] - $step6Data[Config::get('constants.options.avg_diastolic')]);
@@ -491,7 +502,7 @@ class DoctorController extends BaseController
                    $overall_blood_score = $overall_blood_score + 4;
                }
        
-               $step4Data =  $this->getLevelBood($allocation_id, 4);
+               $step4Data =  $this->getLevelBood($allocation_id, $this->VALSA);
                $overall_blood_score = $overall_blood_score + $step4Data[Config::get('constants.options.score')];
 
                $SPRV = ($step3Data[Config::get('constants.options.avg_systolic')] - $step4Data[ Config::get('constants.options.avg_systolic') ]);

@@ -202,8 +202,17 @@
               <div class="tab-pane active" id="tab1"> 
               @endif                
                                
+                    
+                    <div class="col-md-12 col-lg-12">
+                      <div class="d-flex justify-content-end">                                           
+                        <a href="#" id="btn_allocate" class="btn mb-1 btn-rounded btn-outline-success" onClick="allocateDevice()"> Next </a>
+                      </div>
+                    </div>
+
                      <div class="col-md-12 col-lg-12 col-xl-12">
                         <div class="block px-4 py-3">
+                            
+                            
                             <div class="row col-1g-12">                                  
                                   <div class="col-lg-6 col-12">
                                         <div class="d-flex align-items-center i-con-h-a my-1">
@@ -312,22 +321,24 @@
                
                
                 @if($allocation->first())
-                <div class="tab-pane <?php $step = $allocation->first()->step; if( $step == "1" || $step == "2" ||$step == "3" || $step == "4" || $step == "5" || $step == "6") echo " active"; ?>" id="tab2"> 
+                <div class="tab-pane <?php $step = $allocation->first()->step; if( $step == "1" || $step == "2" ||$step == "3" || $step == "4" || $step == "5" || $step == "6" || $step == "7") echo " active"; ?>" id="tab2"> 
                 @else
                 <div class="tab-pane" id="tab2"> 
                 @endif
 
-                  <div class="row row-sm">    
-
+                  <div class="row row-sm">
                         <div class="col-xl-8">
                           <strong id="step_description">Step 2 - please hook up all sensors to patient and begin sending data.  Click Start when the PHD device shows it is sending data successfully. Click Stop when all sensor tests have passed. Create task</strong>
                         </div>
 
                         <div class="col-xl-4">
                           <div class="form-group">
-                            <button id="btn_start" type="button"  class="btn w-sm mb-1 btn-rounded btn-outline-info" onClick="start()">Start</button>
-                            <button id="btn_stop" type="button"  class="btn w-sm mb-1 btn-rounded btn-outline-danger" onClick="stop()" >Stop</button>
-                            <button id="btn_reset" type="button" class="btn w-sm mb-1 btn-rounded btn-outline-warning" onClick="resetAllocation()" >Reset</button>
+                           
+                              <button id="btn_start" type="button"  class="btn mb-1 btn-rounded btn-outline-info" onClick="start()">Start</button>
+                              <button id="btn_stop" type="button"  class="btn mb-1 btn-rounded btn-outline-danger" onClick="stop()" >Stop</button>
+                              <button id="btn_reset" type="button" class="btn mb-1 btn-rounded btn-outline-warning" onClick="resetAllocation()" >Reset</button>                                                          
+                              <button type="button" id="btn_next" class="btn w-sm mb-1 btn-rounded btn-outline-success button-next"> Next </button>
+                                                                                  
                           </div>
                         </div>
                         
@@ -505,8 +516,8 @@
                     <!-- <a href="#" class="btn btn-white button-previous i-con-h-a"><i class="i-con i-con-arrow-left"><i></i></i></a> -->
                   </div>  
                   <div class="col-xl-6 col-12">
-                    <div class="d-flex justify-content-end">
-                      <a href="#" id="btn_next" class="btn btn-white button-next i-con-h-a"> Next </a>
+                    <div class="d-flex justify-content-end">                        
+                      <!-- <a href="#" id="btn_next" class="btn btn-white button-next i-con-h-a"> Next </a> -->
                       <!-- <a href="#" class="btn btn-white button-last i-con-h-a"><i class="i-con i-con-right"><i></i></i></a> -->                      
                     </div>
                   </div>

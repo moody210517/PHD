@@ -9,7 +9,7 @@
 			<div class="bg-white pt-4 pb-5">
 
 				<div class="page-title padding pb-0 ">
-					<h2 class="text-md mb-0">Type II Risk Assessment </h2>
+					<h2 class="text-md mb-0">Skin Microcirculation </h2>
 				</div>
 								
 				<form data-plugin="parsley" data-option="{}"  method="post" action="{{ url('doctor/prestep3') }}" enctype="multipart/form-data">
@@ -112,7 +112,7 @@
 									<div id="preview">
 										<canvas width="380" height="170" id="canvas-preview1"></canvas>						
 									</div>
-									<div class="scale_label"> <div>0% &nbsp &nbsp 0</div>  <div class="scale_label_right"> 4 &nbsp  100% </div>  </div>
+									<!-- <div class="scale_label"> <div>0% &nbsp &nbsp 0</div>  <div class="scale_label_right"> 4 &nbsp  100% </div>  </div> -->
 									<div id="preview-textfield1" class="reset" style="display:none;">1</div>
 									<div class="reset"> {{ $skin[0] }}</div>
 									<div id="status1" class="status {{$skin[3]}}">{{$skin[2]}}</div>
@@ -120,15 +120,12 @@
 							</div>							
 						</div>																		
 					</div>
-
-
 				</div>
 
 
 				<div class="page-title padding pb-0 ">
-					<h2 class="text-md mb-0"> Overall Blood Pressure Results </h2>
+					<h2 class="text-md mb-0"> Skin Microcirculation Results </h2>
 				</div>
-
 
 				<div class="padding">				
 																														
@@ -142,7 +139,7 @@
 										<div id="preview">
 											<canvas width="380" height="170" id="canvas-preview2"></canvas>						
 										</div>
-										<div class="scale_label"> <div>0% &nbsp &nbsp 0</div>  <div class="scale_label_right"> 2 &nbsp  100% </div>  </div>
+										<!-- <div class="scale_label"> <div>0% &nbsp &nbsp 0</div>  <div class="scale_label_right"> 2 &nbsp  100% </div>  </div> -->
 										<div id="preview-textfield2" class="reset" style="display:none;"></div>
 										
 										<div id="status2" class="status {{$hand[4]}}">{{$hand[3]}}</div>
@@ -171,7 +168,7 @@
 										<div id="preview">
 											<canvas width="380" height="170" id="canvas-preview3"></canvas>						
 										</div>
-										<div class="scale_label"> <div>0% &nbsp &nbsp 0</div>  <div class="scale_label_right"> 2 &nbsp  100% </div>  </div>
+										<!-- <div class="scale_label"> <div>0% &nbsp &nbsp 0</div>  <div class="scale_label_right"> 2 &nbsp  100% </div>  </div> -->
 										<div id="preview-textfield3" class="reset" style="display:none;"></div>
 										
 										<div id="status2" class="status {{$feet[4]}}">{{$feet[3]}}</div>
@@ -208,7 +205,6 @@
 							<table>
 						</div>
 						
-
 				</div>
 				
 				
@@ -263,28 +259,28 @@
 	$(document).ready(function() {		
 		var diabetLabel =  {
 				font: "10px sans-serif",
-				labels: [0, 12, 31, 46, 77, 100],
+				labels: [0, 1, 2, 4],
 				fractionDigits: 0
 			};
 		var diabetZone = [								
-				{strokeStyle: "#008000", min: 0, max: 31}, // green
-				{strokeStyle: "#FFFF00", min: 31, max: 46}, // yellow
-				{strokeStyle: "#FFA500", min: 46, max: 77}, // orange
-				{strokeStyle: "#FF0000", min: 77, max: 100} //red
+				{strokeStyle: "#008000", min: 0, max: 1}, // green
+				{strokeStyle: "#FFFF00", min: 1, max: 2}, // yellow				
+				{strokeStyle: "#FF0000", min: 2, max: 4} //red
 			];
 
 
 		var baselineLabel =  {
 				font: "10px sans-serif",
-				labels: [0, 25, 50, 100],
+				labels: [0, 1, 2],
 				fractionDigits: 0
 			};
 
 		var baselineZone = [								
-				{strokeStyle: "#008000", min: 0, max: 25}, // green
-				{strokeStyle: "#FFFF00", min: 25, max: 50}, // yellow				
-				{strokeStyle: "#FF0000", min: 50, max: 100} //red
+				{strokeStyle: "#008000", min: 0, max: 0.7}, // green
+				{strokeStyle: "#FFFF00", min: 0.7, max: 1.4}, // yellow				
+				{strokeStyle: "#FFA500", min: 1.4, max: 2} // orange
 			];
+			
 		var standingLabel =  {
 				font: "10px sans-serif",
 				labels: [0, 25, 50, 100],
@@ -298,9 +294,9 @@
 
 		
 
-		myInit("canvas-preview1", "preview-textfield1", "{{$skin[1]}}" , diabetLabel, diabetZone, 100);
-		myInit("canvas-preview2", "preview-textfield2", "{{$hand[2]}}" , baselineLabel, baselineZone, 100);
-		myInit("canvas-preview3", "preview-textfield3", "{{$feet[2]}}" , standingLabel, standingZone, 100);
+		myInit("canvas-preview1", "preview-textfield1", "{{$skin[0]}}" , diabetLabel, diabetZone, 4);
+		myInit("canvas-preview2", "preview-textfield2", "{{$hand[1]}}" , baselineLabel, baselineZone, 2);
+		myInit("canvas-preview3", "preview-textfield3", "{{$feet[1]}}" , baselineLabel, baselineZone, 2);
 		
 	});
 

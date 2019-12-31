@@ -4,13 +4,19 @@
 <div class="page-container">
 
     <div class="page-container-1" id="page-container">
+        
+
+        <input value="{{$logintype}}" id="logintype" type="hidden" />
+
         <div class="page-title padding pb-0 ">
             @if($logintype == "1")
             <h2 class="text-md mb-0">Add Patient
             <!-- <a href="{{ url('admin/users') }}" class="btn btn-primary" style="float: right;color: white;">Back</a> -->
             </h2>
             @else
-            <h2 class="text-md mb-0">Test for New Patient
+            <h2 class="text-md mb-0">
+            Add New Patient
+            <!-- Test for New Patient -->
             <!-- <a href="{{ url('admin/users') }}" class="btn btn-primary" style="float: right;color: white;">Back</a> -->
             </h2>
             @endif
@@ -451,9 +457,11 @@
                 @endif
                 
                 
-                <div class="form-group">  
-                    <button class="btn btn-primary" style="float: right;">Save</button>
+                <div class="form-group" style="float: right;"> 
+                    <button class="btn btn-primary" >Save</button>
+                    <a href="{{ url('doctor/testland')}}" class="btn btn-primary"> Cancel </a>
                 </div>
+                
 
                 <input type="hidden" name="company_id" class="  form-control" placeholder="First Name" value="{{Session::get('company_id')}}"  required="required">   
 
@@ -530,7 +538,12 @@
         var home_num = $("#home_num").val();
         if(phonenumber(home_num)){            
         }else{
-            alert("Please input correct home number!");
+            var  logintype = $("#logintype").val();
+            if(logintype == '1'){
+                alert("Please input correct home number!");
+            }else{
+
+            }            
         }
 	});
 
@@ -541,10 +554,19 @@
     function check(){
         var home_num = $("#home_num").val();
         var mobile_num = $("#mobile_num").val();
-        if(phonenumber(mobile_num) && phonenumber(home_num)){
+
+        var  logintype = $("#logintype").val();
+        if(logintype == '1'){
+            if(phonenumber(mobile_num) && phonenumber(home_num) ){ 
+            }else{
+                alert("Please input correct phone number!");
+            }                        
         }else{
-            alert("Please input correct phone number!");
-        }
+            if(phonenumber(mobile_num) ){ 
+            }else{
+                alert("Please input correct phone number!");
+            }   
+        }       
     }
 
 
@@ -574,6 +596,7 @@
           data: { id:id},
           url: "{{ URL::to('api/getCity')}}",
           success: function(result) {     
+                
                 var res = result.results;
                 if(res == 200){
 

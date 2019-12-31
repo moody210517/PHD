@@ -110,7 +110,7 @@
 									<div id="preview">
 										<canvas width="380" height="170" id="canvas-preview1"></canvas>						
 									</div>
-									<div class="scale_label"> <div>0% &nbsp &nbsp 0</div>  <div class="scale_label_right"> 35 &nbsp  100% </div>  </div>
+									<!-- <div class="scale_label"> <div>0% &nbsp &nbsp 0</div>  <div class="scale_label_right"> 35 &nbsp  100% </div>  </div> -->
 									<div id="preview-textfield1" class="reset" style="display:none;">1</div>
 									<div class="reset"> {{$adrenergic[0] }} </div>
 									<div id="status1" class="status {{$adrenergic[3] }}"> {{$adrenergic[2] }} </div>
@@ -140,7 +140,7 @@
 										<div id="preview">
 											<canvas width="380" height="170" id="canvas-preview2"></canvas>						
 										</div>
-										<div class="scale_label"> <div>0% &nbsp &nbsp 0</div>  <div class="scale_label_right"> 5 &nbsp  100% </div>  </div>
+										<!-- <div class="scale_label"> <div>0% &nbsp &nbsp 0</div>  <div class="scale_label_right"> 5 &nbsp  100% </div>  </div> -->
 										<div id="preview-textfield2" class="reset" style="display:none;"></div>
 										
 										<div id="status2" class="status {{$BaselineSys[3]}}"> {{$BaselineSys[2]}} </div>
@@ -169,7 +169,7 @@
 										<div id="preview">
 											<canvas width="380" height="170" id="canvas-preview3"></canvas>						
 										</div>
-										<div class="scale_label"> <div>0% &nbsp &nbsp 0</div>  <div class="scale_label_right"> 5 &nbsp  100% </div>  </div>
+										<!-- <div class="scale_label"> <div>0% &nbsp &nbsp 0</div>  <div class="scale_label_right"> 5 &nbsp  100% </div>  </div> -->
 										<div id="preview-textfield3" class="reset" style="display:none;"></div>
 										
 										<div id="status2" class="status {{$BaselineDia[3]}}"> {{$BaselineDia[2]}} </div>
@@ -198,7 +198,7 @@
 										<div id="preview">
 											<canvas width="380" height="170" id="canvas-preview4"></canvas>						
 										</div>
-										<div class="scale_label"> <div>0% &nbsp &nbsp 0</div>  <div class="scale_label_right"> 5 &nbsp  100% </div>  </div>
+										<!-- <div class="scale_label"> <div>0% &nbsp &nbsp 0</div>  <div class="scale_label_right"> 5 &nbsp  100% </div>  </div> -->
 										<div id="preview-textfield4" class="reset" style="display:none;"></div>
 										
 										<div id="status2" class="status {{$StandingSys[3]}} "> {{$StandingSys[2]}}  </div>
@@ -227,7 +227,7 @@
 										<div id="preview">
 											<canvas width="380" height="170" id="canvas-preview5"></canvas>						
 										</div>
-										<div class="scale_label"> <div>0% &nbsp &nbsp 0</div>  <div class="scale_label_right"> 5 &nbsp  100% </div>  </div>
+										<!-- <div class="scale_label"> <div>0% &nbsp &nbsp 0</div>  <div class="scale_label_right"> 5 &nbsp  100% </div>  </div> -->
 										<div id="preview-textfield5" class="reset" style="display:none;"></div>
 										
 										<div id="status2" class="status  {{$StandingDia[3]}}">  {{$StandingDia[2]}} </div>
@@ -268,7 +268,7 @@
 										<div id="preview">
 											<canvas width="380" height="170" id="canvas-preview6"></canvas>						
 										</div>
-										<div class="scale_label"> <div>0% &nbsp &nbsp 0</div>  <div class="scale_label_right"> 5 &nbsp  100% </div>  </div>
+										<!-- <div class="scale_label"> <div>0% &nbsp &nbsp 0</div>  <div class="scale_label_right"> 5 &nbsp  100% </div>  </div> -->
 										<div id="preview-textfield6" class="reset" style="display:none;"></div>
 										
 										<div id="status2" class="status  {{$SPRV[3]}} "> {{$SPRV[2]}} </div>
@@ -297,7 +297,7 @@
 										<div id="preview">
 											<canvas width="380" height="170" id="canvas-preview7"></canvas>						
 										</div>
-										<div class="scale_label"> <div>0% &nbsp &nbsp 0</div>  <div class="scale_label_right"> 5 &nbsp  100% </div>  </div>
+										<!-- <div class="scale_label"> <div>0% &nbsp &nbsp 0</div>  <div class="scale_label_right"> 5 &nbsp  100% </div>  </div> -->
 										<div id="preview-textfield7" class="reset" style="display:none;"></div>
 										
 										<div id="status2" class="status {{$SPRS[3]}}"> {{$SPRS[2]}}</div>
@@ -326,7 +326,7 @@
 										<div id="preview">
 											<canvas width="380" height="170" id="canvas-preview8"></canvas>						
 										</div>
-										<div class="scale_label"> <div>0% &nbsp &nbsp 0</div>  <div class="scale_label_right"> 5 &nbsp  100% </div>  </div>
+										<!-- <div class="scale_label"> <div>0% &nbsp &nbsp 0</div>  <div class="scale_label_right"> 5 &nbsp  100% </div>  </div> -->
 										<div id="preview-textfield8" class="reset" style="display:none;"></div>
 										
 										<div id="status2" class="status {{$DPRS[3]}}"> {{$DPRS[2]}} </div>
@@ -406,14 +406,14 @@
 	$(document).ready(function() {		
 		var adrenergicLabel =  {
 				font: "10px sans-serif",
-				labels: [0, 24, 50, 76, 100],
+				labels: [0, 7, 15, 23, 30],
 				fractionDigits: 0
 			};
 		var ardrenergicZones = [
-				{strokeStyle: "#008000", min: 0, max: 24},
-				{strokeStyle: "#FFFF00", min: 24, max: 50},
-				{strokeStyle: "#FFA500", min: 50, max: 76},
-				{strokeStyle: "#FF0000", min: 76, max: 100}
+				{strokeStyle: "#008000", min: 0, max: 7},
+				{strokeStyle: "#FFFF00", min: 7, max: 15},
+				{strokeStyle: "#FFA500", min: 15, max: 23},
+				{strokeStyle: "#FF0000", min: 23, max: 30}
 			];
 
 		var commonLabel =  {
@@ -428,27 +428,27 @@
 	
 		var commonLabel2 =  {
 				font: "10px sans-serif",
-				labels: [0, 25, 50, 75, 100],
+				labels: [0, 1, 2, 3, 4, 5],
 				fractionDigits: 0
 			};
 		var commonZone2 = [								
-				{strokeStyle: "#008000", min: 0, max: 25}, // green
-				{strokeStyle: "#FFFF00", min: 25, max: 50}, // yellow
-				{strokeStyle: "#FFA500", min: 50, max: 75}, // orange
-				{strokeStyle: "#FF0000", min: 75, max: 100} //red
+				{strokeStyle: "#008000", min: 0, max: 1}, // green
+				{strokeStyle: "#FFFF00", min: 1, max: 3}, // yellow
+				{strokeStyle: "#FFA500", min: 3, max: 4}, // orange
+				{strokeStyle: "#FF0000", min: 4, max: 5} //red
 			];
 
 		
 
-		myInit("canvas-preview1", "preview-textfield1", "{{$adrenergic[1] }}" , adrenergicLabel, ardrenergicZones, 100);
+		myInit("canvas-preview1", "preview-textfield1", "{{$adrenergic[0] }}" , adrenergicLabel, ardrenergicZones, 30);
 
-		myInit("canvas-preview2", "preview-textfield2", "{{$BaselineSys[1]}}" , commonLabel2, commonZone2, 100);
-		myInit("canvas-preview3", "preview-textfield3", "{{$BaselineDia[1]}}" , commonLabel2, commonZone2, 100);
-		myInit("canvas-preview4", "preview-textfield4", "{{$StandingSys[1]}}" , commonLabel2, commonZone2, 100);
-		myInit("canvas-preview5", "preview-textfield5", "{{$StandingDia[1]}}" , commonLabel2, commonZone2, 100);
-		myInit("canvas-preview6", "preview-textfield6", "{{$SPRV[1]}}" , commonLabel2, commonZone2, 100);
-		myInit("canvas-preview7", "preview-textfield7", "{{$SPRS[1]}}" , commonLabel2, commonZone2, 100);
-		myInit("canvas-preview8", "preview-textfield8", "{{$DPRS[1]}}" , commonLabel2, commonZone2, 100);		
+		myInit("canvas-preview2", "preview-textfield2", "{{$BaselineSys[0]}}" , commonLabel2, commonZone2, 5);
+		myInit("canvas-preview3", "preview-textfield3", "{{$BaselineDia[0]}}" , commonLabel2, commonZone2, 5);
+		myInit("canvas-preview4", "preview-textfield4", "{{$StandingSys[0]}}" , commonLabel2, commonZone2, 5);
+		myInit("canvas-preview5", "preview-textfield5", "{{$StandingDia[0]}}" , commonLabel2, commonZone2, 5);
+		myInit("canvas-preview6", "preview-textfield6", "{{$SPRV[0]}}" , commonLabel2, commonZone2, 5);
+		myInit("canvas-preview7", "preview-textfield7", "{{$SPRS[0]}}" , commonLabel2, commonZone2, 5);
+		myInit("canvas-preview8", "preview-textfield8", "{{$DPRS[0]}}" , commonLabel2, commonZone2, 5);		
 
 	});
 

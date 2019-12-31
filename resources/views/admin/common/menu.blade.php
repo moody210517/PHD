@@ -22,12 +22,10 @@
                 <div class="collapse navbar-collapse order-2 order-lg-1" id="navbarToggler">
                 </div>
                 <ul class="nav navbar-menu order-1 order-lg-2">
-                    <!-- <li class="nav-item d-none d-sm-block">
-                        <a class="nav-link px-2 i-con-h-a" data-plugin="screenfull" data-toggle="fullscreen" data-title="Fullscreen">
-                        <i class="i-con i-con-fullscreen"></i>
-                        </a>
+                     <li class="nav-item d-none d-sm-block">                        
+                        <a  href="{{ URL::to('doctor/testland') }}" class="nav-link px-2 i-con-h-a">Home</a>
                     </li>
-                                                            -->
+                                                            
                     <!-- User dropdown menu -->
 
                     <li class="nav-item dropdown">

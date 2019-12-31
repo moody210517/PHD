@@ -49,6 +49,7 @@ class OfficeController extends BaseController
         $users = Users::where('company_id', Session::get('company_id'))
         ->where('id', '!=', Session::get('user_id'))
         ->where('user_type_id', $user->first()->auto_num)
+        ->orderBy('id', 'DESC')
         ->get();        
 
         foreach($users as $user){
@@ -73,15 +74,14 @@ class OfficeController extends BaseController
 
     public function getAddpatient($id = '' , Request $request = null){    
 
-
         $error_msg = "";
         if($request->has('first_name')){ 
             //$pwd = $request->input('user_password'); 
             //$cpwd = $request->input('confirmPassword');
 
             $home = $request->input('home_num'); 
-            $mobile = $request->input('mobile_num');           
-            if(preg_match("/^[0-9]{3}-[0-9]{3}-[0-9]{4}$/", $home) && preg_match("/^[0-9]{3}-[0-9]{3}-[0-9]{4}$/", $mobile)){
+            $mobile = $request->input('mobile_num');    //preg_match("/^[0-9]{3}-[0-9]{3}-[0-9]{4}$/", $home) &&        
+            if( preg_match("/^[0-9]{3}-[0-9]{3}-[0-9]{4}$/", $mobile)){
 
                 $check = Users::where('first_name', $request->input('first_name'))
                     ->where('last_name', $request->input('last_name'))
@@ -149,30 +149,23 @@ class OfficeController extends BaseController
                     $patient_id = $check->first()->id;                    
                 }
                                 
-                //return redirect('office/patients/add');                                                                                            
-                $user_type = 'new';                
-                $patient = Users::where('id', $patient_id)->get()->first();
-                $symptoms = VisitPurpose::where('type', 'Symptoms')->get();
-                $treatment = VisitPurpose::where('type', 'Treatment')->get();
-                $disease = VisitPurpose::where('type', 'Disease')->get();                
-                $tester_id = Session::get("user_id");
+                return redirect('doctor/testland');                                                                                            
                                 
-                if($patient){
-                    $user_diabet = UserDiabet::where('user_id', $patient_id)->get();
-                    return view('doctor.prestep.prestep2')
-                    ->with('patient', $patient)
-                    ->with('user_diabet', $user_diabet);            
-                }else{
-                    return redirect()->back();
-                }                 
-                // old code to go step 3
-                // return view('doctor.prestep.prestep3')
+                // $user_type = 'new';                
+                // $patient = Users::where('id', $patient_id)->get()->first();
+                // $symptoms = VisitPurpose::where('type', 'Symptoms')->get();
+                // $treatment = VisitPurpose::where('type', 'Treatment')->get();
+                // $disease = VisitPurpose::where('type', 'Disease')->get();                
+                // $tester_id = Session::get("user_id");
+                                
+                // if($patient){
+                //     $user_diabet = UserDiabet::where('user_id', $patient_id)->get();
+                //     return view('doctor.prestep.prestep2')
                 //     ->with('patient', $patient)
-                //     ->with('symptoms', $symptoms)
-                //     ->with('treatment', $treatment)
-                //     ->with('disease', $disease)
-                //     ->with('user_type', $user_type)
-                //     ->with('tester_id', $tester_id);
+                //     ->with('user_diabet', $user_diabet);            
+                // }else{
+                //     return redirect()->back();
+                // }                                
 
             }
 

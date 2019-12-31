@@ -116,8 +116,7 @@ class ApiController extends BaseController
 
 
     public function test(Request $request){
-
-        $allocation_id = "139";
+        
          //Overall Blood Pressure         
         $value1 =  $this->getLevel($allocation_id, 3);
         $value2 =  $this->getLevel($allocation_id, 6);

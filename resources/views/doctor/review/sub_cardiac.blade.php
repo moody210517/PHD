@@ -110,7 +110,7 @@
 									<div id="preview">
 										<canvas width="380" height="170" id="canvas-preview1"></canvas>						
 									</div>
-									<div class="scale_label"> <div>0% &nbsp &nbsp 0</div>  <div class="scale_label_right"> 18 &nbsp  100% </div>  </div>
+									<!-- <div class="scale_label"> <div>0% &nbsp &nbsp 0</div>  <div class="scale_label_right"> 18 &nbsp  100% </div>  </div> -->
 									<div id="preview-textfield1" class="reset" style="display:none;">1</div>
 									<div class="reset"> {{$card[0]}}</div>
 									<div id="status1" class="status {{$card[3]}}"> {{$card[2]}} </div>
@@ -142,7 +142,7 @@
 										<div id="preview">
 											<canvas width="380" height="170" id="canvas-preview2"></canvas>						
 										</div>
-										<div class="scale_label"> <div>0% &nbsp &nbsp 0</div>  <div class="scale_label_right"> 3 &nbsp  100% </div>  </div>
+										<!-- <div class="scale_label"> <div>0% &nbsp &nbsp 0</div>  <div class="scale_label_right"> 3 &nbsp  100% </div>  </div> -->
 										<div id="preview-textfield2" class="reset" style="display:none;"></div>
 										
 										<div id="status2" class="status {{$RR[3]}}">{{$RR[2]}}</div>
@@ -171,7 +171,7 @@
 										<div id="preview">
 											<canvas width="380" height="170" id="canvas-preview3"></canvas>						
 										</div>
-										<div class="scale_label"> <div>0% &nbsp &nbsp 0</div>  <div class="scale_label_right"> 1 &nbsp  100% </div>  </div>
+										<!-- <div class="scale_label"> <div>0% &nbsp &nbsp 0</div>  <div class="scale_label_right"> 1 &nbsp  100% </div>  </div> -->
 										<div id="preview-textfield3" class="reset" style="display:none;"></div>
 										
 										<div id="status2" class="status {{$VRC4[3]}} "> {{$VRC4[2]}}  </div>
@@ -200,7 +200,7 @@
 										<div id="preview">
 											<canvas width="380" height="170" id="canvas-preview4"></canvas>						
 										</div>
-										<div class="scale_label"> <div>0% &nbsp &nbsp 0</div>  <div class="scale_label_right"> 1 &nbsp  100% </div>  </div>
+										<!-- <div class="scale_label"> <div>0% &nbsp &nbsp 0</div>  <div class="scale_label_right"> 1 &nbsp  100% </div>  </div> -->
 										<div id="preview-textfield4" class="reset" style="display:none;"></div>
 										
 										<div id="status2" class="status  {{$VRC6[3]}} ">  {{$VRC6[2]}} </div>
@@ -236,7 +236,7 @@
 										<div id="preview">
 											<canvas width="380" height="170" id="canvas-preview5"></canvas>						
 										</div>
-										<div class="scale_label"> <div>0% &nbsp &nbsp 0</div>  <div class="scale_label_right"> 5 &nbsp  100% </div>  </div>
+										<!-- <div class="scale_label"> <div>0% &nbsp &nbsp 0</div>  <div class="scale_label_right"> 5 &nbsp  100% </div>  </div> -->
 										<div id="preview-textfield5" class="reset" style="display:none;"></div>
 										
 										<div id="status2" class="status {{$SPRS[3]}}">  {{$SPRS[2]}} </div>
@@ -265,7 +265,7 @@
 										<div id="preview">
 											<canvas width="380" height="170" id="canvas-preview6"></canvas>						
 										</div>
-										<div class="scale_label"> <div>0% &nbsp &nbsp 0</div>  <div class="scale_label_right"> 5 &nbsp  100% </div>  </div>
+										<!-- <div class="scale_label"> <div>0% &nbsp &nbsp 0</div>  <div class="scale_label_right"> 5 &nbsp  100% </div>  </div> -->
 										<div id="preview-textfield6" class="reset" style="display:none;"></div>
 										
 										<div id="status2" class="status {{$DPRS[3]}} "> {{$DPRS[2]}}  </div>
@@ -295,7 +295,7 @@
 											<canvas width="380" height="170" id="canvas-preview7"></canvas>						
 										</div>
 																				
-										<div class="scale_label"> <div>0% &nbsp &nbsp 0</div>  <div class="scale_label_right"> 3 &nbsp  100% </div>  </div>
+										<!-- <div class="scale_label"> <div>0% &nbsp &nbsp 0</div>  <div class="scale_label_right"> 3 &nbsp  100% </div>  </div> -->
 										<div id="preview-textfield7" class="reset" style="display:none;"></div>
 										
 										<div id="status2" class="status {{$SPRS7[3]}}"> {{$SPRS7[2]}}</div>
@@ -369,6 +369,20 @@
 <script type="text/javascript">   
     
 	$(document).ready(function() {		
+
+		var cardicLabel =  {
+				font: "10px sans-serif",
+				labels: [0, 4, 9, 13, 18],
+				fractionDigits: 0
+			};
+		var cardicZone = [
+				{strokeStyle: "#008000", min: 0, max: 4},
+				{strokeStyle: "#FFFF00", min: 4, max: 9},
+				{strokeStyle: "#FFA500", min: 9, max: 13},
+				{strokeStyle: "#FF0000", min: 13, max: 18}
+			];
+
+
 		var commonLabel =  {
 				font: "10px sans-serif",
 				labels: [0, 70 , 100],
@@ -379,60 +393,49 @@
 				{strokeStyle: "#FF0000", min: 70, max: 100} //red
 			];
 
-		var ansDysfunctionLabel =  {
-				font: "10px sans-serif",
-				labels: [0, 28, 50, 78, 100],
-				fractionDigits: 0
-			};
-		var ansDysfunctionZone = [
-				{strokeStyle: "#008000", min: 0, max: 28},
-				{strokeStyle: "#FFFF00", min: 28, max: 50},
-				{strokeStyle: "#FFA500", min: 50, max: 78},
-				{strokeStyle: "#FF0000", min: 78, max: 100}
-			];
+		
 
 		var RRLabel =  {
 				font: "10px sans-serif",
-				labels: [0, 33.3, 66.6, 100],
+				labels: [0, 1, 2, 3],
 				fractionDigits: 0
 			};
 		var RRZone = [								
-				{strokeStyle: "#008000", min: 0, max: 33.3}, // green
-				{strokeStyle: "#FFFF00", min: 33.3, max: 66.6}, // yellow
-				{strokeStyle: "#FF0000", min: 66.6, max: 100} //red
+				{strokeStyle: "#008000", min: 0, max: 1}, // green
+				{strokeStyle: "#FFFF00", min: 1, max: 2}, // yellow
+				{strokeStyle: "#FF0000", min: 2, max: 3} //red
 			];
 
 
 		var VRC4Label =  {
 				font: "10px sans-serif",
-				labels: [0, 50, 100],
+				labels: [0, 1],
 				fractionDigits: 0
 			};
 		var VRC4Zone = [								
-				{strokeStyle: "#008000", min: 0, max: 50}, // green	
-				{strokeStyle: "#FF0000", min: 50, max: 100} //red
+				{strokeStyle: "#008000", min: 0, max: 0.5}, // green	
+				{strokeStyle: "#FFFF00", min: 0.5, max: 1} //red
 			];
 
 		var SPLabel =  {
 				font: "10px sans-serif",
-				labels: [0, 20, 40, 60, 80, 100],
+				labels: [0, 1, 3, 4, 5],
 				fractionDigits: 0
 			};
 		var SPZone = [								
-				{strokeStyle: "#008000", min: 0, max: 40}, // green	
-				{strokeStyle: "#FFFF00", min: 40, max: 60},
-				{strokeStyle: "#FFA500", min: 60, max: 80},
-				{strokeStyle: "#FF0000", min: 80, max: 100} //red
+				{strokeStyle: "#008000", min: 0, max: 1}, // green	
+				{strokeStyle: "#FFFF00", min: 1, max: 3},
+				{strokeStyle: "#FFA500", min: 3, max: 4},
+				{strokeStyle: "#FF0000", min: 4, max: 5} //red
 			];
 
-		myInit("canvas-preview1", "preview-textfield1", "{{$card[1]}}" , ansDysfunctionLabel, ansDysfunctionZone, 100);
-
-		myInit("canvas-preview2", "preview-textfield2", "{{$RR[1]}}" , RRLabel, RRZone, 100);
-		myInit("canvas-preview3", "preview-textfield3", "{{$VRC4[1]}}" , VRC4Label, VRC4Zone, 100);
-		myInit("canvas-preview4", "preview-textfield4", "{{$VRC6[1]}}" , VRC4Label, VRC4Zone, 100);
-		myInit("canvas-preview5", "preview-textfield5", "{{$SPRS[1]}}" , SPLabel, SPZone, 100);
-		myInit("canvas-preview6", "preview-textfield6", "{{$DPRS[1]}}" , SPLabel, SPZone, 100);
-		myInit("canvas-preview7", "preview-textfield7", "{{$SPRS7[1]}}" , RRLabel, RRZone, 100);
+		myInit("canvas-preview1", "preview-textfield1", "{{$card[0]}}" , cardicLabel, cardicZone, 18);
+		myInit("canvas-preview2", "preview-textfield2", "{{$RR[0]}}" , RRLabel, RRZone, 3);
+		myInit("canvas-preview3", "preview-textfield3", "{{$VRC4[0]}}" , VRC4Label, VRC4Zone, 1);
+		myInit("canvas-preview4", "preview-textfield4", "{{$VRC6[0]}}" , VRC4Label, VRC4Zone, 1);
+		myInit("canvas-preview5", "preview-textfield5", "{{$SPRS[0]}}" , SPLabel, SPZone, 5);
+		myInit("canvas-preview6", "preview-textfield6", "{{$DPRS[0]}}" , SPLabel, SPZone, 5);
+		myInit("canvas-preview7", "preview-textfield7", "{{$SPRS7[0]}}" , RRLabel, RRZone, 3);
 		
 
 	});

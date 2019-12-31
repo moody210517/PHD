@@ -23,6 +23,12 @@ class SubreportController extends Controller
 {
     use AuthorizesRequests, DispatchesJobs, ValidatesRequests;
   
+    private $BASELINE = 3;
+    private $VALSA = 4;
+    private $DEEPBREADING = 5;
+    private $STANDING = 6;
+    private $HANDGRIP = 7;
+
     public function getDiabetReport($id = '', Request $request = null){
 
         $allocation_id = $id;// $request->input('patient_id');
@@ -36,7 +42,7 @@ class SubreportController extends Controller
             $visit_form_id = $allocation->first()->visit_form_id;
             $diabet_risk_id = $allocation->first()->diabet_risk_id;       
             $patient = Users::where('id', $patient_id)->get()->first();
-            if($patient){                
+            if($patient){
                 // -----------------------------------------   BMI Value   ---------------------------------------------------------------
                 // get bmi values                
                 $bmiData = $this->getBMI($patient->weight, $patient->user_height);
@@ -84,15 +90,15 @@ class SubreportController extends Controller
                 // waist score
                 $waist_score = 0;
                 if($patient->sex == "Male"){
-                    if($waist >= 94 && $waist < 102){
+                    if($waist >= 37 && $waist < 40){
                         $waist_score = 3;
-                    }else if($waist >= 102){
+                    }else if($waist >= 40){
                         $waist_score = 4;
                     }
                 }else{
-                    if($waist >= 80 && $waist < 88){
+                    if($waist >= 31 && $waist < 35){
                         $waist_score = 3;
-                    }else if($waist >= 88){
+                    }else if($waist >= 35){
                         $waist_score = 4;
                     }
                 }
@@ -175,24 +181,28 @@ class SubreportController extends Controller
                 // get BMI data 
                 $bmiData = $this->getBMI($patient->weight, $patient->user_height);
                 
-                $step3Data =  getLevelBood($allocation_id, 3);
-                $step6Data =  getLevelBood($allocation_id, 6);
+                $step3Data =  getLevelBood($allocation_id, $this->BASELINE);
+                $step6Data =  getLevelBood($allocation_id, $this->STANDING);
 
                 $SPRS = abs($step3Data[Config::get('constants.options.avg_systolic')] - $step6Data[Config::get('constants.options.avg_systolic')]);
                 $DPRS = abs($step3Data[Config::get('constants.options.avg_diastolic')] - $step6Data[Config::get('constants.options.avg_diastolic')]);
         
                 $overall_blood_score = $step3Data[Config::get('constants.options.score')] + $step6Data[ Config::get('constants.options.score') ];
                 
-                // base line section
+                // base line section and standing section ...
                 $BaselineTitleColor = getRiskAndTitleColor($step3Data[Config::get('constants.options.score')] , 1, 2, 3, 4 , 5 , 20 , 20, 20, 20, 20 );
+
                 $baseline_systolic_color = "green-color";
-                if($step3Data[Config::get('constants.options.avg_systolic')] > 130 && $step3Data[Config::get('constants.options.avg_systolic')] < 139){
+                if($step3Data[Config::get('constants.options.avg_systolic')] > 120 && $step3Data[Config::get('constants.options.avg_systolic')] <= 130  ){
+                    $baseline_systolic_color = "green-color";
+                }else if($step3Data[Config::get('constants.options.avg_systolic')] > 130 && $step3Data[Config::get('constants.options.avg_systolic')] < 139){
                     $baseline_systolic_color = "yellow-color";
                 }else if($step3Data[Config::get('constants.options.avg_systolic')] > 140 && $step3Data[Config::get('constants.options.avg_systolic')] < 179){
                     $baseline_systolic_color = "orange-color";
                 }else if($step3Data[Config::get('constants.options.avg_systolic')] >= 180){
                     $baseline_systolic_color = "red-color";
                 }
+
                 $baseline_dyastolic_color = "green-color";
                 if($step3Data[Config::get('constants.options.avg_diastolic')] > 80 && $step3Data[Config::get('constants.options.avg_diastolic')] < 89){
                     $baseline_dyastolic_color = "yellow-color";
@@ -201,19 +211,19 @@ class SubreportController extends Controller
                 }else if($step3Data[Config::get('constants.options.avg_diastolic')] >= 120){
                     $baseline_dyastolic_color = "red-color";
                 }
-
-
-                // standing section
-                $StandingTitleColor = getRiskAndTitleColor($step6Data[Config::get('constants.options.score')] , 1, 2, 3, 4 , 5 , 20 , 20, 20, 20, 20 );          
-                $StandingResponseScore = getSPRS_DPRS_Score($SPRS, $DPRS); // Get SPRS, DPRS Score 
+                
+                $StandingTitleColor = getRiskAndTitleColor($step6Data[Config::get('constants.options.score')] , 1, 2, 3, 4 , 5 , 20 , 20, 20, 20, 20 );                         
                 $standing_systolic_color = "green-color";
-                if($step6Data[Config::get('constants.options.avg_systolic')] > 120 && $step6Data[Config::get('constants.options.avg_systolic')] < 129){
+                if($step6Data[Config::get('constants.options.avg_systolic')] > 110 && $step6Data[Config::get('constants.options.avg_systolic')] < 119){
+                    $standing_systolic_color = "green-color";
+                }else if($step6Data[Config::get('constants.options.avg_systolic')] > 120 && $step6Data[Config::get('constants.options.avg_systolic')] < 129){
                     $standing_systolic_color = "yellow-color";
                 }else if($step6Data[Config::get('constants.options.avg_systolic')] > 130 && $step6Data[Config::get('constants.options.avg_systolic')] < 169){
                     $standing_systolic_color = "orange-color";
                 }else if($step6Data[Config::get('constants.options.avg_systolic')] >= 170){
                     $standing_systolic_color = "red-color";
                 }
+
                 $standing_dyastolic_color = "green-color";
                 if($step6Data[Config::get('constants.options.avg_diastolic')] > 75 && $step6Data[Config::get('constants.options.avg_diastolic')] < 84){
                     $standing_dyastolic_color = "yellow-color";
@@ -223,22 +233,21 @@ class SubreportController extends Controller
                     $standing_dyastolic_color = "red-color";
                 }
 
-                $overall_blood_score += $StandingResponseScore[0];
-                                                            
+                 // BP Standing Response
+                $StandingResponseScore = getSPRS_DPRS_Score($SPRS, $DPRS); // Get SPRS, DPRS Score 
+                $overall_blood_score += $StandingResponseScore[0];                                                            
                 $StandingResTitleColor = getRiskAndTitleColor( $StandingResponseScore[0] , 2, 4 , 6, 8 , 0 , 25 , 25, 25, 25, 0 );
-
-                
-                        
-                $step4Data =  getLevelBoodValsa($allocation_id, 4);
-                $step5Data =  getLevelBoodValsa($allocation_id, 5);
+                                        
+                $step4Data =  getLevelBoodValsa($allocation_id, $this->VALSA);
+                $step5Data =  getLevelBoodValsa($allocation_id, $this->DEEPBREADING);
                 $overall_blood_score  +=  $step4Data[Config::get('constants.options.score')];
+                
 
-                $SPRV = ($step3Data[Config::get('constants.options.avg_systolic')] - $step4Data[ Config::get('constants.options.avg_systolic') ]);
-                $SPRV_SCORE =  $step4Data[Config::get('constants.options.score')];
-                $SPRV_SYS_AVG = $step4Data[Config::get('constants.options.avg_systolic')];
-                $SPRV_DYA_AVG = $step4Data[Config::get('constants.options.avg_diastolic')];
+                $VAL_SCORE =  $step4Data[Config::get('constants.options.score')];
+                $VAL_SYS_AVG = $step4Data[Config::get('constants.options.avg_systolic')];
+                $VAL_DYA_AVG = $step4Data[Config::get('constants.options.avg_diastolic')];
+                $ValsaTitleColor = getRiskAndTitleColor( $VAL_SCORE , 1, 3 , 4, 5 , 0 , 25 , 25, 25, 25, 0 );
 
-                $ValsaTitleColor = getRiskAndTitleColor( $SPRV_SCORE , 1, 3 , 4, 5 , 0 , 25 , 25, 25, 25, 0 );
 
                 $valsa_systolic_color = "green-color";
                 if($step4Data[Config::get('constants.options.avg_systolic')] > 170 && $step4Data[Config::get('constants.options.avg_systolic')] < 179){
@@ -257,62 +266,74 @@ class SubreportController extends Controller
                     $valsa_dyastolic_color = "red-color";
                 }
 
-
-                $DPRV = ($step3Data[Config::get('constants.options.avg_diastolic')] - $step4Data[ Config::get('constants.options.avg_diastolic') ]);
-                $DPRV_SCORE = 0;
-                if( $DPRV > -20 && $DPRV <= -10){
+                
+                $SPRV = ($step3Data[Config::get('constants.options.avg_systolic')] - $step4Data[ Config::get('constants.options.avg_systolic') ]);                
+                $SPRV_SCORE = 0;
+                if( $SPRV > -20 && $SPRV <= -10){
                     $overall_blood_score += 2;
-                    $DPRV_SCORE += 2;
-                }else if($DPRV > -10 && $DPRV <= -5){
+                    $SPRV_SCORE += 2;
+                }else if($SPRV > -10 && $SPRV <= -5){
                     $overall_blood_score  += 3;
-                    $DPRV_SCORE += 3;
-                }else if($DPRV > -5 && $DPRV != 0){
+                    $SPRV_SCORE += 3;
+                }else if($SPRV > -5 && $SPRV != 0){
                     $overall_blood_score  +=  4;
-                    $DPRV_SCORE += 4;
+                    $SPRV_SCORE += 4;
                 }
-                $ValsaResTitleColor = getRiskAndTitleColor( $DPRV_SCORE , 0.1, 2 , 3, 4 , 0 , 25 , 25, 25, 25, 0 );
+                $ValsaResTitleColor = getRiskAndTitleColor( $SPRV_SCORE , 0.1, 2 , 3, 4 , 0 , 25 , 25, 25, 25, 0 );
+                 
                 
-                
+
+                $step5RRData = $this->getOximeterRR($allocation_id, 5);
+                $VRC5 = 0;
+                if( count($step5RRData[0])  > 0){
+                    $MaxMin = getLongShortRR($step5RRData[0]); 
+                    if($MaxMin[1] != 0){
+                        $VRC5 = $MaxMin[0] / $MaxMin[1];
+                    }
+                }
 
                 $VRC4_Score = 0;
                 $VRC6_Score = 0;
-                $VRC5_Score = 0;
-                if($step5Data[Config::get('constants.options.min_heart_rate')] != 0){
-                    $VRC5 = $step5Data[Config::get('constants.options.max_heart_rate')] / $step5Data[Config::get('constants.options.min_heart_rate')];
-                }else{
-                    $VRC5 = 0;
-                }
+                $VRC5_Score = 0;                
                 $color4 = "green-color";
                 $color6 = "green-color";
                 $color5 = "green-color";
-                if($VRC5 >= 1.2){
+                if($VRC5 < 1.2){
                     $overall_blood_score  += 1;
                     $VRC5_Score = 1;
                     $color5 = "yellow-color";
                 }
 
-                if($step4Data[Config::get('constants.options.min_heart_rate')] != 0){
-                    $VRC4 = $step4Data[Config::get('constants.options.max_heart_rate')] / $step4Data[Config::get('constants.options.min_heart_rate')];
-                }else{
-                    $VRC4 = 0;
-                }                            
-                if($VRC4 >= 1.25){
+                $VRC4 = 0;
+                $step4RRData = $this->getOximeterRR($allocation_id, 4);
+                if( count($step4RRData[0])  > 0){
+                    $MaxMin = getLongShortRR($step4RRData[0]); 
+                    if($MaxMin[1] != 0){
+                        $VRC4 = $MaxMin[0] / $MaxMin[1];
+                    }
+                }         
+                if($VRC4 < 1.25){
                     $overall_blood_score  += 1;
                     $VRC4_Score = 1;
                     $color4 = "yellow-color";
                 }
-                if( $step6Data[Config::get('constants.options.min_heart_rate')] != 0){
-                    $VRC6 = $step6Data[Config::get('constants.options.max_heart_rate')] / $step6Data[Config::get('constants.options.min_heart_rate')];
-                }else{
-                    $VRC6 = 0;
-                }        
-                if($VRC6 >= 1.13){
+
+                $VRC6 = 0;
+                $step6RRData = $this->getOximeterRR($allocation_id, 6);
+                if( count($step6RRData[0])  > 0){
+                    $MaxMin = getLongShortRR($step6RRData[0]); 
+                    if($MaxMin[1] != 0){
+                        $VRC6 = $MaxMin[0] / $MaxMin[1];
+                    }
+                }
+
+                if($VRC6 < 1.13){
                     $overall_blood_score  += 1;
                     $VRC6_Score = 1;
                     $color6 = "yellow-color";
-                }         
+                }                
                 $para_score =   $VRC4_Score + $VRC6_Score + $VRC5_Score;    
-                $paraTitleColor = getRiskAndTitleColor( $para_score , 0.1, 2 , 3, 0 , 0 , 33.3 , 33.3, 33.4, 0, 0 );
+                $paraTitleColor = getRiskAndTitleColor( $para_score , 0.1, 2 , 3, 0 , 0 , 33.3 , 33.3, 33.4, 0, 0 );                
 
                 $overall_blood = getRiskAndTitleColor($overall_blood_score, 7, 15, 23, 30, 0, 23, 27, 27, 23 , 0);
                                 
@@ -330,7 +351,7 @@ class SubreportController extends Controller
                             round($step3Data[Config::get('constants.options.avg_systolic')], 2), 
                             round($step3Data[Config::get('constants.options.avg_diastolic')], 2),
                             $BaselineTitleColor[1],
-                            $BaselineTitleColor[2],
+                            $step3Data[6],// color
                             $BaselineTitleColor[0],
                             $baseline_systolic_color,
                             $baseline_dyastolic_color
@@ -339,7 +360,7 @@ class SubreportController extends Controller
                             round($step6Data[Config::get('constants.options.avg_systolic')], 2), 
                             round($step6Data[Config::get('constants.options.avg_diastolic')], 2),
                             $StandingTitleColor[1],
-                            $StandingTitleColor[2] ,
+                            $step6Data[6] ,
                             $StandingTitleColor[0],
                             $standing_systolic_color,
                             $standing_dyastolic_color
@@ -348,11 +369,11 @@ class SubreportController extends Controller
                     , $StandingResTitleColor[1], $StandingResTitleColor[2]
                     , $StandingResTitleColor[0], $StandingResponseScore[1] , $StandingResponseScore[2] ,  $StandingResponseScore[3] , $StandingResponseScore[4]
                     ])
-                    ->with('valsalva', [round($SPRV_SCORE, 2),  round($SPRV_SYS_AVG, 2), round($SPRV_DYA_AVG, 2) 
-                    , $ValsaTitleColor[1], $ValsaTitleColor[2]
-                    , $ValsaTitleColor[0],$valsa_systolic_color, $valsa_dyastolic_color
+                    ->with('valsalva', [round($VAL_SCORE, 2),  round($VAL_SYS_AVG, 2), round($VAL_DYA_AVG, 2) 
+                    , $ValsaTitleColor[1], $step4Data[6]
+                    , $step4Data[7],$valsa_systolic_color, $valsa_dyastolic_color
                     ])
-                    ->with('valsalvaRes', [$DPRV_SCORE,  round($DPRV, 2)
+                    ->with('valsalvaRes', [$SPRV_SCORE,  round($SPRV, 2)
                     , $ValsaResTitleColor[1], $ValsaResTitleColor[2]
                     , $ValsaResTitleColor[0]
                     ])
@@ -386,20 +407,24 @@ class SubreportController extends Controller
                 //$Female_Hand_Score = 0; $Female_Feet_Score = 0;
                 $Hand_Score = 0; $Feet_Score = 0;
                 if($patient->sex == "Male"){
-                    $Hand_Score = getMaleHandScore($patient->age, $GSR);
-                    $Feet_Score = getMaleFeetScore($patient->age, $GSR);
+                    $Hand_Score = getMaleHandScore($patient->age, $GSR[0]);
+                    $Feet_Score = getMaleFeetScore($patient->age, $GSR[1]);
                 }else{
-                    $Hand_Score = getFemaleHandScore($patient->age, $GSR);
-                    $Feet_Score = getFemaleFeetScore($patient->age, $GSR);                    
+                    $Hand_Score = getFemaleHandScore($patient->age, $GSR[0]);
+                    $Feet_Score = getFemaleFeetScore($patient->age, $GSR[1]);                    
                 }
-                $SkinTitleColor = getRiskAndTitleColor($Hand_Score + $Feet_Score, 1, 2, 4, 0, 0, 25, 25, 50, 0 , 0);
+
+                $HandTitleColor = getSkinTitleColor($Hand_Score,"sub");
+                $FeetTitleColor = getSkinTitleColor($Feet_Score,"sub");
+                $SkinTitleColor = getSkinTitleColor($Hand_Score + $Feet_Score,"overall");
+
                 return view('doctor.review.sub_skin')
                 ->with('allocation', $allocation->first())
                 ->with('patient', $patient)
                 ->with('bmi', $bmiData[0])->with('weight_status', $bmiData[1])->with('color', $bmiData[2])
                 ->with('skin', [$Hand_Score + $Feet_Score, $SkinTitleColor[0] , $SkinTitleColor[1] , $SkinTitleColor[2]]) // Score, Percentage , 
-                ->with('hand', [ $GSR, $Hand_Score , $SkinTitleColor[0] , $SkinTitleColor[1] , $SkinTitleColor[2]]) // Real Value, Score, Percent, Title , Title Color
-                ->with('feet', [ $GSR, $Feet_Score , $SkinTitleColor[0] , $SkinTitleColor[1] , $SkinTitleColor[2]]); 
+                ->with('hand', [ $GSR[0], $Hand_Score , $HandTitleColor[0] , $HandTitleColor[1] , $HandTitleColor[2]]) // Real Value, Score, Percent, Title , Title Color
+                ->with('feet', [ $GSR[1], $Feet_Score , $FeetTitleColor[0] , $FeetTitleColor[1] , $FeetTitleColor[2]]); 
 
             }
         }
@@ -418,7 +443,7 @@ class SubreportController extends Controller
             if($patient){
                 $bmiData = $this->getBMI($patient->weight, $patient->user_height);
                 // Get ANS Dysfunction
-                $step3Data =  getLevelBood($allocation_id, 3);
+                $step3Data =  getLevelBood($allocation_id, $this->BASELINE);
                 $HR = $step3Data[Config::get('constants.options.avg_heart_rate')]; // mean heard rate during step 3.
 
                 $ANS_Score = 0;
@@ -426,12 +451,12 @@ class SubreportController extends Controller
                 $ANS_Score += $HR_Score;
                 $HR_Per_Title_Color =  getRiskAndTitleColor($HR_Score, 1, 2, 3, 4, 5, 20, 20, 20, 20 , 20);
                                
-                $SDNN = $this->getSDNN();        // Get SDNN Value
+                $SDNN = $this->getSDNN($allocation_id, 3);        // Get SDNN Value
                 $SDNN_SCORE = getSDNNScore($patient->age, $SDNN);    // Get SDNN Score 
                 $ANS_Score  +=  $SDNN_SCORE;
                 $SDNN_Per_Title_Color =  getRiskAndTitleColor($SDNN_SCORE, 0.1, 1, 3, 0, 0, 33.3, 33.3, 33.4, 0, 0);                
  
-                $RMSSD = $this->getRMSSD();      // Get RMSSD Value
+                $RMSSD = $this->getRMSSD($allocation_id, 3);      // Get RMSSD Value
                 $RMSSD_SCORE = getRMSSDScore($patient->age, $RMSSD);  // Get RMSSD Score  
                 $ANS_Score  +=  $RMSSD_SCORE;
                 $RMSSD_Per_Title_Color =  getRiskAndTitleColor($RMSSD_SCORE, 0.1, 1, 3, 0, 0, 33.3, 33.3, 33.4, 0, 0);
@@ -447,16 +472,14 @@ class SubreportController extends Controller
                  $ANS_Score += $PERCENT_MORE_THAN_50_Score;
                  $More50_Per_Title_Color =  getRiskAndTitleColor($PERCENT_MORE_THAN_50_Score, 0.1, 1, 3, 0, 0, 33.3, 33.3, 33.4, 0, 0);
                               
-                 $AVG_OXYGEN = $step3RRData[2];                
+                 $AVG_OXYGEN = $step3RRData[1];   
                  $AVG_OXYGEN_Score = 0;
-                 $Oxygen_Per = 50; $Oxygen_Title = "Low"; $Oxygen_Color = "green-color";
+                 $Oxygen_Per = 0; $Oxygen_Title = "Low"; $Oxygen_Color = "green-color";
                  if($AVG_OXYGEN < 94 ){
                      $AVG_OXYGEN_Score += 1;
                      $Oxygen_Per = 100; $Oxygen_Title = "High"; $Oxygen_Color = "red-color";
                  }
                  $ANS_Score += $AVG_OXYGEN_Score;
-
-
                  $ans_dysfunction = getRiskAndTitleColor($ANS_Score, 5, 9, 14, 18, 0, 28, 22, 28, 22 , 0);
 
                 return view('doctor.review.sub_ans_dysfunction')
@@ -490,9 +513,9 @@ class SubreportController extends Controller
             $patient = Users::where('id', $patient_id)->get()->first();
             if($patient){
                 $bmiData = $this->getBMI($patient->weight, $patient->user_height);          
-                $step3Data =  getLevelBood($allocation_id, 3);
-                $step4Data =  getLevelBood($allocation_id, 4);
-                $step6Data =  getLevelBood($allocation_id, 6);
+                $step3Data =  getLevelBood($allocation_id, $this->BASELINE);
+                $step4Data =  getLevelBood($allocation_id, $this->VALSA);
+                $step6Data =  getLevelBood($allocation_id, $this->STANDING);
                 if($step4Data[Config::get('constants.options.min_heart_rate')] != 0){
                     $VRC4 = $step4Data[Config::get('constants.options.max_heart_rate')] / $step4Data[Config::get('constants.options.min_heart_rate')];
                 }else{
@@ -571,45 +594,53 @@ class SubreportController extends Controller
             $patient = Users::where('id', $patient_id)->get()->first();
             if($patient){
                 $bmiData = $this->getBMI($patient->weight, $patient->user_height);          
-                $step4Data =  getLevelBood($allocation_id, 4);
-                $step6Data =  getLevelBood($allocation_id, 6);
-                if($step4Data[Config::get('constants.options.min_heart_rate')] != 0){
-                    $VRC4 = $step4Data[Config::get('constants.options.max_heart_rate')] / $step4Data[Config::get('constants.options.min_heart_rate')];
-                }else{
-                    $VRC4 = 0;
-                }                
-                if( $step6Data[Config::get('constants.options.min_heart_rate')] != 0){
-                    $VRC6 = $step6Data[Config::get('constants.options.max_heart_rate')] / $step6Data[Config::get('constants.options.min_heart_rate')];
-                }else{
-                    $VRC6 = 0;
-                }                
-
-                // Adrenergic                                                                                 
-                $RR = getRR($allocation_id, 5);
-                $MaxMin = getLongShortRR($RR);
+                
+                // para                               
+                $step5RRData = $this->getOximeterRR($allocation_id, 5);
                 $EIR_Score = 0;$EIR = 0;
-                if($MaxMin[1] != 0){
-                    $EIR = $MaxMin[0] / $MaxMin[1];
-                }
-                if($EIR >= 1.2){
+                if( count($step5RRData[0])  > 0){
+                    $MaxMin = getLongShortRR($step5RRData[0]); 
+                    if($MaxMin[1] != 0){
+                        $EIR = $MaxMin[0] / $MaxMin[1];
+                    }
+                }                                                
+                if($EIR < 1.2){
                     $EIR_Score = 1;
                 }
-                $EIR_ScoreTitleColor = getRiskAndTitleColor( $EIR_Score , 0.1, 1 , 0, 0 , 0 , 67 , 33, 0, 0, 0 );
+                $EIR_ScoreTitleColor = getParaTitleColor( $EIR_Score , "sub");
 
+
+                $VRC4 = 0;
+                $step4RRData = $this->getOximeterRR($allocation_id, 4);
+                if( count($step4RRData[0])  > 0){
+                    $MaxMin = getLongShortRR($step4RRData[0]); 
+                    if($MaxMin[1] != 0){
+                        $VRC4 = $MaxMin[0] / $MaxMin[1];
+                    }
+                }  
                 $VRC4_Score = 0;
-                if( $VRC4 >= 1.25){
+                if( $VRC4 < 1.25){
                     $VRC4_Score = 1;
                 }
-                $VRC4_ScoreTitleColor = getRiskAndTitleColor( $VRC4_Score , 0.1, 1 , 0, 0 , 0 , 67 , 33, 0, 0, 0 );
+                $VRC4_ScoreTitleColor = getParaTitleColor( $VRC4_Score , "sub");
+
+                $VRC6 = 0;
+                $step6RRData = $this->getOximeterRR($allocation_id, 6);
+                if( count($step6RRData[0])  > 0){
+                    $MaxMin = getLongShortRR($step6RRData[0]); 
+                    if($MaxMin[1] != 0){
+                        $VRC6 = $MaxMin[0] / $MaxMin[1];
+                    }
+                }
 
                 $VRC6_Score = 0;
-                if($VRC6 >= 1.13){
+                if($VRC6 < 1.13){
                     $VRC6_Score = 1;
                 }
-                $VRC6_ScoreTitleColor = getRiskAndTitleColor( $VRC6_Score , 0.1, 1 , 0, 0 , 0 , 67 , 33, 0, 0, 0 );
+                $VRC6_ScoreTitleColor = getParaTitleColor( $VRC6_Score , "sub");
 
-                $ParaScore = $EIR_Score + $VRC4_Score + $VRC6_Score;                
-                $para = getRiskAndTitleColor($ParaScore, 1, 2, 3, 0, 0, 24, 26, 26, 24 , 0);
+                $ParaScore = $EIR_Score + $VRC4_Score + $VRC6_Score;
+                $para = getParaTitleColor($ParaScore, "overall");
 
                 return view('doctor.review.sub_para')
                 ->with('allocation', $allocation->first())
@@ -641,31 +672,37 @@ class SubreportController extends Controller
 
                 $bmiData = $this->getBMI($patient->weight, $patient->user_height);
 
-                $step3RRData = getRR($allocation_id, 3);                
-                $step6RRData = getRR($allocation_id, 6);
-                $step3Data =  getLevelBood($allocation_id, 3);
-                $step4Data =  getLevelBood($allocation_id, 4);
-                $step6Data =  getLevelBood($allocation_id, 6);       
+                $step3RRData = getRR($allocation_id, $this->BASELINE);            
+                $step6RRData = getRR($allocation_id, $this->STANDING);
+                $step3Data =  getLevelBood($allocation_id, $this->BASELINE);
+                $step4Data =  getLevelBood($allocation_id, $this->VALSA);
+                $step6Data =  getLevelBood($allocation_id, $this->STANDING); 
 
 
                 $AVG_RR  = $step3RRData[2];                 // Get Avg RR Value
                 $AVG_RR_Score = getAvgRRScore($AVG_RR);            // Get Avg RR Score      
                 $RR = getRiskAndTitleColor( $AVG_RR_Score , 0.1, 1 , 3, 0 , 0 , 33.3 , 33.3, 33.4, 0, 0 );
 
+                $VRC4 = 0;
+                if($step4Data[Config::get('constants.options.min_heart_rate')] != 0){
+                    $VRC4 = $step4Data[Config::get('constants.options.max_heart_rate')] / $step4Data[Config::get('constants.options.min_heart_rate')];
+                }
                 
-                $VRC4 = $step4Data[Config::get('constants.options.max_heart_rate')] / $step4Data[Config::get('constants.options.min_heart_rate')];
-                $VRC6 = $step6Data[Config::get('constants.options.max_heart_rate')] / $step6Data[Config::get('constants.options.min_heart_rate')];
+                $VRC6 = 0;
+                if($step6Data[Config::get('constants.options.min_heart_rate')] != 0){
+                    $VRC6 = $step6Data[Config::get('constants.options.max_heart_rate')] / $step6Data[Config::get('constants.options.min_heart_rate')];
+                }
+                
                 $VRC4_Score = 0;
-                if( $VRC4 > 1.25){
+                if( $VRC4 < 1.25){
                     $VRC4_Score = 1;
                 }
-                $VRC4_Title_Color = getRiskAndTitleColor( $VRC4_Score , 0.1, 1 , 0, 0 , 0 , 50 , 50, 0, 0, 0 );
-
+                $VRC4_Title_Color = getValsaTitleColor( $VRC4_Score );
                 $VRC6_Score = 0;
-                if($VRC6 > 1.13){
+                if($VRC6 < 1.13){
                     $VRC6_Score = 1;
                 }
-                $VRC6_Title_Color = getRiskAndTitleColor( $VRC6_Score , 0.1, 1 , 0, 0 , 0 , 50 , 50, 0, 0, 0 );
+                $VRC6_Title_Color = getValsaTitleColor( $VRC6_Score );
 
                 $SPRS = $step3Data[Config::get('constants.options.avg_systolic')] - $step6Data[Config::get('constants.options.avg_systolic')];
                 $SPRS_Score = getSPRSScore($SPRS);
@@ -692,7 +729,6 @@ class SubreportController extends Controller
 
                 $CardScore = $AVG_RR_Score + $VRC4_Score + $VRC6_Score + $SPRS_Score + $DPRS_Score + $SPRS7_Score;
                 $card = getRiskAndTitleColor($CardScore, 4, 9, 13, 18, 0, 22, 28, 22, 28 , 0);
-
 
                 return view('doctor.review.sub_cardiac')
                 ->with('allocation', $allocation->first())

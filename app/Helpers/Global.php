@@ -6,9 +6,45 @@
     function test($number){               
         return $number * 3;
     }
+
+    function CallAPI($method, $url, $data = false)
+    {
+        $curl = curl_init();
+
+        switch ($method)
+        {
+            case "POST":
+                curl_setopt($curl, CURLOPT_POST, 1);
+
+                if ($data)
+                    curl_setopt($curl, CURLOPT_POSTFIELDS, $data);
+                break;
+            case "PUT":
+                curl_setopt($curl, CURLOPT_PUT, 1);
+                break;
+            default:
+                if ($data)
+                    $url = sprintf("%s?%s", $url, http_build_query($data));
+        }
+
+        // Optional Authentication:
+        curl_setopt($curl, CURLOPT_HTTPAUTH, CURLAUTH_BASIC);
+        curl_setopt($curl, CURLOPT_USERPWD, "username:password");
+
+        curl_setopt($curl, CURLOPT_URL, $url);
+        curl_setopt($curl, CURLOPT_RETURNTRANSFER, 1);
+
+        $result = curl_exec($curl);
+
+        curl_close($curl);
+
+        return $result;
+    }
+
+
    
     function getLevelBood($allocation_id, $step){                      
-        $allocation_id = 139;
+        //$allocation_id = 139;
         $blood = Blood::where('allocation_id', $allocation_id)
         ->where('step_id', $step)
         ->get();           
@@ -42,22 +78,28 @@
             $avg_bpm = $bpm/$n;
         }
         $overview_score = 0;
-        if($avg_systolic > 120 && $avg_diastolic < 129 && $avg_diastolic < 80){
+        $score_color = "green-color";
+
+        if($avg_systolic > 120 && $avg_systolic <= 130 && $avg_diastolic < 80){
             $overview_score = $overview_score + 1;
-        }else if( ($avg_systolic > 130 && $avg_diastolic < 139) || ($avg_diastolic > 80 && $avg_diastolic < 89) ){
+            $score_color = "green-color";
+        }else if( ($avg_systolic > 130 && $avg_systolic < 139) || ($avg_diastolic > 80 && $avg_diastolic < 89) ){
             $overview_score = $overview_score + 3;
-        }else if( ($avg_systolic > 140 && $avg_diastolic < 179) || ($avg_diastolic > 90 && $avg_diastolic < 119) ){
+            $score_color = "yellow-color";
+        }else if( ($avg_systolic > 140 && $avg_systolic < 179) || ($avg_diastolic > 90 && $avg_diastolic < 119) ){
             $overview_score = $overview_score + 4;
+            $score_color = "orange-color";
         }else if($avg_systolic >= 180 || $avg_diastolic >= 120){
             $overview_score = $overview_score + 5;
+            $score_color = "red-color";
         }
-        return [$overview_score, $avg_systolic, $avg_diastolic, $avg_bpm, $min_tmp, $max_tmp];
+        return [$overview_score, $avg_systolic, $avg_diastolic, $avg_bpm, $min_tmp, $max_tmp, $score_color];
     }
 
 
 
     function getLevelBoodValsa($allocation_id, $step){                      
-        $allocation_id = 139;
+        //$allocation_id = 139;
         $blood = Blood::where('allocation_id', $allocation_id)
         ->where('step_id', $step)
         ->get();           
@@ -90,56 +132,65 @@
             $avg_diastolic = $dia/$n;
             $avg_bpm = $bpm/$n;
         }
-        $overview_score = 0;
-        if($avg_systolic > 160 && $avg_diastolic < 169 && $avg_diastolic < 120){
+        $overview_score = 0; $score_percentage =0;
+        $score_color = "green-color";
+        if($avg_systolic > 160 && $avg_systolic < 169 && $avg_diastolic < 120){
             $overview_score = $overview_score + 1;
-        }else if( ($avg_systolic > 170 && $avg_diastolic < 179) || ($avg_diastolic > 120 && $avg_diastolic < 129) ){
+            $score_percentage = 20;
+            $score_color = "green-color";
+        }else if( ($avg_systolic > 170 && $avg_systolic < 179) || ($avg_diastolic > 120 && $avg_diastolic < 129) ){
             $overview_score = $overview_score + 3;
-        }else if( ($avg_systolic > 180 && $avg_diastolic < 219) || ($avg_diastolic > 130 && $avg_diastolic < 159) ){
+            $score_color = "yellow-color";
+            $score_percentage = 40;
+        }else if( ($avg_systolic > 180 && $avg_systolic < 219) || ($avg_diastolic > 130 && $avg_diastolic < 159) ){
             $overview_score = $overview_score + 4;
+            $score_color = "orange-color";
+            $score_percentage = 60;
         }else if($avg_systolic >= 220 || $avg_diastolic >= 160){
             $overview_score = $overview_score + 5;
+            $score_color = "red-color";
+            $score_percentage = 100;
         }
-        return [$overview_score, $avg_systolic, $avg_diastolic, $avg_bpm, $min_tmp, $max_tmp];
+        return [$overview_score, $avg_systolic, $avg_diastolic, $avg_bpm, $min_tmp, $max_tmp, $score_color, $score_percentage];
     }
 
-
-
+    
     function getRR($allocation_id, $step){
         
-        $allocation_id = 139;
-        $step = 0;
-
+        //$allocation_id = 139;        
         $pluse_oximeter = Oximeter::where('allocation_id', $allocation_id)
         ->where('step_id', $step)
         ->get();
-
+       
         $n = 0;$SPO2bpm =0;$OxygenSat = 0; 
         $RR = []; $RR_Total = 0; $countMoreThan50 = 0;
+        $index = 0;
         foreach($pluse_oximeter as $item){
             $value  = json_decode($item["raw_data"], true);
-            foreach($value as $v){     
+                        
+            foreach($value as $v){
+                
                 $SPO2bpm = $SPO2bpm + $v["SPO2bpm"];
                 $OxygenSat = $SPO2bpm + $v["OxygenSat"];
                 $RR_TimeStamp = $v["RR"];
                 $RRT = $RR_TimeStamp;//json_decode($RR_TimeStamp);
                 $tmp = 0;
                 $tmp2 = 0;
+
                 foreach($RRT as $vv){
                     if($tmp == 0){
                         $tmp = $vv;
+                        $RR_Total += $vv;
                     }else{
                         $RR[] = $vv - $tmp;
-                        $RR_Total += $vv - $tmp;                    
+                        $RR_Total += $vv;// - $tmp;
+
+                        if(abs($vv - $tmp ) > 50){
+                            $countMoreThan50 += abs($vv - $tmp );
+                            $index ++;
+                        }
+
                         $tmp = $vv;
-                        if($tmp2 == 0){
-                            $tmp2 = $vv - $tmp;
-                        }else{
-                            if(abs($vv - $tmp - $tmp2) > 50){
-                                $countMoreThan50 += 1;
-                            }
-                            $tmp2 = $vv - $tmp;
-                        }                                                
                     }                    
                 }
                 $n++;
@@ -156,7 +207,7 @@
         }        
         if(count($RR) > 0){
             $avg_rr = $RR_Total / count($RR);
-            $percentMoreThan50 = $countMoreThan50 * 100 / count($RR);
+            $percentMoreThan50 = $countMoreThan50  / $index;
         }
         
         return [$avg_spo2bpm, $avg_oxygensat, $avg_rr, $percentMoreThan50,  $RR];
@@ -179,11 +230,101 @@
         return [$max, $min];        
     }
 
+    function getValsaTitleColor($score){
+        $risk = 0;
+        if($score == 0){
+            $risk = 0;
+            $risk_title = "Low";  
+            $risk_color = "green-color";            
+        }else if($score == 1){
+            $risk = 100;
+            $risk_title = "High";  
+            $risk_color = "yellow-color";            
+        }
+        return [$risk , $risk_title, $risk_color];
+    }
 
+    
+    function getParaTitleColor($score, $type){
+        
+        $risk = 0;
+        if($type == "overall"){
+            if($score == 0 || $score == 1){
+                if($score == 0){
+                    $risk = 0;
+                }else{
+                    $risk = 25;
+                }                
+                $risk_title = "Low";  
+                $risk_color = "green-color";            
+            }else if($score == 2){
+                $risk = 50;
+                $risk_title = "Medium";  
+                $risk_color = "yellow-color";            
+            }else if($score == 3 ){
+                $risk = 100;
+                $risk_title = "High";  
+                $risk_color = "red-color";            
+            }
+        }else{
+            if($score == 0){
+                $risk = 0;
+                $risk_title = "Low";  
+                $risk_color = "green-color";            
+            }else if($score == 1){
+                $risk = 100;
+                $risk_title = "High";  
+                $risk_color = "yellow-color";            
+            }
 
-    function getSubScoreTitleColor( $score ){
+        }
+        return [$risk , $risk_title, $risk_color];
 
     }
+
+
+    function getSkinTitleColor( $score , $type){
+        $risk = 0;
+        if($type == "overall"){
+            if($score == 0 || $score == 1){
+                if($score == 0){
+                    $risk = 0;
+                }else{
+                    $risk = 25;
+                }                
+                $risk_title = "Very Low";  
+                $risk_color = "green-color";            
+            }else if($score == 2){
+                $risk = 50;
+                $risk_title = "Moderate";  
+                $risk_color = "yellow-color";            
+            }else if($score == 3 || $score == 4){
+                $risk = 100;
+                $risk_title = "High";  
+                $risk_color = "red-color";            
+            }
+        }else{
+            if($score == 0){
+                $risk = 50;
+                $risk_title = "Normal";  
+                $risk_color = "green-color";            
+            }else if($score == 1){
+                $risk = 100;
+                $risk_title = "Above Normal";  
+                $risk_color = "yellow-color";            
+            }else if($score == 2){
+                $risk = 0;
+                $risk_title = "Below Normal";  
+                $risk_color = "orange-color";            
+            }
+        }        
+
+        return [$risk , $risk_title, $risk_color];
+
+    }
+
+
+
 
     function getRiskAndTitleColor($measure, $val1, $val2 , $val3 , $val4, $val5 = 0, $per1, $per2, $per3, $per4, $per5){
         

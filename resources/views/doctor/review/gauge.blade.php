@@ -56,10 +56,10 @@
 
 
 					<div class="row px-3 pt-5">
-						<h2>Results </h2>
+						<h2>Over Results of Test </h2>						
 					</div>
-					
-					
+					<h5>(Click on any gauge for more details)</h5>
+										
 
 					<div class="row px-3 pt-5">
 						<div class="col-md-12 report_title">		
@@ -91,28 +91,27 @@
 						<div class="col-md-4 blue-border">
 							<label class="col-form-label report_sub_title"> <h6 class="mb-0">Type II Risk</h6> </label>
 							<div class="row" >
-								<div class="form-control text-center no-border pt-3 pb-3 canvas_container" >	
+								<div class="form-control text-center no-border pt-3 pb-3 canvas_container_overall" id="div-preview1">	
 									<div id="preview">
 										<canvas width="380" height="170" id="canvas-preview1"></canvas>						
 									</div>
-									<div class="scale_label"> <div>0% &nbsp &nbsp 0</div>  <div class="scale_label_right"> 26 &nbsp  100% </div>  </div>
+									<!-- <div class="scale_label"> <div>0% &nbsp &nbsp 0</div>  <div class="scale_label_right"> 26 &nbsp  100% </div>  </div> -->
 									<div id="preview-textfield1" class="reset" style="display:none;">1</div>
 									<div class="reset"> {{ $diabet_risk_score }}</div>
 									<div id="status1" class="status {{$diabet_risk_color}}">{{$diabet_risk_name}}</div>
 								</div>
 							</div>			
-						</div>
-						
+						</div>						
 
 						<div class="col-md-4 blue-border">
 							<label class="col-form-label report_sub_title"> <h6 class="mb-0">Overall Blood Pressure</h6> </label>
 							<div class="row">
-								<div class="form-control text-center  pt-3 pb-3 canvas_container">
+								<div class="form-control text-center  pt-3 pb-3 canvas_container_overall" id="div-preview2">
 									
 									<div id="preview">
 										<canvas width="380" height="170" id="canvas-preview2"></canvas>						
 									</div>
-									<div class="scale_label"> <div>0% &nbsp &nbsp 0</div>  <div class="scale_label_right"> 30 &nbsp  100% </div>  </div>
+									<!-- <div class="scale_label"> <div>0% &nbsp &nbsp 0</div>  <div class="scale_label_right"> 30 &nbsp  100% </div>  </div> -->
 									<div id="preview-textfield2" class="reset" style="display:none;"></div>
 									<div class="reset">{{ $overall_blood_risk_score }} </div>
 									<div id="status2" class="status {{$overall_blood_risk_color}}">{{$overall_blood_risk_name}}</div>
@@ -126,12 +125,12 @@
 						<div class="col-md-4 blue-border">
 							<label class="col-form-label report_sub_title"><h6 class="mb-0"> Skin Microcirculation</h6> </label>
 							<div class="row">
-								<div class="form-control text-center  no-border  pt-3 pb-3 canvas_container">
+								<div class="form-control text-center  no-border  pt-3 pb-3 canvas_container_overall" id="div-preview3">
 									
 									<div id="preview">
 										<canvas width="380" height="170" id="canvas-preview3"></canvas>						
 									</div>
-									<div class="scale_label"> <div>0% &nbsp &nbsp 0</div>  <div class="scale_label_right"> 4 &nbsp  100% </div>  </div>
+									<!-- <div class="scale_label"> <div>0% &nbsp &nbsp 0</div>  <div class="scale_label_right"> 4 &nbsp  100% </div>  </div> -->
 									<div id="preview-textfield3" class="reset" style="display:none;">1,250</div>
 									<div class="reset"> {{$skin[0]}} </div>
 									<div id="status3" class="status {{$skin[3]}}"> {{$skin[2]}}</div>
@@ -165,16 +164,15 @@
 							<div class="col-md-3  blue-border">
 								<label class="col-form-label report_sub_title"> <h6 class="mb-0">ANS Dysfunction</h6> </label>
 								<div class="row">
-									<div class="form-control text-center no-border  pt-3 pb-3 canvas_container">
+									<div class="form-control text-center no-border  pt-3 pb-3 canvas_container_overall" id="div-preview5">
 										
 										<div id="preview">
-											<canvas width="380" height="170" id="canvas-preview5"></canvas>						
+											<canvas width="380" height="170" id="canvas-preview5" ></canvas>						
 										</div>
-										<div class="scale_label2"> <div>0% &nbsp  0</div>  <div class="scale_label_right"> 18   100% </div>  </div>										
+										<!-- <div class="scale_label2"> <div>0% &nbsp  0</div>  <div class="scale_label_right"> 18   100% </div>  </div>										 -->
 										<div id="preview-textfield5" class="reset" style="display:none;">1,250</div>
 										<div class="reset">{{ $ans_dysfunction_risk_score }}</div>
 										<div id="status5" class="status {{$ans_dysfunction_risk_color}}">{{$ans_dysfunction_risk_name}}</div>
-
 
 									</div>					
 								</div>							
@@ -184,12 +182,12 @@
 							<div class="col-md-3   blue-border">
 								<label class="col-form-label report_sub_title"> <h6 class="mb-0">Adrenergic Sympathetic</h6> </label>
 								<div class="row">
-									<div class="form-control text-center no-border  pt-3 pb-3 canvas_container">
+									<div class="form-control text-center no-border  pt-3 pb-3 canvas_container_overall" id="div-preview6">
 										
 										<div id="preview">
-											<canvas width="380" height="170" id="canvas-preview6"></canvas>	
+											<canvas width="380" height="170" id="canvas-preview6" ></canvas>	
 										</div>
-										<div class="scale_label2"> <div>0% &nbsp  0</div>  <div class="scale_label_right"> 35   100% </div>  </div>
+										<!-- <div class="scale_label2"> <div>0% &nbsp  0</div>  <div class="scale_label_right"> 35   100% </div>  </div> -->
 										<div id="preview-textfield6" class="reset" style="display:none;">1,250</div>
 										<div class="reset">{{$adrenergic[0]}}</div>
 										<div id="status6" class="status {{$adrenergic[3]}}">{{$adrenergic[2]}}</div>
@@ -202,12 +200,12 @@
 							<div class="col-md-3   blue-border">
 								<label class="col-form-label report_sub_title"> <h6 class="mb-0">Parasympathetic</h6> </label>
 								<div class="row">
-									<div class="form-control text-center no-border  pt-3 pb-3 canvas_container">
+									<div class="form-control text-center no-border  pt-3 pb-3 canvas_container_overall" id="div-preview7">
 										
 										<div id="preview">
 											<canvas width="380" height="170" id="canvas-preview7"></canvas>						
 										</div>
-										<div class="scale_label2"> <div>0% &nbsp  0</div>  <div class="scale_label_right"> 3   100% </div>  </div>
+										<!-- <div class="scale_label2"> <div>0% &nbsp  0</div>  <div class="scale_label_right"> 3   100% </div>  </div> -->
 										<div id="preview-textfield7" class="reset" style="display:none;">1,250</div>
 										<div class="reset">{{$para[0]}}</div>
 										<div id="status7" class="status {{$para[3]}}">{{$para[2]}}</div>
@@ -220,12 +218,12 @@
 							<div class="col-md-3  blue-border">
 								<label class="col-form-label report_sub_title"> <h6 class="mb-0">Cardiac Autonomic Neuropathy</h6> </label>
 								<div class="row">
-									<div class="form-control text-center no-border  pt-3 pb-3 canvas_container">
+									<div class="form-control text-center no-border  pt-3 pb-3 canvas_container_overall" id="div-preview8">
 										
 										<div id="preview">
 											<canvas width="380" height="170" id="canvas-preview8"></canvas>	
 										</div>
-										<div class="scale_label2"> <div>0% &nbsp  0</div>  <div class="scale_label_right"> 18            100% </div>  </div>
+										<!-- <div class="scale_label2"> <div>0% &nbsp  0</div>  <div class="scale_label_right"> 18            100% </div>  </div> -->
 										<div id="preview-textfield8" class="reset" style="display:none;">1,250</div>
 										<div class="reset">{{$card[0]}}</div>
 										<div id="status8" class="status {{$card[3]}}">{{$card[2]}}</div>
@@ -236,7 +234,14 @@
 
 					</div>																			
 			</div>
-							
+
+
+
+			<div class="col-md-12 mt-4 text-center">									
+				<a  href="{{ URL::to('doctor/testland') }}" class="btn col-md-2 mb-1 btn-primary">Home</a>	
+			</div>
+
+
 		</div>
 	</div>
 </div>
@@ -339,124 +344,121 @@
     $(document).ready(function() {
 		var diabetLabel =  {
 				font: "10px sans-serif",
-				labels: [0, 12, 31, 46, 77, 100],
+				labels: [0, 3, 8, 12, 20, 26],
 				fractionDigits: 0
 			};
 		var diabetZone = [								
-				{strokeStyle: "#008000", min: 0, max: 31}, // green
-				{strokeStyle: "#FFFF00", min: 31, max: 46}, // yellow
-				{strokeStyle: "#FFA500", min: 46, max: 77}, // orange
-				{strokeStyle: "#FF0000", min: 77, max: 100} //red
+				{strokeStyle: "#008000", min: 0, max: 8}, // green
+				{strokeStyle: "#FFFF00", min: 8, max: 12}, // yellow
+				{strokeStyle: "#FFA500", min: 12, max: 20}, // orange
+				{strokeStyle: "#FF0000", min: 20, max: 26} //red
 			];
-
 
 
 		var bloodPressureLabel =  {
 				font: "10px sans-serif",
-				labels: [0, 23, 50, 77, 100],
+				labels: [0, 7, 15, 23, 30],
 				fractionDigits: 0
 			};
 		var bloodPressureZone = [
-				{strokeStyle: "#008000", min: 0, max: 23},
-				{strokeStyle: "#FFFF00", min: 23, max: 50},
-				{strokeStyle: "#FFA500", min: 50, max: 77},
-				{strokeStyle: "#FF0000", min: 77, max: 100}
+				{strokeStyle: "#008000", min: 0, max: 7},
+				{strokeStyle: "#FFFF00", min: 7, max: 15},
+				{strokeStyle: "#FFA500", min: 15, max: 23},
+				{strokeStyle: "#FF0000", min: 23, max: 30}
 			];
 
 
 		var ansDysfunctionLabel =  {
 				font: "10px sans-serif",
-				labels: [0, 28, 50, 78, 100],
+				labels: [0, 5, 9, 14, 18],
 				fractionDigits: 0
 			};
 		var ansDysfunctionZone = [
-				{strokeStyle: "#008000", min: 0, max: 28},
-				{strokeStyle: "#FFFF00", min: 28, max: 50},
-				{strokeStyle: "#FFA500", min: 50, max: 78},
-				{strokeStyle: "#FF0000", min: 78, max: 100}
+				{strokeStyle: "#008000", min: 0, max: 5},
+				{strokeStyle: "#FFFF00", min: 5, max: 9},
+				{strokeStyle: "#FFA500", min: 9, max: 14},
+				{strokeStyle: "#FF0000", min: 14, max: 18}
 			];
 
 
 		var skinLabel =  {
 				font: "10px sans-serif",
-				labels: [0, 25, 50, 100],
+				labels: [0, 1, 2,4],
 				fractionDigits: 0
 			};
 		var skinZones = [				
-				{strokeStyle: "#008000", min: 0, max: 25},
-				{strokeStyle: "#FFFF00", min: 25, max: 50},
-				{strokeStyle: "#FF0000", min: 50, max: 100}
+				{strokeStyle: "#008000", min: 0, max: 1},
+				{strokeStyle: "#FFFF00", min: 1, max: 2},
+				{strokeStyle: "#FF0000", min: 2, max: 4}
 			];
 
 		var adrenergicLabel =  {
 				font: "10px sans-serif",
-				labels: [0, 24, 50, 76, 100],
+				labels: [0, 7, 15, 23, 30],
 				fractionDigits: 0
 			};
 		var ardrenergicZones = [
-				{strokeStyle: "#008000", min: 0, max: 24},
-				{strokeStyle: "#FFFF00", min: 24, max: 50},
-				{strokeStyle: "#FFA500", min: 50, max: 76},
-				{strokeStyle: "#FF0000", min: 76, max: 100}
+				{strokeStyle: "#008000", min: 0, max: 7},
+				{strokeStyle: "#FFFF00", min: 7, max: 15},
+				{strokeStyle: "#FFA500", min: 15, max: 23},
+				{strokeStyle: "#FF0000", min: 23, max: 30}
 			];
 
 		var paraLabel =  {
 				font: "10px sans-serif",
-				labels: [0, 33.3, 66.6, 100],
+				labels: [0, 1, 2, 3],
 				fractionDigits: 0
 			};
 		var paraZones = [
-				{strokeStyle: "#008000", min: 0, max: 33.3},
-				{strokeStyle: "#FFFF00", min: 33.3, max: 66.6},		
-				{strokeStyle: "#FF0000", min: 66.6, max: 100}
+				{strokeStyle: "#008000", min: 0, max: 1},
+				{strokeStyle: "#FFFF00", min: 1, max: 2},		
+				{strokeStyle: "#FF0000", min: 2, max: 3}
 			];
 
 
 		var cardLabel =  {
 				font: "10px sans-serif",
-				labels: [0, 22, 50, 72, 100],
+				labels: [0, 4, 9, 13, 18],
 				fractionDigits: 0
 			};
 		var cardZones = [
-				{strokeStyle: "#008000", min: 0, max: 22},
-				{strokeStyle: "#FFFF00", min: 22, max: 50},
-				{strokeStyle: "#FFA500", min: 50, max: 72},
-				{strokeStyle: "#FF0000", min: 72, max: 100}
+				{strokeStyle: "#008000", min: 0, max: 4},
+				{strokeStyle: "#FFFF00", min: 4, max: 9},
+				{strokeStyle: "#FFA500", min: 9, max: 13},
+				{strokeStyle: "#FF0000", min: 13, max: 18}
 			];
 
 		//initZones("canvas-preview1")
-		myInit("canvas-preview1", "preview-textfield1", "{{$diabet_risk_percent}}" , diabetLabel, diabetZone);
-		myInit("canvas-preview2", "preview-textfield2", "{{$overall_blood_risk_percent}}" , bloodPressureLabel, bloodPressureZone);
-		myInit("canvas-preview3", "preview-textfield3", "{{$skin[1]}}" , skinLabel, skinZones);
+		myInit("canvas-preview1", "preview-textfield1", "{{$diabet_risk_score}}" , diabetLabel, diabetZone, 26);
+		myInit("canvas-preview2", "preview-textfield2", "{{$overall_blood_risk_score}}" , bloodPressureLabel, bloodPressureZone,30);
+		myInit("canvas-preview3", "preview-textfield3", "{{$skin[0]}}" , skinLabel, skinZones, 4);
 		//myInit("canvas-preview4", "preview-textfield4");
-		myInit("canvas-preview5", "preview-textfield5", "{{ $ans_dysfunction_risk_percent}}" , ansDysfunctionLabel, ansDysfunctionZone);
-		myInit("canvas-preview6", "preview-textfield6", "{{ $adrenergic[1] }}" , adrenergicLabel, ardrenergicZones);
-		myInit("canvas-preview7", "preview-textfield7", "{{$para[1]}}" , paraLabel, paraZones);
-		myInit("canvas-preview8", "preview-textfield8","{{$card[1]}}" , cardLabel, cardZones);
+		myInit("canvas-preview5", "preview-textfield5", "{{ $ans_dysfunction_risk_score}}" , ansDysfunctionLabel, ansDysfunctionZone, 18);
+		myInit("canvas-preview6", "preview-textfield6", "{{ $adrenergic[0] }}" , adrenergicLabel, ardrenergicZones, 30);
+		myInit("canvas-preview7", "preview-textfield7", "{{$para[0]}}" , paraLabel, paraZones,3);
+		myInit("canvas-preview8", "preview-textfield8","{{$card[0]}}" , cardLabel, cardZones, 18);
 
-		$("#canvas-preview1").click(function(){
+		$("#div-preview1").click(function(){
 			document.getElementById("diabetForm").submit();
 		});
-		$("#canvas-preview2").click(function(){
+		$("#div-preview2").click(function(){
 			document.getElementById("bloodPressureForm").submit();
 		});
-		$("#canvas-preview3").click(function(){
+		$("#div-preview3").click(function(){
 			//skin
 			document.getElementById("skinForm").submit();
 		});
-		$("#canvas-preview4").click(function(){
 		
-		});
-		$("#canvas-preview5").click(function(){
+		$("#div-preview5").click(function(){
 			document.getElementById("ansForm").submit();
 		});
-		$("#canvas-preview6").click(function(){
+		$("#div-preview6").click(function(){
 			document.getElementById("adrenergicForm").submit();
 		});
-		$("#canvas-preview7").click(function(){
+		$("#div-preview7").click(function(){
 			document.getElementById("paraForm").submit();
 		});
-		$("#canvas-preview8").click(function(){
+		$("#div-preview8").click(function(){
 			document.getElementById("cardiacForm").submit();
 		});	
 		$("#bmi_info").click(function(){			
@@ -467,7 +469,7 @@
 		window.location.href = "{{ URL::to('office/addPatient') }}";
 	}
 
-	function myInit(id, text, value, staticLables, staticZones){
+	function myInit(id, text, value, staticLables, staticZones, maxValue){
 
 		var opts = {
 			angle: 0,
@@ -490,7 +492,7 @@
 		var target = document.getElementById(id); // your canvas element	
 		var gauge = new Gauge(target).setOptions(opts); // create sexy gauge!
 		gauge.setTextField(document.getElementById(text));
-		gauge.maxValue = 100; // set max gauge value
+		gauge.maxValue = maxValue; // set max gauge value
 		gauge.setMinValue(0);  // set min value
 		gauge.set(value); // set actual value
 	}

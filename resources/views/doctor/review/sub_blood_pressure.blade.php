@@ -110,7 +110,7 @@
 									<div id="preview">
 										<canvas width="380" height="170" id="canvas-preview1"></canvas>						
 									</div>
-									<div class="scale_label"> <div>0% &nbsp &nbsp 0</div>  <div class="scale_label_right"> 30 &nbsp  100% </div>  </div>
+									<!-- <div class="scale_label"> <div>0% &nbsp &nbsp 0</div>  <div class="scale_label_right"> 30 &nbsp  100% </div>  </div> -->
 									<div id="preview-textfield1" class="reset" style="display:none;">1</div>
 									<div class="reset"> {{ $overall_blood_risk_score }}</div>
 									<div id="status1" class="status {{$overall_blood_risk_color}}">{{$overall_blood_risk_name}}</div>
@@ -140,7 +140,7 @@
 										<div id="preview">
 											<canvas width="380" height="170" id="canvas-preview2"></canvas>						
 										</div>
-										<div class="scale_label"> <div>0% &nbsp &nbsp 0</div>  <div class="scale_label_right"> 5 &nbsp  100% </div>  </div>
+										<!-- <div class="scale_label"> <div>0% &nbsp &nbsp 0</div>  <div class="scale_label_right"> 5 &nbsp  100% </div>  </div> -->
 										<div id="preview-textfield2" class="reset" style="display:none;"></div>
 										
 										<div id="status2" class="status {{$baseline[4]}}">{{$baseline[3]}}</div>
@@ -173,18 +173,18 @@
 										<div id="preview">
 											<canvas width="380" height="170" id="canvas-preview3"></canvas>						
 										</div>
-										<div class="scale_label"> <div>0% &nbsp &nbsp 0</div>  <div class="scale_label_right"> 5 &nbsp  100% </div>  </div>
+										<!-- <div class="scale_label"> <div>0% &nbsp &nbsp 0</div>  <div class="scale_label_right"> 5 &nbsp  100% </div>  </div> -->
 										<div id="preview-textfield3" class="reset" style="display:none;"></div>
 										
 										<div id="status2" class="status {{$standing[4]}}">{{$standing[3]}}</div>
 										
 										<div class="reading"> 
 											<div class="item_row"> 
-												<div class="item_title"> Systolic Pressure <= 140 mmHg </div>
+												<div class="item_title"> Systolic Pressure <= 119 mmHg </div>
 												<div class="item_value {{$standing[6]}}"> {{ $standing[1] }} </div>
 											</div>
 											<div class="item_row"> 
-												<div class="item_title"> Diastolic Pressure <= 90 mmHg </div>
+												<div class="item_title"> Diastolic Pressure <= 75 mmHg </div>
 												<div class="item_value {{$standing[7]}}"> {{ $standing[2] }} </div>
 											</div>
 											<div class="item_row"> 
@@ -207,7 +207,7 @@
 										<div id="preview">
 											<canvas width="380" height="170" id="canvas-preview4"></canvas>						
 										</div>
-										<div class="scale_label"> <div>0% &nbsp &nbsp 0</div>  <div class="scale_label_right"> 8 &nbsp  100% </div>  </div>
+										<!-- <div class="scale_label"> <div>0% &nbsp &nbsp 0</div>  <div class="scale_label_right"> 8 &nbsp  100% </div>  </div> -->
 										<div id="preview-textfield4" class="reset" style="display:none;"></div>
 										
 										<div id="status2" class="status {{$standingRes[4]}}">{{$standingRes[3]}}</div>
@@ -247,7 +247,7 @@
 										<div id="preview">
 											<canvas width="380" height="170" id="canvas-preview5"></canvas>						
 										</div>
-										<div class="scale_label"> <div>0% &nbsp &nbsp 0</div>  <div class="scale_label_right"> 5 &nbsp  100% </div>  </div>
+										<!-- <div class="scale_label"> <div>0% &nbsp &nbsp 0</div>  <div class="scale_label_right"> 5 &nbsp  100% </div>  </div> -->
 										<div id="preview-textfield5" class="reset" style="display:none;"></div>
 										
 										<div id="status2" class="status {{$valsalva[4]}}">{{ $valsalva[3] }}</div>
@@ -281,7 +281,7 @@
 										<div id="preview">
 											<canvas width="380" height="170" id="canvas-preview6"></canvas>						
 										</div>
-										<div class="scale_label"> <div>0% &nbsp &nbsp 0</div>  <div class="scale_label_right"> 4 &nbsp  100% </div>  </div>
+										<!-- <div class="scale_label"> <div>0% &nbsp &nbsp 0</div>  <div class="scale_label_right"> 4 &nbsp  100% </div>  </div> -->
 										<div id="preview-textfield6" class="reset" style="display:none;"></div>
 										
 										<div id="status2" class="status {{$valsalvaRes[3]}}">{{$valsalvaRes[2]}}</div>
@@ -312,7 +312,7 @@
 										<div id="preview">
 											<canvas width="380" height="170" id="canvas-preview7"></canvas>						
 										</div>
-										<div class="scale_label"> <div>0% &nbsp &nbsp 0</div>  <div class="scale_label_right"> 3 &nbsp  100% </div>  </div>
+										<!-- <div class="scale_label"> <div>0% &nbsp &nbsp 0</div>  <div class="scale_label_right"> 3 &nbsp  100% </div>  </div> -->
 										<div id="preview-textfield7" class="reset" style="display:none;"></div>
 										
 										<div id="status2" class="status {{$para[8]}}">{{$para[7]}}</div>
@@ -397,69 +397,83 @@
 	$(document).ready(function() {		
 		var diabetLabel =  {
 				font: "10px sans-serif",
-				labels: [0, 12, 31, 46, 77, 100],
+				labels: [0, 7, 15, 23, 30],
 				fractionDigits: 0
 			};
 		var diabetZone = [								
-				{strokeStyle: "#008000", min: 0, max: 31}, // green
-				{strokeStyle: "#FFFF00", min: 31, max: 46}, // yellow
-				{strokeStyle: "#FFA500", min: 46, max: 77}, // orange
-				{strokeStyle: "#FF0000", min: 77, max: 100} //red
+				{strokeStyle: "#008000", min: 0, max: 7}, // green
+				{strokeStyle: "#FFFF00", min: 7, max: 15}, // yellow
+				{strokeStyle: "#FFA500", min: 15, max: 23}, // orange
+				{strokeStyle: "#FF0000", min: 23, max: 30} //red
 			];
 
 
 		var baselineLabel =  {
 				font: "10px sans-serif",
-				labels: [0, 20, 40, 60, 80, 100],
+				labels: [0, 1, 3, 4, 5],
 				fractionDigits: 0
 			};
 		var baselineZone = [								
-				{strokeStyle: "#008000", min: 0, max: 40}, // green
-				{strokeStyle: "#FFFF00", min: 40, max: 60}, // yellow
-				{strokeStyle: "#FFA500", min: 60, max: 80}, // orange
-				{strokeStyle: "#FF0000", min: 80, max: 100} //red
+				{strokeStyle: "#008000", min: 0, max: 1}, // green
+				{strokeStyle: "#FFFF00", min: 1, max: 3}, // yellow
+				{strokeStyle: "#FFA500", min: 3, max: 4}, // orange
+				{strokeStyle: "#FF0000", min: 4, max: 5} //red
 			];
 		var standingLabel =  {
 				font: "10px sans-serif",
-				labels: [0, 20, 40, 60, 80, 100],
+				labels: [0, 1, 3, 4, 5],
 				fractionDigits: 0
 			};
 		var standingZone = [								
-				{strokeStyle: "#008000", min: 0, max: 40}, // green
-				{strokeStyle: "#FFFF00", min: 40, max: 60}, // yellow
-				{strokeStyle: "#FFA500", min: 60, max: 80}, // orange
-				{strokeStyle: "#FF0000", min: 80, max: 100} //red
+				{strokeStyle: "#008000", min: 0, max: 1}, // green
+				{strokeStyle: "#FFFF00", min: 1, max: 3}, // yellow
+				{strokeStyle: "#FFA500", min: 3, max: 4}, // orange
+				{strokeStyle: "#FF0000", min: 4, max: 5} //red
 			];
 
 		var standResLabel =  {
 				font: "10px sans-serif",
-				labels: [0, 25, 50, 75, 100],
+				labels: [0,2,  4, 6, 8],
 				fractionDigits: 0
 			};
+						
 		var standResZone = [								
-				{strokeStyle: "#008000", min: 0, max: 25}, // green
-				{strokeStyle: "#FFFF00", min: 25, max: 50}, // yellow
-				{strokeStyle: "#FFA500", min: 50, max: 75}, // orange
-				{strokeStyle: "#FF0000", min: 75, max: 100} //red
+				{strokeStyle: "#008000", min: 0, max: 2}, // green
+				{strokeStyle: "#FFFF00", min: 2, max: 4}, // yellow
+				{strokeStyle: "#FFA500", min: 4, max: 6}, // orange
+				{strokeStyle: "#FF0000", min: 6, max: 8} //red
 			];
+
+		var valResLabel =  {
+				font: "10px sans-serif",
+				labels: [0 ,1,2, 3, 4],
+				fractionDigits: 0
+			};
+		var valResZone = [								
+				{strokeStyle: "#008000", min: 0, max: 1}, // green
+				{strokeStyle: "#FFFF00", min: 1, max: 2}, // yellow
+				{strokeStyle: "#FFA500", min: 2, max: 3}, // orange
+				{strokeStyle: "#FF0000", min: 3, max: 4} //red
+			];
+			
 		var paraLabel =  {
 				font: "10px sans-serif",
-				labels: [0, 33.3, 66.6,  100],
+				labels: [0, 1, 2,  3],
 				fractionDigits: 0
 			};
 		var paraZone = [								
-				{strokeStyle: "#008000", min: 0, max: 33.3}, // green
-				{strokeStyle: "#FFFF00", min: 33.4, max: 66.6}, // yellow				
-				{strokeStyle: "#FF0000", min: 66.6, max: 100} //red
+				{strokeStyle: "#008000", min: 0, max: 1}, // green
+				{strokeStyle: "#FFFF00", min: 1, max: 2}, // yellow				
+				{strokeStyle: "#FF0000", min: 2, max: 3} //red
 			];
 
-		myInit("canvas-preview1", "preview-textfield1", "{{$overall_blood_risk_percent}}" , diabetLabel, diabetZone, 100);
-		myInit("canvas-preview2", "preview-textfield2", "{{$baseline[5]}}" , baselineLabel, baselineZone, 100);
-		myInit("canvas-preview3", "preview-textfield3", "{{$standing[5]}}" , standingLabel, standingZone, 100);
-		myInit("canvas-preview4", "preview-textfield4", "{{$standingRes[5]}}" , standResLabel, standResZone, 100);
-		myInit("canvas-preview5", "preview-textfield5", "{{$valsalva[5]}}" , diabetLabel, diabetZone, 100);
-		myInit("canvas-preview6", "preview-textfield6", "{{$valsalvaRes[4]}}" , diabetLabel, diabetZone, 100);
-		myInit("canvas-preview7", "preview-textfield7", "{{$para[9]}}" , paraLabel, paraZone, 100);
+		myInit("canvas-preview1", "preview-textfield1", "{{$overall_blood_risk_score}}" , diabetLabel, diabetZone, 30);
+		myInit("canvas-preview2", "preview-textfield2", "{{$baseline[0]}}" , baselineLabel, baselineZone, 5);
+		myInit("canvas-preview3", "preview-textfield3", "{{$standing[0]}}" , standingLabel, standingZone, 5);
+		myInit("canvas-preview4", "preview-textfield4", "{{$standingRes[2]}}" , standResLabel, standResZone, 8);
+		myInit("canvas-preview5", "preview-textfield5", "{{$valsalva[0]}}" , standingLabel, standingZone, 5);
+		myInit("canvas-preview6", "preview-textfield6", "{{$valsalvaRes[0]}}" , valResLabel, valResZone, 4);
+		myInit("canvas-preview7", "preview-textfield7", "{{$para[3]}}" , paraLabel, paraZone, 3);
 
 	});
 

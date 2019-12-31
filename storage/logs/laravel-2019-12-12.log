@@ -1,0 +1,4 @@
+[2019-12-12 12:36:21] local.ERROR: Maximum execution time of 30 seconds exceeded {"exception":"[object] (Symfony\\Component\\Debug\\Exception\\FatalErrorException(code: 1): Maximum execution time of 30 seconds exceeded at F:\\CDriver\\Xampp\\htdocs\\phd\\vendor\\laravel\\framework\\src\\Illuminate\\Queue\\QueueServiceProvider.php:19)
+[stacktrace]
+#0 {main}
+"} 

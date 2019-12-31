@@ -8,12 +8,21 @@
 		<div class="page-container">
 			<div class="bg-white pt-4 pb-5">
 
-				<div class="page-title padding pb-0 ">
-					<h2 class="text-md mb-0">Type II Risk Assessment </h2>
-				</div>
+				
 								
 				<form data-plugin="parsley" data-option="{}"  method="post" action="{{ url('doctor/editVisitForm') }}" enctype="multipart/form-data">
 				@csrf
+				<div class="page-title padding pb-0 ">
+					<h2 class="text-md mb-0">Type II Risk Assessment </h2>
+				</div>
+
+				<div class="col-md-12 mt-2 text-right">
+					<button type="button" class="btn col-md-2 mb-1 btn-primary" data-toggle="modal" data-target="#m"> Cancel </button>		
+					<button type="button" class="btn col-md-2 mb-1 btn-primary" onclick="back()"> Back </button>		
+					<button type="submit" class="btn col-md-2 mb-1 btn-primary"> Next </button>		
+				</div>
+
+
 				<input type="hidden" value="{{$patient->id}}" id="patient_id" name="patient_id" />
 				<input type="hidden" value="{{$allocation_id}}" id="allocation_id" name="allocation_id" />
 				<input type = "hidden" value="exist" name="user_type" />
@@ -178,7 +187,7 @@
 				</div>
 				
 				
-				<div class="col-md-12 mt-4 text-center">
+				<div class="col-md-12 mt-4 text-right">
 					<button type="button" class="btn col-md-2 mb-1 btn-primary" data-toggle="modal" data-target="#m"> Cancel </button>		
 					<button type="button" class="btn col-md-2 mb-1 btn-primary" onclick="back()"> Back </button>		
 					<button type="submit" class="btn col-md-2 mb-1 btn-primary"> Next </button>		

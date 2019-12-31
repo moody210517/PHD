@@ -23,7 +23,7 @@
 
                 
             
-                <table id="datatable" class="table table-theme table-row v-middle" data-plugin="dataTable" style="margin-top: -15px;">
+                <table id="datatable_testlists" class="table table-theme table-row v-middle" data-plugin="dataTable" style="margin-top: -15px;">
                 <!-- <table class="table table-theme v-middle" data-plugin="bootstrapTable"
                     id="table"
                     data-toolbar="#toolbar"
@@ -128,6 +128,9 @@
 <script type="text/javascript">   
 
     $(document).ready(function() {  
+        // $('#datatable_testlists').dataTable({     
+        //     "iDisplayLength": 25
+        // });
     });
 
     $("#cancelBtn").click(function(){

@@ -110,7 +110,7 @@
 									<div id="preview">
 										<canvas width="380" height="170" id="canvas-preview0"></canvas>						
 									</div>
-									<div class="scale_label"> <div>0% &nbsp &nbsp 0</div>  <div class="scale_label_right"> 3 &nbsp  100% </div>  </div>
+									<!-- <div class="scale_label"> <div>0% &nbsp &nbsp 0</div>  <div class="scale_label_right"> 3 &nbsp  100% </div>  </div> -->
 									<div id="preview-textfield0" class="reset" style="display:none;">1</div>
 									<div class="reset">  {{$para[0]}} </div>
 									<div id="status1" class="status {{$para[3]}}">  {{$para[2]}} </div>
@@ -142,7 +142,7 @@
 										<div id="preview">
 											<canvas width="380" height="170" id="canvas-preview1"></canvas>						
 										</div>
-										<div class="scale_label"> <div>0% &nbsp &nbsp 0</div>  <div class="scale_label_right"> 1 &nbsp  100% </div>  </div>
+										<!-- <div class="scale_label"> <div>0% &nbsp &nbsp 0</div>  <div class="scale_label_right"> 1 &nbsp  100% </div>  </div> -->
 										<div id="preview-textfield1" class="reset" style="display:none;"></div>
 										
 										<div id="status2" class="status {{$EIR[3]}} ">  {{$EIR[2]}}  </div>
@@ -172,7 +172,7 @@
 										<div id="preview">
 											<canvas width="380" height="170" id="canvas-preview2"></canvas>						
 										</div>
-										<div class="scale_label"> <div>0% &nbsp &nbsp 0</div>  <div class="scale_label_right"> 1 &nbsp  100% </div>  </div>
+										<!-- <div class="scale_label"> <div>0% &nbsp &nbsp 0</div>  <div class="scale_label_right"> 1 &nbsp  100% </div>  </div> -->
 										<div id="preview-textfield2" class="reset" style="display:none;"></div>
 
 										<div id="status2" class="status {{$VRC4[3]}}"> {{$VRC4[2]}} </div>
@@ -201,7 +201,7 @@
 										<div id="preview">
 											<canvas width="380" height="170" id="canvas-preview3"></canvas>						
 										</div>
-										<div class="scale_label"> <div>0% &nbsp &nbsp 0</div>  <div class="scale_label_right"> 1 &nbsp  100% </div>  </div>
+										<!-- <div class="scale_label"> <div>0% &nbsp &nbsp 0</div>  <div class="scale_label_right"> 1 &nbsp  100% </div>  </div> -->
 										<div id="preview-textfield3" class="reset" style="display:none;"></div>
 										
 										<div id="status2" class="status {{$VRC6[3]}}"> {{$VRC6[2]}} </div>
@@ -277,32 +277,30 @@
 
 		var paraLabel =  {
 				font: "10px sans-serif",
-				labels: [0, 33.3, 66.6, 100],
+				labels: [0, 1, 2, 3],
 				fractionDigits: 0
 			};
 		var paraZones = [
-				{strokeStyle: "#008000", min: 0, max: 33.3},
-				{strokeStyle: "#FFFF00", min: 33.3, max: 66.6},		
-				{strokeStyle: "#FF0000", min: 66.6, max: 100}
+				{strokeStyle: "#008000", min: 0, max: 1},
+				{strokeStyle: "#FFFF00", min: 1, max: 2},		
+				{strokeStyle: "#FF0000", min: 2, max: 3}
 			];
-
-
 
 		var commonLabel =  {
 				font: "10px sans-serif",
-				labels: [0, 70 , 100],
+				labels: [0,  1],
 				fractionDigits: 0
 			};
 		var commonZone = [								
-				{strokeStyle: "#008000", min: 0, max: 70}, // green			
-				{strokeStyle: "#FF0000", min: 70, max: 100} //red
+				{strokeStyle: "#008000", min: 0, max: 0.7}, // green			
+				{strokeStyle: "#FFFF00", min: 0.7, max: 1} //red
 			];
 
 			
-		myInit("canvas-preview0", "preview-textfield0", "{{$para[1]}}" , paraLabel, paraZones, 100);
-		myInit("canvas-preview1", "preview-textfield1", "{{$EIR[1]}}" , commonLabel, commonZone, 100);
-		myInit("canvas-preview2", "preview-textfield2", "{{$VRC4[1]}}" , commonLabel, commonZone, 100);
-		myInit("canvas-preview3", "preview-textfield3", "{{$VRC6[1]}}" , commonLabel, commonZone, 100);
+		myInit("canvas-preview0", "preview-textfield0", "{{$para[0]}}" , paraLabel, paraZones, 3);
+		myInit("canvas-preview1", "preview-textfield1", "{{$EIR[0]}}" , commonLabel, commonZone, 1);
+		myInit("canvas-preview2", "preview-textfield2", "{{$VRC4[0]}}" , commonLabel, commonZone, 1);
+		myInit("canvas-preview3", "preview-textfield3", "{{$VRC6[0]}}" , commonLabel, commonZone, 1);
 		
 	});
 

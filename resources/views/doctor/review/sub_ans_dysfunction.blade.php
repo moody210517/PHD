@@ -110,7 +110,7 @@
 									<div id="preview">
 										<canvas width="380" height="170" id="canvas-preview1"></canvas>						
 									</div>
-									<div class="scale_label"> <div>0% &nbsp &nbsp 0</div>  <div class="scale_label_right"> 18 &nbsp  100% </div>  </div>
+									<!-- <div class="scale_label"> <div>0% &nbsp &nbsp 0</div>  <div class="scale_label_right"> 18 &nbsp  100% </div>  </div> -->
 									<div id="preview-textfield1" class="reset" style="display:none;">1</div>
 									<div class="reset"> {{ $ans[0] }}</div>
 									<div id="status1" class="status {{$ans[3]}}">{{$ans[2]}}</div>
@@ -140,7 +140,7 @@
 										<div id="preview">
 											<canvas width="380" height="170" id="canvas-preview2"></canvas>						
 										</div>
-										<div class="scale_label"> <div>0% &nbsp &nbsp 0</div>  <div class="scale_label_right"> 5 &nbsp  100% </div>  </div>
+										<!-- <div class="scale_label"> <div>0% &nbsp &nbsp 0</div>  <div class="scale_label_right"> 5 &nbsp  100% </div>  </div> -->
 										<div id="preview-textfield2" class="reset" style="display:none;"></div>
 										
 										<div id="status2" class="status {{$heart_rate[4]}}">{{$heart_rate[3]}}</div>
@@ -172,7 +172,7 @@
 										<div id="preview">
 											<canvas width="380" height="170" id="canvas-preview3"></canvas>						
 										</div>
-										<div class="scale_label"> <div>0% &nbsp &nbsp 0</div>  <div class="scale_label_right"> 3 &nbsp  100% </div>  </div>
+										<!-- <div class="scale_label"> <div>0% &nbsp &nbsp 0</div>  <div class="scale_label_right"> 3 &nbsp  100% </div>  </div> -->
 										<div id="preview-textfield3" class="reset" style="display:none;"></div>
 										
 										<div id="status2" class="status {{$SDNN[4]}}">{{$SDNN[3]}}</div>
@@ -201,7 +201,7 @@
 										<div id="preview">
 											<canvas width="380" height="170" id="canvas-preview4"></canvas>						
 										</div>
-										<div class="scale_label"> <div>0% &nbsp &nbsp 0</div>  <div class="scale_label_right"> 3 &nbsp  100% </div>  </div>
+										<!-- <div class="scale_label"> <div>0% &nbsp &nbsp 0</div>  <div class="scale_label_right"> 3 &nbsp  100% </div>  </div> -->
 										<div id="preview-textfield4" class="reset" style="display:none;"></div>
 										
 										<div id="status2" class="status {{$RMSSD[4]}}">{{$RMSSD[3]}}</div>
@@ -238,7 +238,7 @@
 										<div id="preview">
 											<canvas width="380" height="170" id="canvas-preview5"></canvas>						
 										</div>
-										<div class="scale_label"> <div>0% &nbsp &nbsp 0</div>  <div class="scale_label_right"> 3 &nbsp  100% </div>  </div>
+										<!-- <div class="scale_label"> <div>0% &nbsp &nbsp 0</div>  <div class="scale_label_right"> 3 &nbsp  100% </div>  </div> -->
 										<div id="preview-textfield5" class="reset" style="display:none;"></div>
 										
 										<div id="status2" class="status {{$AVG_RR[4]}}">{{$AVG_RR[3]}}</div>
@@ -269,7 +269,7 @@
 										<div id="preview">
 											<canvas width="380" height="170" id="canvas-preview6"></canvas>						
 										</div>
-										<div class="scale_label"> <div>0% &nbsp &nbsp 0</div>  <div class="scale_label_right"> 3 &nbsp  100% </div>  </div>
+										<!-- <div class="scale_label"> <div>0% &nbsp &nbsp 0</div>  <div class="scale_label_right"> 3 &nbsp  100% </div>  </div> -->
 										<div id="preview-textfield6" class="reset" style="display:none;"></div>
 										
 										<div id="status2" class="status {{$More50[4]}}">{{$More50[3]}}</div>
@@ -299,7 +299,7 @@
 										<div id="preview">
 											<canvas width="380" height="170" id="canvas-preview7"></canvas>						
 										</div>
-										<div class="scale_label"> <div>0% &nbsp &nbsp 0</div>  <div class="scale_label_right"> 1 &nbsp  100% </div>  </div>
+										<!-- <div class="scale_label"> <div>0% &nbsp &nbsp 0</div>  <div class="scale_label_right"> 1 &nbsp  100% </div>  </div> -->
 										<div id="preview-textfield7" class="reset" style="display:none;"></div>
 										
 										<div id="status2" class="status {{$SPO2[4]}}">{{$SPO2[3]}}</div>
@@ -377,61 +377,58 @@
 <script type="text/javascript">   
     
 	$(document).ready(function() {		
-		var commonLabel =  {
+		var ansDysfunctionLabel =  {
 				font: "10px sans-serif",
-				labels: [0, 33.3, 66.6 , 100],
-				fractionDigits: 0
-			};
-		var commonZone = [								
-				{strokeStyle: "#008000", min: 0, max: 33.3}, // green			
-				{strokeStyle: "#FFFF00", min: 33.3, max: 66.6}, // yellow
-				{strokeStyle: "#FF0000", min: 66.6, max: 100} //red
-			];
-			var ansDysfunctionLabel =  {
-				font: "10px sans-serif",
-				labels: [0, 28, 50, 78, 100],
+				labels: [0, 5, 9, 14, 18],
 				fractionDigits: 0
 			};
 		var ansDysfunctionZone = [
-				{strokeStyle: "#008000", min: 0, max: 28},
-				{strokeStyle: "#FFFF00", min: 28, max: 50},
-				{strokeStyle: "#FFA500", min: 50, max: 78},
-				{strokeStyle: "#FF0000", min: 78, max: 100}
+				{strokeStyle: "#008000", min: 0, max: 5},
+				{strokeStyle: "#FFFF00", min: 5, max: 9},
+				{strokeStyle: "#FFA500", min: 9, max: 14},
+				{strokeStyle: "#FF0000", min: 14, max: 18}
 			];
 
 		var baselineLabel =  {
 				font: "10px sans-serif",
-				labels: [0, 40, 60, 80, 100],
+				labels: [0, 1, 2, 3, 4, 5],
 				fractionDigits: 0
 			};
 		var baselineZone = [								
-				{strokeStyle: "#008000", min: 0, max: 40}, // green
-				{strokeStyle: "#FFFF00", min: 40, max: 60}, // yellow
-				{strokeStyle: "#FFA500", min: 60, max: 80}, // orange
-				{strokeStyle: "#FF0000", min: 80, max: 100} //red
+				{strokeStyle: "#008000", min: 0, max: 1}, // green
+				{strokeStyle: "#FFFF00", min: 1, max: 3}, // yellow
+				{strokeStyle: "#FFA500", min: 3, max: 4}, // orange
+				{strokeStyle: "#FF0000", min: 4, max: 5} //red
 			];
 
-
+		var commonLabel =  {
+				font: "10px sans-serif",
+				labels: [0, 1,2, 3],
+				fractionDigits: 0
+			};
+		var commonZone = [								
+				{strokeStyle: "#008000", min: 0, max: 1}, // green			
+				{strokeStyle: "#FFFF00", min: 1, max: 2}, // yellow
+				{strokeStyle: "#FF0000", min: 2, max: 3} //red
+			];		
+		
 		var plusLabel =  {
 				font: "10px sans-serif",
-				labels: [0, 50, 100],
+				labels: [0, 1],
 				fractionDigits: 0
 			};
 		var pluseZone = [								
-				{strokeStyle: "#008000", min: 0, max: 50}, // green			
-				{strokeStyle: "#FF0000", min: 50, max: 100} //red
+				{strokeStyle: "#008000", min: 0, max: 0.5}, // green			
+				{strokeStyle: "#FF0000", min: 0.5, max: 1} //red
 			];
 
-		
-
-		myInit("canvas-preview1", "preview-textfield1", "{{$ans[1]}}" , ansDysfunctionLabel, ansDysfunctionZone, 100);
-
-		myInit("canvas-preview2", "preview-textfield2", "{{$heart_rate[2]}}" , baselineLabel, baselineZone, 100);
-		myInit("canvas-preview3", "preview-textfield3", "{{$SDNN[2]}}" , commonLabel, commonZone, 100);
-		myInit("canvas-preview4", "preview-textfield4", "{{$RMSSD[1]}}" , commonLabel, commonZone, 100);
-		myInit("canvas-preview5", "preview-textfield5", "{{$AVG_RR[1]}}" , commonLabel, commonZone, 100);
-		myInit("canvas-preview6", "preview-textfield6", "{{$More50[1]}}" , commonLabel, commonZone, 100);
-		myInit("canvas-preview7", "preview-textfield7", "{{$SPO2[1]}}" , plusLabel, pluseZone, 100);
+		myInit("canvas-preview1", "preview-textfield1", "{{$ans[0]}}" , ansDysfunctionLabel, ansDysfunctionZone, 18);
+		myInit("canvas-preview2", "preview-textfield2", "{{$heart_rate[1]}}" , baselineLabel, baselineZone, 5);
+		myInit("canvas-preview3", "preview-textfield3", "{{$SDNN[1]}}" , commonLabel, commonZone, 3);
+		myInit("canvas-preview4", "preview-textfield4", "{{$RMSSD[1]}}" , commonLabel, commonZone, 3);
+		myInit("canvas-preview5", "preview-textfield5", "{{$AVG_RR[1]}}" , commonLabel, commonZone, 3);
+		myInit("canvas-preview6", "preview-textfield6", "{{$More50[1]}}" , commonLabel, commonZone, 3);
+		myInit("canvas-preview7", "preview-textfield7", "{{$SPO2[1]}}" , plusLabel, pluseZone, 1);
 
 	});
 

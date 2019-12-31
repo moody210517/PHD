@@ -25,7 +25,7 @@ use App\GSR;
 
 use Session;
 use DateTime;
-
+use App\Oximeter;
 
 
 class Controller extends BaseController
@@ -59,11 +59,12 @@ class Controller extends BaseController
 
     function getGSR($allocation_id, $step){
         
-        $allocation_id = 139;
+       // $allocation_id = 139;
         $gsrs = GSR::where('allocation_id', $allocation_id)
         ->where('step_id', $step)
         ->get();           
         $n = 0; $gsr_value = 0;
+        $foot_index = 0; $gsr_value_foot = 0;
         foreach($gsrs as $item){            
             $value  = json_decode($item["raw_data"], true);
             foreach($value as $vv){     
@@ -73,40 +74,86 @@ class Controller extends BaseController
                     $gsr_value += $v;
                     $n++;
                 }
+
+                foreach($foot as $v){                      
+                    $gsr_value_foot += $v;
+                    $foot_index++;
+                }                
+
             }            
         }
+        if($n > 0 && $foot_index > 0){
+            return [$gsr_value/$n , $gsr_value_foot/$foot_index];
+        }
+
+        return [0, 0];
+    }
+
+
+    function getOximeterRR($allocation_id, $step){
+        $oximeters = Oximeter::where('allocation_id', $allocation_id)
+        ->where('step_id', $step)
+        ->get(); 
+
+        //return json_encode($oximeters);                
+        $RR_VALUE = [];
+        $total_rr = 0; $n = 0;
+        foreach($oximeters as $item){            
+            
+            $value  = json_decode($item["raw_data"], true);
+            foreach($value as $v){
+                foreach($v["RR"] as $vv){                                     
+                    $RR_VALUE[] = $vv;
+                    $total_rr += $vv;
+                    $n++;                
+                }
+            }            
+        }
+        
+
+        $avg = 0;
         if($n > 0){
-            return $gsr_value/$n;
+            $avg = $total_rr/$n;
         }
-        return 0;
+        return [$RR_VALUE, $avg];        
     }
 
-
-    function getSDNN($RR = []){
-
-        $index = 0;
-        $total = 0;
+    function getSDNN($allocation_id, $step){   
+        $data = $this->getOximeterRR($allocation_id, $step);
+        $RR  = $data[0];
+        $avg = $data[1];
+        $total_tmp = 0;
         foreach($RR as $val){
-            $total += $val;
-            $index++;
-        }
+            $total_tmp += ($val - $avg) * ($val - $avg);    
+        }        
 
-        if($index > 0){
-            $avg = $total/$index;
-        }else{
-            $avg = 0;
+        if(count($RR) != 0){
+            return  sqrt ($total_tmp /  count($RR) ) ;
         }
-        
-
-        
-        foreach($RR as $val){
-            $total_tmp = ($val - $avg) * ($val - $avg);    
-        }
-        return 0;
+        return 0;        
     }
+     
+    
+    function getRMSSD($allocation_id, $step){
 
-    function getRMSSD(){
+       $data = $this->getOximeterRR($allocation_id, $step);
+        $RR  = $data[0];
+        $avg = $data[1];
+        $total_tmp = 0;
+        $tmp = 0;
+        foreach($RR as $val){
+            if($tmp != 0){
+                $total_tmp += ($val - $tmp) * ($val - $tmp);    
+            }
+            $tmp = $val;       
+            
+        }   
+        
+        if((count($RR) - 1) != 0){
+            return  sqrt ($total_tmp /  (count($RR) - 1) ) ;
+        }        
         return 0;
+
     }
 
 }

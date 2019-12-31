@@ -3,6 +3,11 @@
 <div class="page-container">
 
     <div class="page-container-1" id="page-container">
+
+        
+        <input value="{{$logintype}}" id="logintype" type="hidden" />
+
+
         <div class="page-title padding pb-0 ">
             <h2 class="text-md mb-0">Edit Patient
             @if($page == 'patient')
@@ -420,10 +425,13 @@
         var home_num = $("#home_num").val();
         if(phonenumber(home_num)){            
         }else{
-            alert("Please input correct home number!");
+            var  logintype = $("#logintype").val();
+            if(logintype == '1'){
+                alert("Please input correct home number!");
+            }       
         }
-	});
-
+    });
+            
     $("#weight").change(function(){
        check();
     });
@@ -435,10 +443,19 @@
     function check(){
         var home_num = $("#home_num").val();
         var mobile_num = $("#mobile_num").val();
-        if(phonenumber(mobile_num) && phonenumber(home_num)){
+
+        var  logintype = $("#logintype").val();
+        if(logintype == '1'){
+            if(phonenumber(mobile_num) && phonenumber(home_num) ){ 
+            }else{
+                alert("Please input correct phone number!");
+            }                        
         }else{
-            alert("Please input correct phone number!");
-        }
+            if(phonenumber(mobile_num) ){ 
+            }else{
+                alert("Please input correct phone number!");
+            }   
+        }       
     }
 
 

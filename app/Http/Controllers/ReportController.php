@@ -21,8 +21,23 @@ use Session;
 
 class ReportController extends Controller
 {
-    use AuthorizesRequests, DispatchesJobs, ValidatesRequests;      
 
+    use AuthorizesRequests, DispatchesJobs, ValidatesRequests;      
+    private $BASELINE = 3;
+    private $VALSA = 4;
+    private $DEEPBREADING = 5;
+    private $STANDING = 6;
+    private $HANDGRIP = 7;
+    
+
+    public function getTest(){
+        //$data = $this->getOximeterRR(42,4);       
+        //echo json_encode($data);
+        $data  = array('patient_id'=>3, "weight"=>33);
+        $res = CallAPI("POST", "https://prohealthdetect.com/phd/api/updateWeight", $data);
+        echo json_encode($res);
+
+    }
 
     public function getReview($id = '', Request $request = null){
 
@@ -84,15 +99,15 @@ class ReportController extends Controller
                     $diabet_risk_score += 3;
                 }
                 if($patient->sex == "Male"){
-                    if($waist >= 94 && $waist < 102){
+                    if($waist >= 37 && $waist < 40){
                         $diabet_risk_score += 3;
-                    }else if($waist >= 102){
+                    }else if($waist >= 40){
                         $diabet_risk_score += 4;
                     }
                 }else{
-                    if($waist >= 80 && $waist < 88){
+                    if($waist >= 31 && $waist < 35){
                         $diabet_risk_score += 3;
-                    }else if($waist >= 88){
+                    }else if($waist >= 35){
                         $diabet_risk_score += 4;
                     }
                 }
@@ -102,25 +117,25 @@ class ReportController extends Controller
                 $diabet_risk_name = $overall_blood[1];
                 $diabet_risk_color = $overall_blood[2];
             
-                //Overall Blood Pressure
-                //$allocation_id = "139";                
-               $step3Data =  getLevelBood($allocation_id, 3);
-               $step6Data =  getLevelBood($allocation_id, 6);
-
+                //Overall Blood Pressure                             
+               $step3Data =  getLevelBood($allocation_id, $this->BASELINE);
+               $step6Data =  getLevelBood($allocation_id, $this->STANDING);
+               $step5Data =  getLevelBood($allocation_id, $this->DEEPBREADING);
+               
                $SPRS = abs($step3Data[Config::get('constants.options.avg_systolic')] - $step6Data[Config::get('constants.options.avg_systolic')]);
                $DPRS = abs($step3Data[Config::get('constants.options.avg_diastolic')] - $step6Data[Config::get('constants.options.avg_diastolic')]);
        
                $overall_blood_score = $step3Data[Config::get('constants.options.score')] + $step6Data[ Config::get('constants.options.score') ];  
-            //    $AVG_Systolic_Baseline = $step3Data[Config::get('constants.options.avg_systolic')];
-            //    $AVG_Diastolic_Baseline = $step3Data[Config::get('constants.options.avg_diastolic')];
-            //    $AVG_Systolic_Standing = $step6Data[Config::get('constants.options.avg_systolic')];
-            //    $AVG_Diastolic_Standing = $step6Data[Config::get('constants.options.avg_diastolic')];
-
+               
                 $StandingResponseScore = getSPRS_DPRS_Score($SPRS, $DPRS); // Get SPRS, DPRS Score 
                 $overall_blood_score += $StandingResponseScore[0];
                       
-               $step4Data =  getLevelBood($allocation_id, 4);       
+
+               $step4Data =  getLevelBoodValsa($allocation_id, $this->VALSA);       
+               $overall_blood_score  +=  $step4Data[Config::get('constants.options.score')];
+
                $SPRV = ($step3Data[Config::get('constants.options.avg_systolic')] - $step4Data[ Config::get('constants.options.avg_systolic') ]);
+
                if( $SPRV > -20 && $SPRV <= -10){
                    $overall_blood_score = $overall_blood_score + 2;
                }else if($SPRV > -10 && $SPRV <= -5){
@@ -129,36 +144,60 @@ class ReportController extends Controller
                    $overall_blood_score = $overall_blood_score + 4;
                }
 
-               
-               if($step4Data[Config::get('constants.options.min_heart_rate')] != 0){
-                   $VRC4 = $step4Data[Config::get('constants.options.max_heart_rate')] / $step4Data[Config::get('constants.options.min_heart_rate')];
-               }else{
-                   $VRC4 = 0;
-               }                            
-               if($VRC4 > 1.25){
+                $step5RRData = $this->getOximeterRR($allocation_id, 5);                
+                $VRC5 = 0;
+                if( count($step5RRData[0])  > 0){
+                    $MaxMin = getLongShortRR($step5RRData[0]); 
+                    if($MaxMin[1] != 0){
+                        $VRC5 = $MaxMin[0] / $MaxMin[1];
+                    }
+                } 
+                $VRC5_Score = 0;
+                if($VRC5 < 1.2){
+                    $overall_blood_score  += 1;
+                    $VRC5_Score = 1;                
+                }
+                               
+                $VRC4 = 0;
+                $step4RRData = $this->getOximeterRR($allocation_id, 4);
+                if( count($step4RRData[0])  > 0){
+                    $MaxMin = getLongShortRR($step4RRData[0]); 
+                    if($MaxMin[1] != 0){
+                        $VRC4 = $MaxMin[0] / $MaxMin[1];
+                    }
+                }  
+
+               if($VRC4 < 1.25){
                    $overall_blood_score = $overall_blood_score + 1;
                }
-               if( $step6Data[Config::get('constants.options.min_heart_rate')] != 0){
-                   $VRC6 = $step6Data[Config::get('constants.options.max_heart_rate')] / $step6Data[Config::get('constants.options.min_heart_rate')];
-               }else{
-                   $VRC6 = 0;
-               }        
-               if($VRC6 > 1.13){
+
+               $VRC6 = 0;
+                $step6RRData = $this->getOximeterRR($allocation_id, 6);
+                if( count($step6RRData[0])  > 0){
+                    $MaxMin = getLongShortRR($step6RRData[0]); 
+                    if($MaxMin[1] != 0){
+                        $VRC6 = $MaxMin[0] / $MaxMin[1];
+                    }
+                }
+               if($VRC6 < 1.13){
                    $overall_blood_score = $overall_blood_score + 1;
                }               
                $overall_blood = getRiskAndTitleColor($overall_blood_score, 7, 15, 23, 30, 0, 23, 27, 27, 23 , 0);
                
+
+
                // ANS Dysfunction Rist                
                $HR = $step3Data[Config::get('constants.options.avg_heart_rate')]; // mean heard rate during step 3.
                $ANS_Score = getANSHeartScore($patient->sex, $patient->age, $HR);
-                              
-               $SDNN = $this->getSDNN();        // Get SDNN Value
+
+               $step3OximeterData = 
+               $SDNN = $this->getSDNN($allocation_id, 3);      // Get SDNN Value
                $SDNN_SCORE = getSDNNScore($patient->age, $SDNN);    // Get SDNN Score 
                $ANS_Score  +=  $SDNN_SCORE;
 
-               $RMSSD = $this->getRMSSD();      // Get RMSSD Value
+               $RMSSD = $this->getRMSSD($allocation_id, 3);      // Get RMSSD Value
                $RMSSD_SCORE = getRMSSDScore($patient->age, $RMSSD);  // Get RMSSD Score  
-               $ANS_Score  +=  $SDNN_SCORE;
+               $ANS_Score  +=  $RMSSD_SCORE;
                              
                 $step3RRData = getRR($allocation_id, 3);    
                 $AVG_RR  = $step3RRData[2];                 // Get Avg RR Value
@@ -169,7 +208,7 @@ class ReportController extends Controller
                 $PERCENT_MORE_THAN_50_Score = get50Score($PERCENT_MORE_THAN_50);    // Get Score 
                 $ANS_Score += $PERCENT_MORE_THAN_50_Score;
                              
-                $AVG_OXYGEN = $step3RRData[2];                
+                $AVG_OXYGEN = $step3RRData[1];             
                 if($AVG_OXYGEN < 94 ){
                     $ANS_Score += 1;
                 }
@@ -180,48 +219,35 @@ class ReportController extends Controller
                 //$Female_Hand_Score = 0; $Female_Feet_Score = 0;
                 $Hand_Score = 0; $Feet_Score = 0;
                 if($patient->sex == "Male"){
-                    $Hand_Score = getMaleHandScore($patient->age, $GSR);
-                    $Feet_Score = getMaleFeetScore($patient->age, $GSR);
+                    $Hand_Score = getMaleHandScore($patient->age, $GSR[0]);
+                    $Feet_Score = getMaleFeetScore($patient->age, $GSR[1]);
                 }else{
-                    $Hand_Score = getFemaleHandScore($patient->age, $GSR);
-                    $Feet_Score = getFemaleFeetScore($patient->age, $GSR);                    
+                    $Hand_Score = getFemaleHandScore($patient->age, $GSR[0]);
+                    $Feet_Score = getFemaleFeetScore($patient->age, $GSR[1]);     
                 }
-                $SkinTitleColor = getRiskAndTitleColor($Hand_Score + $Feet_Score, 1, 2, 4, 0, 0, 25, 25, 50, 0 , 0);
+                $SkinTitleColor = getSkinTitleColor($Hand_Score + $Feet_Score, "overall");
 
                 // Adrenergic 
                 $AVG_Systolic_Baseline = $step3Data[Config::get('constants.options.avg_systolic')];
-                $AVG_Diastolic_Baseline = $step3Data[Config::get('constants.options.avg_diastolic')];
-                
+                $AVG_Diastolic_Baseline = $step3Data[Config::get('constants.options.avg_diastolic')];                
                 $AVG_Systolic_Standing = $step6Data[Config::get('constants.options.avg_systolic')];
                 $AVG_Diastolic_Standing = $step6Data[Config::get('constants.options.avg_diastolic')];                
 
                 $BaselineSysScore = getBaselineFromSys($AVG_Systolic_Baseline);
                 $BaselineDiaScore = getBaselineFromDia($AVG_Diastolic_Baseline);
                 $StandingSysScore = getStandingFromSys($AVG_Systolic_Standing);
-                $StandingDiaScore = getStandingFromDia($AVG_Diastolic_Standing);                
+                $StandingDiaScore = getStandingFromDia($AVG_Diastolic_Standing);   
+
                 $SPRV_Score = getValsalvaScore($SPRV);
+
                 $SPRS = $step3Data[Config::get('constants.options.avg_systolic')] - $step6Data[Config::get('constants.options.avg_systolic')];
                 $SPRS_Score = getSPRSScore($SPRS);
                 $DPRS =  $step3Data[Config::get('constants.options.avg_diastolic')] - $step6Data[Config::get('constants.options.avg_diastolic')];
                 $DPRS_Score = getDPRSScore($DPRS);
-
-                $RR = getRR($allocation_id, 5);
-                $MaxMin = getLongShortRR($RR);
-                $EIR_Score = 0;
-                if($MaxMin[1] != 0){
-                    $EIR_Score = $MaxMin[0] / $MaxMin[1];
-                }
-
-                $VRC4_Score = 0;
-                if( $VRC4 > 1.25){
-                    $VRC4_Score = 1;
-                }
-                $VRC6_Score = 0;
-                if($VRC6 > 1.13){
-                    $VRC6_Score = 1;
-                }
-                $AdrenergicScore = $BaselineSysScore + $BaselineDiaScore + $StandingSysScore + $StandingDiaScore + $SPRV_Score + $SPRS_Score + $DPRS_Score + $EIR_Score + $VRC4_Score + $VRC6_Score;
+                
+                $AdrenergicScore = $BaselineSysScore + $BaselineDiaScore + $StandingSysScore + $StandingDiaScore + $SPRV_Score + $SPRS_Score + $DPRS_Score ; //+ $EIR_Score + $VRC4_Score + $VRC6_Score
                 $adrenergic = getRiskAndTitleColor($AdrenergicScore, 9, 19, 29, 38, 0, 24, 26, 26, 24 , 0);                
+
                 $AVG_Systolic_Baseline = $step3Data[Config::get('constants.options.avg_systolic')];
                 $AVG_Diastolic_Baseline = $step3Data[Config::get('constants.options.avg_diastolic')];                
                 $AVG_Systolic_Standing = $step6Data[Config::get('constants.options.avg_systolic')];
@@ -241,26 +267,49 @@ class ReportController extends Controller
 
                 
                 // Para 
-                $RR = getRR($allocation_id, 5);
-                $MaxMin = getLongShortRR($RR);                
+                $step5RRData = $this->getOximeterRR($allocation_id, 5);                
+                //$RR = getRR($allocation_id, 5);
                 $EIR_Score = 0;$EIR = 0;
-                if($MaxMin[1] != 0){
-                    $EIR = $MaxMin[0] / $MaxMin[1];
-                }
-                if($EIR > 1.2){
+                if( count($step5RRData[0])  > 0){
+                    $MaxMin = getLongShortRR($step5RRData[0]); 
+                    if($MaxMin[1] != 0){
+                        $EIR = $MaxMin[0] / $MaxMin[1];
+                    }
+                }                                                              
+                if($EIR < 1.2){
                     $EIR_Score = 1;
                 }
 
+
+                $VRC4 = 0;
+                $step4RRData = $this->getOximeterRR($allocation_id, 4);
+                if( count($step4RRData[0])  > 0){
+                    $MaxMin = getLongShortRR($step4RRData[0]); 
+                    if($MaxMin[1] != 0){
+                        $VRC4 = $MaxMin[0] / $MaxMin[1];
+                    }
+                }  
+
                 $VRC4_Score = 0;
-                if( $VRC4 > 1.25){
+                if( $VRC4 < 1.25){
                     $VRC4_Score = 1;
                 }
+
+                $VRC6 = 0;
+                $step6RRData = $this->getOximeterRR($allocation_id, 6);
+                if( count($step6RRData[0])  > 0){
+                    $MaxMin = getLongShortRR($step6RRData[0]); 
+                    if($MaxMin[1] != 0){
+                        $VRC6 = $MaxMin[0] / $MaxMin[1];
+                    }
+                }                
                 $VRC6_Score = 0;
-                if($VRC6 > 1.13){
+                if($VRC6 < 1.13){
                     $VRC6_Score = 1;
                 }
                 $ParaScore = $EIR_Score + $VRC4_Score + $VRC6_Score;
-                $para = getRiskAndTitleColor($ParaScore, 1, 2, 3, 0, 0, 33, 33, 34, 0 , 0);
+                $para = getParaTitleColor($ParaScore, "overall");
+
                 
                 // Card
                 //$step3RRData = getRR($allocation_id, 3);    
@@ -268,9 +317,9 @@ class ReportController extends Controller
                 $AVG_RR_Score = getAvgRRScore($AVG_RR);            // Get Avg RR Score               
                 // $VRC4 = $step4Data[Config::get('constants.options.max_heart_rate')] / $step4Data[Config::get('constants.options.min_heart_rate')];
                 // $VRC6 = $step6Data[Config::get('constants.options.max_heart_rate')] / $step6Data[Config::get('constants.options.min_heart_rate')];
-                $step7Data =  getLevelBood($allocation_id, 7);
+                $step7Data =  getLevelBood($allocation_id, $this->HANDGRIP);
                 $SPRS7 = $step3Data[Config::get('constants.options.avg_systolic')] - $step7Data[Config::get('constants.options.avg_systolic')];
-                $SPRS7_Score = 0;
+                $SPRS7_Score = 0;                
                 if($SPRS7 < 11){
                     $SPRS7_Score += 3;
                 }else if($SPRS7 >= 11 &&  $SPRS7 < 16){

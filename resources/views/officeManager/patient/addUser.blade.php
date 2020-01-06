@@ -35,6 +35,8 @@
             @endif
 
                 @csrf
+
+                <input type="hidden" name="from" class="  form-control"  required="required" value="{{$from}}" >
                 <div class="form-group row">
                     <div class="col-sm-3">
                         <label class="col-form-label"> First Name </label>
@@ -79,19 +81,19 @@
                 </div>
 
                 @if($logintype == "1")
-                <div class="form-group row">
-                    <label class="col-sm-3 col-form-label"> Home Number </label>
-                    <div class="col-sm-9">
-                        <input type="tel" id="home_num" name="home_num" class="  form-control" placeholder="231-345-3426" required = "required">
-                    </div>                    
-                </div>
+                    <div class="form-group row">
+                        <label class="col-sm-3 col-form-label"> Home Number </label>
+                        <div class="col-sm-9">
+                            <input type="tel" id="home_num" name="home_num" class="  form-control" placeholder="231-345-3426" required = "required">
+                        </div>                    
+                    </div>
                 @else
-                <div class="form-group row">
-                    <label class="col-sm-3 col-form-label"> Home Number </label>
-                    <div class="col-sm-9">
-                        <input type="tel" id="home_num" name="home_num" class="  form-control" placeholder="231-345-3426">
-                    </div>                    
-                </div>
+                    <div class="form-group row">
+                        <label class="col-sm-3 col-form-label"> Home Number </label>
+                        <div class="col-sm-9">
+                            <input type="tel" id="home_num" name="home_num" class="  form-control" placeholder="231-345-3426">
+                        </div>                    
+                    </div>
                 @endif
 
                               
@@ -146,101 +148,120 @@
                 </div> -->
 
                 @if($logintype == '1')
-                <div class="form-group row">
-                    <label class="col-sm-3 col-form-label">Height - inches(optional)</label>
-                    <div class="col-sm-4">
-                        <!-- <input type="number" id="feet" name="feet" class="form-control" maxlength="2" size="2" > -->
-                        <select id="feet" name="feet" class="form-control" required="required" placeholder="Height - FEET">    
-                            <option disabled selected value> -- select feet -- </option>                            
-                            <option value="3" style="color:black;"> 3 </option>                        
-                            <option value="4" style="color:black;"> 4 </option>
-                            <option value="5" style="color:black;"> 5 </option>
-                            <option value="6" style="color:black;"> 6 </option>
-                            <option value="7" style="color:black;"> 7 </option>
-                            <option value="8" style="color:black;"> 8 </option>
-                        </select>
-                    </div>
-                    <div class="col-sm-4">
-                        <!-- <input type="number" id="inche" name="inche" class="  form-control" placeholder="Height - inches"> -->
-                        <select id="inche" name="inche" class="form-control" required="required" placeholder="Height - inches">    
-                            <option disabled selected value> -- select inches -- </option>                            
-                            <option value="0" style="color:black;"> 0 </option>                        
-                            <option value="1" style="color:black;"> 1 </option>
-                            <option value="2" style="color:black;"> 2 </option>
-                            <option value="3" style="color:black;"> 3 </option>
-                            <option value="4" style="color:black;"> 4 </option>
-                            <option value="5" style="color:black;"> 5 </option>
-                            <option value="6" style="color:black;"> 6 </option>
-                            <option value="7" style="color:black;"> 7 </option>
-                            <option value="8" style="color:black;"> 8 </option>
-                            <option value="9" style="color:black;"> 9 </option>
-                            <option value="10" style="color:black;"> 10 </option>
-                            <option value="11" style="color:black;"> 11 </option>
-                        </select>
-                    </div>
-                </div> 
-                <div class="form-group row">
-                    <label class="col-sm-3 col-form-label">Weight - pounds(optional)</label>
-                    <div class="col-sm-9">
-                    <input type="number" id="weight"  name="weight" class="  form-control" onfocus="check()" placeholder="Weight - pounds">
-                    </div>
-                </div> 
-                <div class="form-group row">
-                    <label class="col-sm-3 col-form-label">Email</label>
-                    <div class="col-sm-9">            
-                    <input type="email" name="email_address" class="  form-control" placeholder="Email"    required="required">
-                    </div>
-                </div>
-                @else
-                <div class="form-group row">
-                    <label class="col-sm-3 mt-1 col-form-label">Height - inches(optional)</label>
-                    <div class="col-sm-4 mt-1">
-                        <!-- user_height -->
-                        <!-- <input type="number" id="feet" name="feet" class="  form-control"  maxlength="2"  size="2" placeholder="Height - FEET" required="required"> -->
-                        <select id="feet" name="feet" class="form-control" required="required" placeholder="Height - FEET">    
-                            <option disabled selected value> -- select feet -- </option>                            
-                            <option value="3" style="color:black;"> 3 </option>                        
-                            <option value="4" style="color:black;"> 4 </option>
-                            <option value="5" style="color:black;"> 5 </option>
-                            <option value="6" style="color:black;"> 6 </option>
-                            <option value="7" style="color:black;"> 7 </option>
-                            <option value="8" style="color:black;"> 8 </option>
-                        </select>
-                    </div>
-                    <div class="col-sm-4 mt-1">
-                        <!-- user_height -->
-                        <!-- <input type="number" id="inche" name="inche" class="  form-control" placeholder="Height - inches" required="required"> -->
-                        <select id="inche" name="inche" class="form-control" required="required" placeholder="Height - inches">    
-                            <option disabled selected value> -- select inches -- </option>                            
-                            <option value="0" style="color:black;"> 0 </option>                        
-                            <option value="1" style="color:black;"> 1 </option>
-                            <option value="2" style="color:black;"> 2 </option>
-                            <option value="3" style="color:black;"> 3 </option>
-                            <option value="4" style="color:black;"> 4 </option>
-                            <option value="5" style="color:black;"> 5 </option>
-                            <option value="6" style="color:black;"> 6 </option>
-                            <option value="7" style="color:black;"> 7 </option>
-                            <option value="8" style="color:black;"> 8 </option>
-                            <option value="9" style="color:black;"> 9 </option>
-                            <option value="10" style="color:black;"> 10 </option>
-                            <option value="11" style="color:black;"> 11 </option>
-                        </select>
-                        
-                    </div>
-                </div> 
-                <div class="form-group row">
-                    <label class="col-sm-3 col-form-label">Weight - pounds(optional)</label>
-                    <div class="col-sm-9">
-                    <input type="number" id="weight"  name="weight" class="  form-control" placeholder="Weight - pounds" required="required">
-                    </div>
-                </div>
+                    <div class="form-group row">
+                        <label class="col-sm-3 col-form-label">Height - inches(optional)</label>
+                        <div class="col-sm-4">
+                            <!-- <input type="number" id="feet" name="feet" class="form-control" maxlength="2" size="2" > -->
+                            <select id="feet" name="feet" class="form-control" required="required" placeholder="Height - FEET">    
+                                <option disabled selected value> -- select feet -- </option>                            
+                                <option value="3" style="color:black;"> 3 </option>                        
+                                <option value="4" style="color:black;"> 4 </option>
+                                <option value="5" style="color:black;"> 5 </option>
+                                <option value="6" style="color:black;"> 6 </option>
+                                <option value="7" style="color:black;"> 7 </option>
+                                <option value="8" style="color:black;"> 8 </option>
+                            </select>
+                        </div>
+                        <div class="col-sm-4">
+                            <!-- <input type="number" id="inche" name="inche" class="  form-control" placeholder="Height - inches"> -->
+                            <select id="inche" name="inche" class="form-control" required="required" placeholder="Height - inches">    
+                                <option disabled selected value> -- select inches -- </option>                            
+                                <option value="0" style="color:black;"> 0 </option>                        
+                                <option value="1" style="color:black;"> 1 </option>
+                                <option value="2" style="color:black;"> 2 </option>
+                                <option value="3" style="color:black;"> 3 </option>
+                                <option value="4" style="color:black;"> 4 </option>
+                                <option value="5" style="color:black;"> 5 </option>
+                                <option value="6" style="color:black;"> 6 </option>
+                                <option value="7" style="color:black;"> 7 </option>
+                                <option value="8" style="color:black;"> 8 </option>
+                                <option value="9" style="color:black;"> 9 </option>
+                                <option value="10" style="color:black;"> 10 </option>
+                                <option value="11" style="color:black;"> 11 </option>
+                            </select>
+                        </div>
+                    </div> 
+                    <div class="form-group row">
+                        <label class="col-sm-3 col-form-label">Weight - pounds(optional)</label>
+                        <div class="col-sm-9">
+                        <input type="number" id="weight"  name="weight" class="  form-control" onfocus="check()" placeholder="Weight - pounds">
+                        </div>
+                    </div> 
 
-                <div class="form-group row">
-                    <label class="col-sm-3 col-form-label">Email</label>
-                    <div class="col-sm-9">            
-                    <input type="email" name="email_address" class="  form-control" placeholder="Email">
+                    
+
+                    <div class="form-group row">
+                        <label class="col-sm-3 col-form-label">Email</label>
+                        <div class="col-sm-9">            
+                        <input type="email" name="email_address" class="  form-control" placeholder="Email"    required="required">
+                        </div>
                     </div>
-                </div>
+                @else
+                    <div class="form-group row">
+                        <label class="col-sm-3 mt-1 col-form-label">Height - inches(optional)</label>
+                        <div class="col-sm-4 mt-1">
+                            <!-- user_height -->
+                            <!-- <input type="number" id="feet" name="feet" class="  form-control"  maxlength="2"  size="2" placeholder="Height - FEET" required="required"> -->
+                            <select id="feet" name="feet" class="form-control" required="required" placeholder="Height - FEET">    
+                                <option disabled selected value> -- select feet -- </option>                            
+                                <option value="3" style="color:black;"> 3 </option>                        
+                                <option value="4" style="color:black;"> 4 </option>
+                                <option value="5" style="color:black;"> 5 </option>
+                                <option value="6" style="color:black;"> 6 </option>
+                                <option value="7" style="color:black;"> 7 </option>
+                                <option value="8" style="color:black;"> 8 </option>
+                            </select>
+                        </div>
+                        <div class="col-sm-4 mt-1">
+                            <!-- user_height -->
+                            <!-- <input type="number" id="inche" name="inche" class="  form-control" placeholder="Height - inches" required="required"> -->
+                            <select id="inche" name="inche" class="form-control" required="required" placeholder="Height - inches">    
+                                <option disabled selected value> -- select inches -- </option>                            
+                                <option value="0" style="color:black;"> 0 </option>                        
+                                <option value="1" style="color:black;"> 1 </option>
+                                <option value="2" style="color:black;"> 2 </option>
+                                <option value="3" style="color:black;"> 3 </option>
+                                <option value="4" style="color:black;"> 4 </option>
+                                <option value="5" style="color:black;"> 5 </option>
+                                <option value="6" style="color:black;"> 6 </option>
+                                <option value="7" style="color:black;"> 7 </option>
+                                <option value="8" style="color:black;"> 8 </option>
+                                <option value="9" style="color:black;"> 9 </option>
+                                <option value="10" style="color:black;"> 10 </option>
+                                <option value="11" style="color:black;"> 11 </option>
+                            </select>
+                            
+                        </div>
+                    </div> 
+                    <div class="form-group row">
+                        <label class="col-sm-3 col-form-label">Weight - pounds(optional)</label>
+                        <div class="col-sm-9">
+                        <input type="number" id="weight"  name="weight" class="  form-control" placeholder="Weight - pounds" required="required">
+                        </div>
+                    </div>
+
+                    <div class="form-group row center">          
+                        <div class="form-check">
+                            <input type="checkbox"  onclick="choosePlacemaker();" value="" id="placemaker">
+                            <label class="col-form-label" for="placemaker">
+                                Check if patient has pacemaker
+                            </label>
+
+                            <label class="col-form-label mx-2" for="placemaker">
+                                <span id="alert_placemaker" class="text-danger" style=" display: none;"> Do not use GSR sensors. </span>                                
+                            </label>
+
+                            <input type="hidden" name="placemaker1" class=" form-control" placeholder="Email" id="placemaker_value">
+                        </div>           
+                    </div>
+                    
+
+                    <div class="form-group row">
+                        <label class="col-sm-3 col-form-label">Email</label>
+                        <div class="col-sm-9">            
+                        <input type="email" name="email_address" class="  form-control" placeholder="Email">
+                        </div>
+                    </div>
                 @endif
                 
                                                            
@@ -261,7 +282,6 @@
                 <div class="form-group">
                     <input type="text" name="billing_id" class="  form-control" placeholder="Billing Addresss"    required="required">
                 </div> -->
-
 
                 <div class="hidden">
                     <select id="country" name="billing_country_id"  data-plugin="select2" data-option="{}"  class="form-control" required="required">
@@ -649,6 +669,20 @@
             //initState(val , unitid, type);
 
         }
+    }
+
+    function choosePlacemaker(){
+        
+        var checkBox = document.getElementById("placemaker");
+        if(checkBox.checked){
+            $("#alert_placemaker").show();        
+            $("#placemaker_value").val("1");
+        }else{
+            $("#alert_placemaker").hide();        
+            $("#placemaker_value").val("0");
+        }
+        
+        
     }
 </script>
 

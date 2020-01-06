@@ -514,9 +514,10 @@
 						}																		
 					}
 
+					
 					var patient_id = $("#patient_id").val();
 					var tester_id = $("#tester_id").val();
-					
+
 					$.ajaxSetup({
 					headers: {
 						'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')

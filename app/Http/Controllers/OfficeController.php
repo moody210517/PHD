@@ -72,8 +72,36 @@ class OfficeController extends BaseController
         ->with('type', $id);
     }
 
+    public function getAddpatient2($id = 'other' , Request $request = null){
+        $error_msg = "";
+        if($request->has('first_name')){ 
+            $this->getAddpatient('other' , $request);
+        }
+        $company = Company::where('history',1)->get();            
+        $usertype = UserType::where('user_type_name',"Patient")->get();
+
+        $country = Country::all();
+        $state = State::where('country_id', '1')->get();
+        $city = City::where('state_id', '1')->orderBy("city_name")->get();
+        
+        return view('officeManager.patient.addUser')
+        ->with('company', $company)
+        ->with('country', $country)
+        ->with('state', $state)
+        ->with('city', $city)
+        ->with('page', 'patient')       
+        ->with('logintype', Session::get('user_type'))
+        ->with('usertype', $usertype)
+        ->with('from', "testland")
+        ->with('error_msg', $error_msg);
+
+        
+    }
+
     public function getAddpatient($id = '' , Request $request = null){    
 
+
+        
         $error_msg = "";
         if($request->has('first_name')){ 
             //$pwd = $request->input('user_password'); 
@@ -118,7 +146,8 @@ class OfficeController extends BaseController
                     $user->user_type_id = $request->input('user_type_id');
                     $user->emr_ehr_id = $request->input('emrid');
                     $user->ethnicity = $request->input('ethnicity');
-                    
+                    $user->placemaker = $request->input('placemaker');
+                                        
                     // $shipping_id = "";
                     // foreach ($request->input('shipping_id') as $cId)
                     //      $shipping_id = $shipping_id.":".$cId;
@@ -148,24 +177,26 @@ class OfficeController extends BaseController
                 }else{
                     $patient_id = $check->first()->id;                    
                 }
+                                                
                                 
-                return redirect('doctor/testland');                                                                                            
+                $user_type = 'new';                
+                $patient = Users::where('id', $patient_id)->get()->first();
+                $symptoms = VisitPurpose::where('type', 'Symptoms')->get();
+                $treatment = VisitPurpose::where('type', 'Treatment')->get();
+                $disease = VisitPurpose::where('type', 'Disease')->get();                
+                $tester_id = Session::get("user_id");
+
+                $from = $request->input('from'); 
                                 
-                // $user_type = 'new';                
-                // $patient = Users::where('id', $patient_id)->get()->first();
-                // $symptoms = VisitPurpose::where('type', 'Symptoms')->get();
-                // $treatment = VisitPurpose::where('type', 'Treatment')->get();
-                // $disease = VisitPurpose::where('type', 'Disease')->get();                
-                // $tester_id = Session::get("user_id");
-                                
-                // if($patient){
-                //     $user_diabet = UserDiabet::where('user_id', $patient_id)->get();
-                //     return view('doctor.prestep.prestep2')
-                //     ->with('patient', $patient)
-                //     ->with('user_diabet', $user_diabet);            
-                // }else{
-                //     return redirect()->back();
-                // }                                
+                if($patient && $from == 'testland'){
+                    $user_diabet = UserDiabet::where('user_id', $patient_id)->get();
+                    return view('doctor.prestep.prestep2')
+                    ->with('patient', $patient)
+                    ->with('user_diabet', $user_diabet);            
+                }else{
+                    return redirect('doctor/testland');
+                    //return redirect()->back();
+                }
 
             }
 
@@ -187,6 +218,7 @@ class OfficeController extends BaseController
         ->with('page', 'patient')       
         ->with('logintype', Session::get('user_type'))
         ->with('usertype', $usertype)
+        ->with('from', "menu")
         ->with('error_msg', $error_msg);
                 
     }

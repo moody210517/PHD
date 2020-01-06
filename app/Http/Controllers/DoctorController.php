@@ -78,12 +78,14 @@ class DoctorController extends BaseController
             ->with('data', $data);
     }
 
+
     public function getTestland(){
-        if (Session::get('user_id') == null) {            
+        if (Session::get('user_id') == null) {
             return redirect('login');
         }
         return view('doctor.testland');
     }        
+
 
     public function getPrestep1($userId = '', Request $request){
 
@@ -115,16 +117,43 @@ class DoctorController extends BaseController
         $patient = Users::where('id', $patient_id)->get()->first();
 
         if($patient){
-
-            $user_diabet = UserDiabet::where('user_id', $patient_id)->orderBy('id', 'DESC')->get();
             
-            return view('doctor.prestep.prestep2')
-            ->with('patient', $patient)
-            ->with('user_diabet', $user_diabet);            
+            $user_diabet = UserDiabet::where('user_id', $patient_id)->orderBy('id', 'DESC')->get();            
+            $tester_id = Session::get("user_id");
+            $allocation_visit_form = AllocationVisitForm::where('patient_id', $patient_id)->where('tester_id', $tester_id)->get();
+            if($user_diabet->first() && $allocation_visit_form->first()){
+                return view('doctor.prestep.bypass_pretest')
+                ->with('patient', $patient)
+                ->with('diabet_risk_id', $user_diabet->first()->id)
+                ->with('visit_form_id', $user_diabet->first()->id);
+
+            }else{
+                return view('doctor.prestep.prestep2')
+                ->with('patient', $patient)
+                ->with('user_diabet', $user_diabet);
+            }
         }else{
             return redirect()->back();
-        }                
+        }
     }
+    
+    public function getGopretest($id = '' , Request $request = null){
+        $patient_id = $request->input('patient_id');
+        $patient = Users::where('id', $patient_id)->get()->first();
+        if($patient){
+            $user_diabet = UserDiabet::where('user_id', $patient_id)->orderBy('id', 'DESC')->get();            
+            return view('doctor.prestep.prestep2')
+            ->with('patient', $patient)
+            ->with('user_diabet', $user_diabet);                     
+        }else{
+            return redirect()->back();
+        }  
+    }    
+
+    public function goGosteps($id = '' , Request $request = null){
+    }
+
+
 
     public function getPrestep3($id = '' , Request $request = null){
 
@@ -145,19 +174,31 @@ class DoctorController extends BaseController
             ->where('auto_num', $check->first()->auto_num)
             ->update(['is_allocated' => $status]);    
         }
-            
 
         // save pre test 2 step ' values to user_diabet table
         $data = $request->all();        
         $data['user_id'] = $patient_id;
-        $response = UserDiabet::create($data);
+        $user_diabet_check = UserDiabet::where('user_id', $patient_id)->get();
+        if($user_diabet_check->first()){
+            //$response = UserDiabet::create($data);            
+            DB::table('tbl_user_diabet')
+            ->where('user_id', $patient_id)
+            ->update(['waist' => $request->input('waist')
+            ,'bpmeds' => $request->input('bpmeds')
+            ,'glucose' => $request->input('glucose')
+            ,'vegetable' => $request->input('vegetable')            
+            ,'family' => $request->input('family') ]);
+
+        }else{
+            $response = UserDiabet::create($data);
+        }
+        
 
         
         $patient = Users::where('id', $patient_id)->get()->first();
         $symptoms = VisitPurpose::where('type', 'Symptoms')->get();
         $treatment = VisitPurpose::where('type', 'Treatment')->get();
         $disease = VisitPurpose::where('type', 'Disease')->get();
-
         $tester_id = Session::get("user_id");
 
         $diabet_risk_id = UserDiabet::where('user_id', $patient_id)->orderBy('id', 'DESC')->first()->id;
@@ -171,7 +212,6 @@ class DoctorController extends BaseController
         ->with('tester_id', $tester_id)
         ->with('diabet_risk_id', $diabet_risk_id);
     }
-
 
     public function getPrestep4($id = '' , Request $request = null){
         
@@ -241,14 +281,15 @@ class DoctorController extends BaseController
             ->with('allocation_id', $allocation_id);                        
         }else{
             return redirect()->back();
-        }   
+        }
+
     }
-        
+
     public function getEditvisitform($id = '' , Request $request = null){
+
         $user_type = $request->input('user_type');
         $patient_id = $request->input('patient_id');
         $allocation_id = $request->input('allocation_id');
-
         
         // check if there is uncompleted test.
         $tester_id = Session::get("user_id");
@@ -262,11 +303,9 @@ class DoctorController extends BaseController
             ,'family' => $request->input('family') ]);
         
 
-        $visit_form_id = Allocation::where('auto_num', $allocation_id)->get()->first()->visit_form_id;
-        
+        $visit_form_id = Allocation::where('auto_num', $allocation_id)->get()->first()->visit_form_id;        
         $visit_form = AllocationVisitForm::where('id', $visit_form_id)->get();
-                
-        
+
         $patient = Users::where('id', $patient_id)->get()->first();
         $symptoms = VisitPurpose::where('type', 'Symptoms')->get();
         $treatment = VisitPurpose::where('type', 'Treatment')->get();
@@ -288,10 +327,8 @@ class DoctorController extends BaseController
             return redirect()->back();
         }        
     }
-
-
-    public function getSteps( $id = '' , Request $request = null ){
-        
+    
+    public function getSteps( $id = '' , Request $request = null ){        
         $patient_id = $request->input('pid');
         $visit_form_id = $request->input('visit_form_id');
         $diabet_risk_id = $request->input('diabet_risk_id');        

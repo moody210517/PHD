@@ -26,7 +26,7 @@
 											<option value="{{$c->id}}" style="color:black;" <?php if($id == $c->id) {echo 'selected';}  ?> > {{$c->first_name.", ".$c->last_name}} </option>                        
 										@endforeach                                         
 								</select>                                        
-							</div>	
+							</div>
 
 							<div class="col-md-12 mt-4 text-center">
 								<button type="submit" class="btn col-md-3 mb-1 btn-primary"> Next </button>		
@@ -40,9 +40,6 @@
 		</div>
 	</div>
 </div>
-
-
-
 
 @stop
 

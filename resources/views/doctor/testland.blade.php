@@ -44,7 +44,7 @@
     $(document).ready(function() {        
 	});
 	function newPatient(){
-		window.location.href = "{{ URL::to('office/addPatient') }}";
+		window.location.href = "{{ URL::to('office/addPatient2') }}";
 	}
 
 	function existPatient(){

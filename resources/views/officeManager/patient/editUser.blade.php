@@ -180,6 +180,26 @@
                            <input type="number" id="weight" name="weight" class="  form-control" value="{{$user->weight}}"  placeholder="Weight - pounds">
                     </div>
 
+                    <div class="form-group row center">          
+                        <div class="form-check">
+                            <input type="checkbox"  onclick="choosePlacemaker();" value="" id="placemaker">
+                            <label class="col-form-label" for="placemaker">
+                                Check if patient has pacemaker
+                            </label>
+
+                            <label class="col-form-label mx-2" for="placemaker">
+                                <span id="alert_placemaker" class="text-danger" style=" display: none;"> 
+                                <!-- Do not use GSR sensors.  -->
+                                Do no hook up GSR sensors to patient as their pace maker will affect the results.
+                                </span>                                
+                            </label>
+
+                            <input type="hidden" name="placemaker_value" value="0" class=" form-control" placeholder="Email" id="placemaker_value">
+                        </div>           
+                    </div>
+
+
+
                     <div class="form-group row">
                         <label class="col-sm-3 col-form-label">Email</label>
                         <div class="col-sm-9">            
@@ -528,6 +548,23 @@
 
         }
     }
+
+    
+    function choosePlacemaker(){
+        
+        var checkBox = document.getElementById("placemaker");
+        if(checkBox.checked){
+            $("#alert_placemaker").show();        
+            $("#placemaker_value").val("1");
+        }else{
+            $("#alert_placemaker").hide();        
+            $("#placemaker_value").val("0");
+        }
+        
+        
+    }
+
+    
 </script>
 
 @stop

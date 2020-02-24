@@ -70,7 +70,7 @@
 									<label class="ui-check ui-check-md">
 									<input type="radio" name="a" class="activity_level">
 									<i class="dark-white"></i>
-									High exercise level: generater than 4 hours per week
+									High exercise level: greater than 4 hours per week
 									</label>								
 								</div>
 
@@ -235,7 +235,7 @@
 
 <input type="hidden" value="{{$user_type}}" name="user_type" id="user_type" />
 
-<form id="myform" data-plugin="parsley" data-option="{}"  method="post" action="{{ url('doctor/steps') }}" enctype="multipart/form-data">
+<form id="myform" data-plugin="parsley" data-option="{}"  method="post" action="{{ url('doctor/waiting') }}" enctype="multipart/form-data">
 	@csrf
 	<input type="hidden" id="pid" value="{{$patient->id}}"  name="pid"/>
 	<input type="hidden" id="visit_form_id"   name="visit_form_id"/>

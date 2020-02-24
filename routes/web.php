@@ -49,6 +49,15 @@ Route::get('/{controller}/{action}/{id?}', function($controller, $action = 'inde
     return $class->{$action}($id, $request);
 })->middleware(CheckLogin::class);
 
+Route::get('/{controller}/{action}/{id?}/{type?}', function($controller, $action = 'index', $id='', $type='', Request $request) {
+    $controller = ucfirst(strtolower($controller) . "Controller");
+    $action = "get" . ucfirst(strtolower($action));
+    $name = "\App\Http\Controllers\\" . $controller;
+    $class = new $name();
+    return $class->{$action}($id,$type, $request);
+})->middleware(CheckLogin::class);
+
+
 
 Route::post('/{controller}/{action?}', function($controller, $action = 'index', Request $request) {    
     $controller = ucfirst($controller . "Controller");

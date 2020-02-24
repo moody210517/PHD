@@ -74,7 +74,7 @@
 									<label class="ui-check ui-check-md">
 									<input type="radio" name="a" <?php if($visit_form->daily_activity == '5') { echo 'checked';} ?>  class="activity_level">
 									<i class="dark-white"></i>
-									High exercise level: generater than 4 hours per week
+									High exercise level: greater than 4 hours per week
 									</label>								
 								</div>
 
@@ -221,6 +221,8 @@
 <form id="myform" data-plugin="parsley" data-option="{}"  method="post" action="{{ url('report/review') }}" enctype="multipart/form-data">
 	@csrf
 	<input type="hidden" id="pid" value="{{$allocation_id}}"  name="allocation_id"/>
+	<input type="hidden" id="pid" value="edit"  name="page_type"/>
+
 </form>
 
 

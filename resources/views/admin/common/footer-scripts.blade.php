@@ -23,6 +23,7 @@
   <script src="{{ asset('assets/js/theme.js') }}" ></script>
   <script src="{{ asset('assets/js/custom.js') }}" ></script>
   <script src="{{ asset('assets/js/steps.js') }}" ></script>
+  <script src="{{ asset('assets/js/test.js') }}" ></script>
   <script src="{{ asset('assets/js/common.js') }}" ></script>
   <script src="{{ asset('assets/js/officeMessage.js') }}" ></script>
   

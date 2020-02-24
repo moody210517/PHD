@@ -56,7 +56,7 @@
 
 
 					<div class="row px-3 pt-5">
-						<h2>Over Results of Test </h2>						
+						<h2>Overall Results of Test </h2>						
 					</div>
 					<h5>(Click on any gauge for more details)</h5>
 										
@@ -123,10 +123,14 @@
 
 												
 						<div class="col-md-4 blue-border">
-							<label class="col-form-label report_sub_title"><h6 class="mb-0"> Skin Microcirculation</h6> </label>
+							<label class="col-form-label report_sub_title"><h6 class="mb-0"> Galvanic Skin Response </h6> </label>
 							<div class="row">
+								@if($patient->placemaker == "1")
+								<div class="form-control text-center  no-border  pt-3 pb-3 canvas_container_overall" style="background-color:#d3d3d3;">
+								@else
 								<div class="form-control text-center  no-border  pt-3 pb-3 canvas_container_overall" id="div-preview3">
-									
+								@endif
+																
 									<div id="preview">
 										<canvas width="380" height="170" id="canvas-preview3"></canvas>						
 									</div>
@@ -236,9 +240,13 @@
 			</div>
 
 
-
-			<div class="col-md-12 mt-4 text-center">									
-				<a  href="{{ URL::to('doctor/testland') }}" class="btn col-md-2 mb-1 btn-primary">Home</a>	
+			<div class="col-md-12 mt-4 text-center">	
+				@if($page_type == "test")
+					<a  href="{{ URL::to('doctor/testland') }}" class="btn col-md-2 mb-1 btn-primary">Home</a>	
+				@else
+				<a  href="{{ URL::to('Testreview/TestPatients') }}" class="btn col-md-2 mb-1 btn-primary">Home</a>	
+				@endif
+				
 			</div>
 
 

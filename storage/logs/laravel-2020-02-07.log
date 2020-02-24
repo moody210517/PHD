@@ -1,0 +1,4 @@
+[2020-02-07 17:29:00] local.ERROR: Maximum execution time of 30 seconds exceeded {"exception":"[object] (Symfony\\Component\\Debug\\Exception\\FatalErrorException(code: 1): Maximum execution time of 30 seconds exceeded at F:\\CDriver\\Xampp\\htdocs\\phd\\vendor\\symfony\outing\\CompiledRoute.php:19)
+[stacktrace]
+#0 {main}
+"} 

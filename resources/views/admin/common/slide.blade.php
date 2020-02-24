@@ -310,8 +310,8 @@
                             </a>
                         </li>  -->
 
-                        <li class="{!! Request::is('admin/test') ? 'active' : '' !!}">                                
-                            <a href="{{ URL::to('admin/test') }}" class="i-con-h-a location-href" data-link="calendar">
+                        <li class="{!! Request::is('Testreview/TestPatients')  || Request::is('Testreview/testlists')  ? 'active' : ''  !!}">                                
+                            <a href="{{ URL::to('Testreview/TestPatients') }}" class="i-con-h-a location-href" data-link="calendar">
                             <span class="nav-icon"><i class="i-con i-con-page"><i></i></i> </span>
                             <span class="nav-text">Test Review</span> 
                             </a>

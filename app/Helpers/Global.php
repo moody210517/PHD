@@ -165,16 +165,30 @@
         $n = 0;$SPO2bpm =0;$OxygenSat = 0; 
         $RR = []; $RR_Total = 0; $countMoreThan50 = 0;
         $index = 0;
-        foreach($pluse_oximeter as $item){
-            $value  = json_decode($item["raw_data"], true);
-                        
+        $min_tmp = 0;
+        $max_tmp = 0;
+
+        foreach($pluse_oximeter as $item){            
+            $value  = json_decode($item["raw_data"], true);                        
             foreach($value as $v){
                 
                 $SPO2bpm = $SPO2bpm + $v["SPO2bpm"];
-                $OxygenSat = $SPO2bpm + $v["OxygenSat"];
+                $OxygenSat = $OxygenSat + $v["OxygenSat"];
+
+                if($n == 0){
+                    $min_tmp = $v["Min"];
+                }
+
+                if($max_tmp < $v["Max"]){
+                    $max_tmp = $v["Max"];
+                }
+                if($min_tmp > $v["Min"]){
+                    $min_tmp = $v["Min"];
+                }
+
                 $RR_TimeStamp = $v["RR"];
                 $RRT = $RR_TimeStamp;//json_decode($RR_TimeStamp);
-                $tmp = 0;
+                $tmp = 0;  
                 $tmp2 = 0;
 
                 foreach($RRT as $vv){
@@ -196,7 +210,7 @@
                 $n++;
             }
         }
-
+    
         $avg_spo2bpm = 0;
         $avg_oxygensat = 0;
         $avg_rr = 0;
@@ -207,10 +221,14 @@
         }        
         if(count($RR) > 0){
             $avg_rr = $RR_Total / count($RR);
+            
+        }
+        if($index > 0){
             $percentMoreThan50 = $countMoreThan50  / $index;
         }
         
-        return [$avg_spo2bpm, $avg_oxygensat, $avg_rr, $percentMoreThan50,  $RR];
+        
+        return [$avg_spo2bpm, $avg_oxygensat, $avg_rr, $percentMoreThan50,  $RR , $min_tmp, $max_tmp];
     }
 
     function getLongShortRR($RR){
@@ -392,7 +410,6 @@
         }    
         return [$risk , $risk_title, $risk_color]; // percent, title, color
     }
-
 
     
 ?>

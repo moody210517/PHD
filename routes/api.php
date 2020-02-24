@@ -17,6 +17,10 @@ Route::middleware('auth:api')->get('/user', function (Request $request) {
     return $request->user();
 });
 
+Route::middleware('auth:apitest')->get('/user', function (Request $request) {
+    return $request->user();
+});
+
 //  --------------------------------------   data sensor apis  ----------------------------------
 
 Route::get('/login', 'ApiController@login');
@@ -55,4 +59,15 @@ Route::post('/updateWeight', 'ApiController@updateWeight');
 Route::post('/addVisitForm', 'ApiController@addVisitForm');
 Route::post('/editVisitForm', 'ApiController@editVisitForm');
 Route::post('/send', 'ApiController@send');
+Route::get('/send', 'ApiController@send');
 
+Route::post('/checkStep', 'ApiTestController@checkStep');
+Route::post('/startStep', 'ApiTestController@startStep');
+Route::get('/startStep', 'ApiTestController@startStep');
+Route::post('/completeStep', 'ApiTestController@completeStep');
+Route::get('/completeStep', 'ApiTestController@completeStep');
+
+
+
+// Review Test
+Route::post('/ApiTest/DiabetReport',        'ApiTestController@getDiabetReport'     )->name('review.typeii');

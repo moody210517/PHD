@@ -1,40 +1,174 @@
 <?php
 
 namespace App\Http\Controllers;
+
+
 use Illuminate\Foundation\Bus\DispatchesJobs;
 use Illuminate\Routing\Controller as BaseController;
 use Illuminate\Foundation\Validation\ValidatesRequests;
 use Illuminate\Foundation\Auth\Access\AuthorizesRequests;
 use Illuminate\Http\Request;
+
 use Response;
 use DB;
 use App\Users;
+use App\UserType;
+use App\Company;
+use App\Ship;
+use App\Bill;
+use App\Country;
+use App\State;
+use App\City;
+use App\Device;
 use App\Allocation;
-use App\Blood;
+use App\GSR;
 use App\AllocationVisitForm;
 use App\UserDiabet;
-use App\Oximeter;
+use App\Blood;
+
+
+
 use Config;
 use Session;
-use App\Helpers\GSR;
+use DateTime;
+use App\Oximeter;
 
 
-class SubreportController extends Controller
+class ApiTestController extends Controller
 {
     use AuthorizesRequests, DispatchesJobs, ValidatesRequests;
-  
-    // private $BASELINE = 3;
-    // private $VALSA = 4;
-    // private $DEEPBREADING = 5;
-    // private $STANDING = 6;
-    // private $HANDGRIP = 7;
+     
+    public function checkStep(Request $request){
+        
+        $allocation_id = $request->input('allocation_id');        
+        $allocation = Allocation::where('auto_num', $allocation_id)->get();
+        if($allocation->first()){
+            if($allocation->first()->token_expired_alert == 1){            
+                DB::table('tbl_allocation')
+                ->where('auto_num', $allocation_id)
+                ->update(['token_expired_alert' => 0]);
+                $a = array('results'=>400,'msg'=>"token expired");
+                return Response::json($a);
+            }
 
-    public function getDiabetReport($id = '', Request $request = null){
+            $step_id = $allocation->first()->step;
+            $blood =  getLevelBood($allocation_id, $step_id);
+            $GSR = $this->getGSR($allocation_id, $step_id);               
+            $spo2 = getRR($allocation_id, $step_id);                      
 
-        $allocation_id = $id;// $request->input('patient_id');
-        if($allocation_id == null || $allocation_id == ''){
-            $allocation_id = $request->input('allocation_id');
+            if($step_id == "1" || $step_id == "2"){
+                if($blood[1] == 0){ // no data
+                    $a = array('results'=>200,'msg'=>"no data" , 'step_id'=>$step_id);                                
+                }else{                                    
+                    $a = array('results'=>300,'msg'=>"exist data" , 'step_id'=>$step_id, 
+                    'o2'=>$spo2[1], 'hrv'=>$spo2[2], 'us'=>$GSR[0],
+                    'sys'=>$blood[1], 'dia'=>$blood[2], 'pul'=>$spo2[0]);
+                }
+            }else if($step_id == "3"){
+
+                if($GSR[0] == 0){
+                    $a = array('results'=>200,'msg'=>"no data" , 'step_id'=>$step_id);  
+                }else{
+                    $a = array('results'=>300, 'msg'=>'exist data' , 'step_id'=>$step_id, 'us'=>$GSR[0]);
+                }                
+            }else if($step_id == "4" || $step_id == "5" || $step_id == "6" || $step_id == "7"){
+                if($blood[1] == 0){ // no data
+                    $a = array('results'=>200,'msg'=>"no data" , 'step_id'=>$step_id);                                
+                }else{                                    
+                    $a = array('results'=>300,'msg'=>"exist data" , 'step_id'=>$step_id, 
+                    'o2'=>$spo2[1], 'hrv'=>$spo2[2], 'us'=>$GSR[0],
+                    'sys'=>$blood[1], 'dia'=>$blood[2], 'pul'=>$spo2[0]);
+                }
+            }else if($step_id == "8"){
+                $a = array('results'=>200,'msg'=>"no data" , 'step_id'=>$step_id); 
+            }
+            return Response::json($a);                     
+        }else{
+            $a = array('results'=>300,'msg'=>"no allocation");
+            return Response::json($a);
+        }        
+    }
+
+    public function startStep(Request $request){
+        $step_id = $request->input('step');
+        $allocation_id = $request->input('allocation_id');
+
+        if($allocation_id != null && $step_id != null){
+            $allocation = Allocation::where('auto_num', $allocation_id)->where('is_allocated', "1")->get();
+            if($allocation->first()){
+                $patient_id = $allocation->first()->user_num;
+                $user = Users::where('id', $patient_id)->get();
+                $pacemaker = "0";
+                if($user->first()){
+                    $pacemaker = $user->first()->placemaker;
+                }
+                
+                $origin_step = $allocation->first()->step;
+                
+                if( $origin_step == $step_id){
+                    $res1 = Oximeter::where('allocation_id',$allocation_id)
+                        ->where('step_id',$step_id)
+                        ->delete();
+                    $res1 = Blood::where('allocation_id',$allocation_id)
+                        ->where('step_id',$step_id)
+                        ->delete();
+                        
+                    $res1 = GSR::where('allocation_id',$allocation_id)
+                        ->where('step_id',$step_id)
+                        ->delete();                        
+                }
+                                                
+                if($pacemaker == "1" && $step_id == 3){
+                    DB::table('tbl_allocation')
+                    ->where('auto_num', $allocation_id)
+                    ->update(['step' => 4]);
+                }else{
+                    DB::table('tbl_allocation')
+                    ->where('auto_num', $allocation_id)
+                    ->update(['step' => $step_id]);
+                }
+                        
+                $a = array('results'=>200,'msg'=>"success");
+                return Response::json($a);
+            }else{
+                $check = Allocation::where('auto_num', $allocation_id)->get();
+                if($check->first()){
+                    $uid = $check->first()->user_num;
+                    $data = Allocation::where('user_num', $uid)->where('is_allocated', 1)->get();
+                    if($data->first()){
+                        DB::table('tbl_allocation')
+                        ->where('auto_num', $data->first()->auto_num)
+                        ->update(['token_expired_alert' => 1]);
+                    }
+                }                
+            }
+
         }
+        
+        $a = array('results'=>300,'msg'=>"failed");
+        return Response::json($a);
+                
+    }
+
+    public function completeStep(Request $request){        
+        $allocation_id = $request->input('allocation_id');
+
+        if($allocation_id != null ){
+            DB::table('tbl_allocation')
+            ->where('auto_num', $allocation_id)
+            ->update(['step' => 8, 'is_allocated'=>0]);
+            $a = array('results'=>200,'msg'=>"success");
+            return Response::json($a);
+        }else{
+            $a = array('results'=>300,'msg'=>"failed");
+            return Response::json($a);
+        }
+        
+    }
+
+    public function getDiabetReport(Request $request){
+        
+        $allocation_id = $request->input('allocation_id');
         $allocation = Allocation::where('auto_num', $allocation_id)->get();
         if($allocation->first()){
             
@@ -135,53 +269,34 @@ class SubreportController extends Controller
                     }else if($diabet_risk_name == "Very high"){
                         $year_risk  =   $year_risk = "~50%*";
                     }    
+                }            
+                                
+                $family_text = "No";        
+                if($family == 1){
+                    $family_text = "Yes - 2nd Degree Relative";
+                }else if($family == 2){
+                    $family_text = "Yes - 1st Degree Relative";
                 }
+                                
+                $a = array('results'=>200,
+                    'title'=> $diabet_risk_name,
+                    'total'=> $diabet_risk_score,
+                    'year_risk'=> $year_risk,
+                    'age'=> [$patient->age, $age_score],
+                    'bmi'=> [$bmiData[0], $bmiData[3]],
+                    'waist'=> [$waist, $waist_score],
+                    'bpmeds'=> [$bpmeds == 1 ? "Yes": "No", $bpmeds_score],
+                    'glucose'=> [$glucose == 1?"Yes":"No", $glucose_score],
+                    'vegetable'=> [$vegetable == 1?"Yes":"No", $vegetable_score],
+                    'family'=> [$family_text, $family_score],
+                    'activity'=> [$activity, $activity_score],
+                    'risk_color'=> $diabet_risk_color,                    
+                    'msg'=>"success");
+                                    
 
-                return view('doctor.review.sub_diabet')
-                ->with('page_type', $request->input('page_type'))
-                ->with('allocation', $allocation->first())
-                ->with('patient', $patient)
-                ->with('weight_status', $bmiData[1])
-                ->with('color', $bmiData[2])
-                ->with('diabet_risk_score', $diabet_risk_score)
-                ->with('diabet_risk_percent', $diabet_risk)
-                ->with('diabet_risk_name', $diabet_risk_name)
-                ->with('diabet_risk_color', $diabet_risk_color)
-                ->with('year_risk', $year_risk)                                
-                ->with('age', [$patient->age, $age_score])
-                ->with('bmi', [$bmiData[0], $bmiData[3]])
-                ->with('waist', [$waist, $waist_score])
-                ->with('bpmeds', [$bpmeds, $bpmeds_score])
-                ->with('glucose', [$glucose, $glucose_score])
-                ->with('vegetable', [$vegetable, $vegetable_score])
-                ->with('family', [$family, $family_score])
-                ->with('activity', [$activity, $activity_score]);
-            }                
-        }
-        redirect()->back();
-    }
 
-    // --------------------------------------------------------- Blood Pressure Sub Report  -------------------------------------------------------
-    public function getBloodPressureReport($id = '', Request $request = null){
 
-        $allocation_id = $id;// $request->input('patient_id');
-        if($allocation_id == null || $allocation_id == ''){
-            $allocation_id = $request->input('allocation_id');
-        }
-
-        $allocation = Allocation::where('auto_num', $allocation_id)->get();
-        if($allocation->first()){
-            
-            $patient_id = $allocation->first()->user_num;
-            $visit_form_id = $allocation->first()->visit_form_id;
-            $diabet_risk_id = $allocation->first()->diabet_risk_id;  
-
-            $patient = Users::where('id', $patient_id)->get()->first();
-            if($patient){
-
-                // get BMI data 
-                $bmiData = $this->getBMI($patient->weight, $patient->user_height);
-                
+                // blood pressure score
                 $step3Data =  getLevelBood($allocation_id, $this->BASELINE);
                 $step6Data =  getLevelBood($allocation_id, $this->STANDING);
 
@@ -281,9 +396,7 @@ class SubreportController extends Controller
                     $SPRV_SCORE += 4;
                 }
                 $ValsaResTitleColor = getRiskAndTitleColor( $SPRV_SCORE , 0.1, 2 , 3, 4 , 0 , 25 , 25, 25, 25, 0 );
-                 
-                
-
+                                 
                 $step5RRData = $this->getOximeterRR($allocation_id, $this->DEEPBREADING);
                 $VRC5 = 0;
                 if( count($step5RRData[0])  > 0){
@@ -327,7 +440,6 @@ class SubreportController extends Controller
                         $VRC6 = $MaxMin[0] / $MaxMin[1];
                     }
                 }
-
                 if($VRC6 < 1.13){
                     $overall_blood_score  += 1;
                     $VRC6_Score = 1;
@@ -335,280 +447,50 @@ class SubreportController extends Controller
                 }                
                 $para_score =   $VRC4_Score + $VRC6_Score + $VRC5_Score;    
                 $paraTitleColor = getRiskAndTitleColor( $para_score , 0.1, 2 , 3, 0 , 0 , 33.3 , 33.3, 33.4, 0, 0 );                
-
                 $overall_blood = getRiskAndTitleColor($overall_blood_score, 7, 15, 23, 30, 0, 23, 27, 27, 23 , 0);
-                                
-                return view('doctor.review.sub_blood_pressure')
-                    ->with('page_type', $request->input('page_type'))
-                    ->with('allocation', $allocation->first())
-                    ->with('patient', $patient)
-                    ->with('bmi', $bmiData[0])
-                    ->with('weight_status', $bmiData[1])
-                    ->with('color', $bmiData[2])  
-                    ->with('overall_blood_risk_score', $overall_blood_score)
-                    ->with('overall_blood_risk_percent', $overall_blood[0])
-                    ->with('overall_blood_risk_name', $overall_blood[1])
-                    ->with('overall_blood_risk_color', $overall_blood[2])
-                    ->with('baseline', [ round($step3Data[Config::get('constants.options.score')], 2),  
-                            round($step3Data[Config::get('constants.options.avg_systolic')], 2), 
-                            round($step3Data[Config::get('constants.options.avg_diastolic')], 2),
-                            $BaselineTitleColor[1],
-                            $step3Data[6],// color
-                            $BaselineTitleColor[0],
-                            $baseline_systolic_color,
-                            $baseline_dyastolic_color
-                             ])
-                    ->with('standing', [ round($step6Data[Config::get('constants.options.score')], 2),  
-                            round($step6Data[Config::get('constants.options.avg_systolic')], 2), 
-                            round($step6Data[Config::get('constants.options.avg_diastolic')], 2),
-                            $StandingTitleColor[1],
-                            $step6Data[6] ,
-                            $StandingTitleColor[0],
-                            $standing_systolic_color,
-                            $standing_dyastolic_color
-                            ])
-                    ->with('standingRes', [round($SPRS , 2),  round($DPRS, 2), round($StandingResponseScore[0], 2) 
-                    , $StandingResTitleColor[1], $StandingResTitleColor[2]
-                    , $StandingResTitleColor[0], $StandingResponseScore[1] , $StandingResponseScore[2] ,  $StandingResponseScore[3] , $StandingResponseScore[4]
-                    ])
-                    ->with('valsalva', [round($VAL_SCORE, 2),  round($VAL_SYS_AVG, 2), round($VAL_DYA_AVG, 2) 
-                    , $ValsaTitleColor[1], $step4Data[6]
-                    , $step4Data[7],$valsa_systolic_color, $valsa_dyastolic_color
-                    ])
-                    ->with('valsalvaRes', [$SPRV_SCORE,  round($SPRV, 2)
-                    , $ValsaResTitleColor[1], $ValsaResTitleColor[2]
-                    , $ValsaResTitleColor[0]
-                    ])
-                    ->with('para', [round($VRC4,2),  round($VRC6, 2) , round($VRC5, 2) 
-                    , round($para_score,2)
-                    , $color4, $color6 , $color5
-                    , $paraTitleColor[1], $paraTitleColor[2]
-                    , $paraTitleColor[0]
-                    ]);
+
+                $blood_res = array('overall_blood_risk_percent' => $overall_blood[0],
+                'overall_blood_risk_name' => $overall_blood[1],
+                'overall_blood_risk_color' => $overall_blood[2],
+                'baseline'=> [ round($step3Data[Config::get('constants.options.score')], 2),  
+                round($step3Data[Config::get('constants.options.avg_systolic')], 2), 
+                round($step3Data[Config::get('constants.options.avg_diastolic')], 2),
+                $BaselineTitleColor[1],
+                $step3Data[6],// color
+                $BaselineTitleColor[0],
+                $baseline_systolic_color,
+                $baseline_dyastolic_color
+                 ],
+                'standing' => [ round($step6Data[Config::get('constants.options.score')], 2),  
+                round($step6Data[Config::get('constants.options.avg_systolic')], 2), 
+                round($step6Data[Config::get('constants.options.avg_diastolic')], 2),
+                $StandingTitleColor[1],
+                $step6Data[6] ,
+                $StandingTitleColor[0],
+                $standing_systolic_color,
+                $standing_dyastolic_color
+                ],
+                'standingRes' => [round($SPRS , 2),  round($DPRS, 2), round($StandingResponseScore[0], 2) 
+                , $StandingResTitleColor[1], $StandingResTitleColor[2]
+                , $StandingResTitleColor[0], $StandingResponseScore[1] , $StandingResponseScore[2] ,  $StandingResponseScore[3] , $StandingResponseScore[4]],
+                'valsalva' =>[round($VAL_SCORE, 2),  round($VAL_SYS_AVG, 2), round($VAL_DYA_AVG, 2) 
+                , $ValsaTitleColor[1], $step4Data[6]
+                , $step4Data[7],$valsa_systolic_color, $valsa_dyastolic_color],
+                'valsalvaRes' =>[$SPRV_SCORE,  round($SPRV, 2)
+                , $ValsaResTitleColor[1], $ValsaResTitleColor[2]
+                , $ValsaResTitleColor[0]],
+                'para' => [round($VRC4,2),  round($VRC6, 2) , round($VRC5, 2) 
+                , round($para_score,2)
+                , $color4, $color6 , $color5
+                , $paraTitleColor[1], $paraTitleColor[2]
+                , $paraTitleColor[0]]   );
 
 
-            }                      
-        }
-        redirect()->back();
-    }
 
 
-    public function getSkin($id = '', Request $request = null){
-        $allocation_id = $id;// $request->input('patient_id');
-        if($allocation_id == null || $allocation_id == ''){
-            $allocation_id = $request->input('allocation_id');
-        }
-        $allocation = Allocation::where('auto_num', $allocation_id)->get();
-        if($allocation->first()){            
-            $patient_id = $allocation->first()->user_num;            
-            $patient = Users::where('id', $patient_id)->get()->first();
-            if($patient){
-                $bmiData = $this->getBMI($patient->weight, $patient->user_height);
-                // Skin Report 
-                $GSR = $this->getGSR($allocation_id, $this->SKIN);
-                //$Female_Hand_Score = 0; $Female_Feet_Score = 0;
-                $Hand_Score = 0; $Feet_Score = 0;
-                if($patient->sex == "Male"){
-                    $Hand_Score = getMaleHandScore($patient->age, $GSR[0]);
-                    $Feet_Score = getMaleFeetScore($patient->age, $GSR[1]);
-                }else{
-                    $Hand_Score = getFemaleHandScore($patient->age, $GSR[0]);
-                    $Feet_Score = getFemaleFeetScore($patient->age, $GSR[1]);                    
-                }
-
-                $HandTitleColor = getSkinTitleColor($Hand_Score,"sub");
-                $FeetTitleColor = getSkinTitleColor($Feet_Score,"sub");
-                $SkinTitleColor = getSkinTitleColor($Hand_Score + $Feet_Score,"overall");
-
-                return view('doctor.review.sub_skin')
-                ->with('page_type', $request->input('page_type'))
-                ->with('allocation', $allocation->first())
-                ->with('patient', $patient)
-                ->with('bmi', $bmiData[0])->with('weight_status', $bmiData[1])->with('color', $bmiData[2])
-                ->with('skin', [$Hand_Score + $Feet_Score, $SkinTitleColor[0] , $SkinTitleColor[1] , $SkinTitleColor[2]]) // Score, Percentage , 
-                ->with('hand', [ $GSR[0], $Hand_Score , $HandTitleColor[0] , $HandTitleColor[1] , $HandTitleColor[2]]) // Real Value, Score, Percent, Title , Title Color
-                ->with('feet', [ $GSR[1], $Feet_Score , $FeetTitleColor[0] , $FeetTitleColor[1] , $FeetTitleColor[2]]); 
-
-            }
-        }
-        redirect()->back();
-    }
-
-    public function getAns($id = '', Request $request = null){
-        $allocation_id = $id;// $request->input('patient_id');
-        if($allocation_id == null || $allocation_id == ''){
-            $allocation_id = $request->input('allocation_id');
-        }
-        $allocation = Allocation::where('auto_num', $allocation_id)->get();
-        if($allocation->first()){            
-            $patient_id = $allocation->first()->user_num;            
-            $patient = Users::where('id', $patient_id)->get()->first();
-            if($patient){
-                $bmiData = $this->getBMI($patient->weight, $patient->user_height);
-                // Get ANS Dysfunction
-                //$step3Data =  getLevelBood($allocation_id, $this->BASELINE);
-                //$HR = $step3Data[Config::get('constants.options.avg_heart_rate')]; // mean heard rate during step 3.
-                $step3RRData = getRR($allocation_id, $this->BASELINE);    
-                $HR = $step3RRData[0];
-                
-                $ANS_Score = 0;
-                $HR_Score =  getANSHeartScore($patient->sex, $patient->age, $HR);
-                $ANS_Score += $HR_Score;
-                $HR_Per_Title_Color =  getRiskAndTitleColor($HR_Score, 1, 2, 3, 4, 5, 20, 20, 20, 20 , 20);
-                               
-                $SDNN = $this->getSDNN($allocation_id, $this->BASELINE);        // Get SDNN Value
-                $SDNN_SCORE = getSDNNScore($patient->age, $SDNN);    // Get SDNN Score 
-                $ANS_Score  +=  $SDNN_SCORE;
-                $SDNN_Per_Title_Color =  getRiskAndTitleColor($SDNN_SCORE, 0.1, 1, 3, 0, 0, 33.3, 33.3, 33.4, 0, 0);                
- 
-                $RMSSD = $this->getRMSSD($allocation_id, $this->BASELINE);      // Get RMSSD Value
-                $RMSSD_SCORE = getRMSSDScore($patient->age, $RMSSD);  // Get RMSSD Score  
-                $ANS_Score  +=  $RMSSD_SCORE;
-                $RMSSD_Per_Title_Color =  getRiskAndTitleColor($RMSSD_SCORE, 0.1, 1, 3, 0, 0, 33.3, 33.3, 33.4, 0, 0);
-                              
-                 
-                 $AVG_RR  = $step3RRData[2];                 // Get Avg RR Value
-                 $AVG_RR_Score = getAvgRRScore($AVG_RR);            // Get Avg RR Score 
-                 $ANS_Score += $AVG_RR_Score;
-                 $AVGRR_Per_Title_Color =  getRiskAndTitleColor($AVG_RR_Score, 0.1, 1, 3, 0, 0, 33.3, 33.3, 33.4, 0, 0);
-                
-                 $PERCENT_MORE_THAN_50 = $step3RRData[3];                            // Get Vale
-                 $PERCENT_MORE_THAN_50_Score = get50Score($PERCENT_MORE_THAN_50);    // Get Score 
-                 $ANS_Score += $PERCENT_MORE_THAN_50_Score;
-                 $More50_Per_Title_Color =  getRiskAndTitleColor($PERCENT_MORE_THAN_50_Score, 0.1, 1, 3, 0, 0, 33.3, 33.3, 33.4, 0, 0);
-                              
-                 $AVG_OXYGEN = $step3RRData[1];   
-                 $AVG_OXYGEN_Score = 0;
-                 $Oxygen_Per = 0; $Oxygen_Title = "Low"; $Oxygen_Color = "green-color";
-                 if($AVG_OXYGEN < 94 ){
-                     $AVG_OXYGEN_Score += 1;
-                     $Oxygen_Per = 100; $Oxygen_Title = "High"; $Oxygen_Color = "red-color";
-                 }
-                 $ANS_Score += $AVG_OXYGEN_Score;
-                 $ans_dysfunction = getRiskAndTitleColor($ANS_Score, 5, 9, 14, 18, 0, 28, 22, 28, 22 , 0);
-
-                return view('doctor.review.sub_ans_dysfunction')
-                ->with('page_type', $request->input('page_type'))
-                ->with('allocation', $allocation->first())
-                ->with('patient', $patient)
-                ->with('bmi', $bmiData[0])->with('weight_status', $bmiData[1])->with('color', $bmiData[2])
-                ->with('heart_rate', [round($HR,2), $HR_Score, $HR_Per_Title_Color[0] , $HR_Per_Title_Color[1] ,  $HR_Per_Title_Color[2] ])
-                ->with('SDNN', [round($SDNN , 2),  $SDNN_SCORE, $SDNN_Per_Title_Color[0] , $SDNN_Per_Title_Color[1] ,  $SDNN_Per_Title_Color[2] ])
-                ->with('RMSSD', [round($RMSSD, 2), $RMSSD_SCORE, $RMSSD_Per_Title_Color[0] , $RMSSD_Per_Title_Color[1] ,  $RMSSD_Per_Title_Color[2] ])
-                ->with('AVG_RR', [round($AVG_RR, 2), $AVG_RR_Score, $AVGRR_Per_Title_Color[0] , $AVGRR_Per_Title_Color[1] ,  $AVGRR_Per_Title_Color[2] ])
-                ->with('More50', [round($PERCENT_MORE_THAN_50, 2) , $PERCENT_MORE_THAN_50_Score, $More50_Per_Title_Color[0] , $More50_Per_Title_Color[1] ,  $More50_Per_Title_Color[2] ])                
-                ->with('SPO2', [ round($AVG_OXYGEN, 2) ,$AVG_OXYGEN_Score,  $Oxygen_Per , $Oxygen_Title ,  $Oxygen_Color ])
-                ->with('ans', [ $ANS_Score ,  $ans_dysfunction[0] , $ans_dysfunction[1] ,  $ans_dysfunction[2] ]);
-                   
-            }
-        }
-        redirect()->back();
-    }
-
-    
-    public function getAdrenergic($id = '', Request $request = null){
-
-        $allocation_id = $id;// $request->input('patient_id');
-        if($allocation_id == null || $allocation_id == ''){
-            $allocation_id = $request->input('allocation_id');
-        }
-
-        $allocation = Allocation::where('auto_num', $allocation_id)->get();
-        if($allocation->first()){            
-            $patient_id = $allocation->first()->user_num;            
-            $patient = Users::where('id', $patient_id)->get()->first();
-            if($patient){
-                $bmiData = $this->getBMI($patient->weight, $patient->user_height);          
-                $step3Data =  getLevelBood($allocation_id, $this->BASELINE);
-                //$step4Data =  getLevelBood($allocation_id, $this->VALSA);
-                $step4RRData =  getRR($allocation_id, $this->VALSA);
-
-                $step6Data =  getLevelBood($allocation_id, $this->STANDING);
-                $step6RRData =  getRR($allocation_id, $this->STANDING);
-
-                if($step4RRData[5] != 0){
-                    //$VRC4 = $step4Data[Config::get('constants.options.max_heart_rate')] / $step4Data[Config::get('constants.options.min_heart_rate')];
-                    $VRC4 = $step4RRData[6] / $step4RRData[5];
-                }else{
-                    $VRC4 = 0;
-                }                
-                if( $step6RRData[5] != 0){
-                    $VRC6 = $step6RRData[6] / $step6RRData[5];                    
-                }else{
-                    $VRC6 = 0;
-                }                
-                $SPRV = ($step3Data[Config::get('constants.options.avg_systolic')] - $step4Data[ Config::get('constants.options.avg_systolic') ]);
-
-                // Adrenergic 
-                $AVG_Systolic_Baseline = $step3Data[Config::get('constants.options.avg_systolic')];
-                $AVG_Diastolic_Baseline = $step3Data[Config::get('constants.options.avg_diastolic')];                
-                $AVG_Systolic_Standing = $step6Data[Config::get('constants.options.avg_systolic')];
-                $AVG_Diastolic_Standing = $step6Data[Config::get('constants.options.avg_diastolic')];                
-
-                $BaselineSysScore = getBaselineFromSys($AVG_Systolic_Baseline);
-                $BaselineSysScoreTitleColor = getRiskAndTitleColor( $BaselineSysScore , 1, 3 , 4, 5 , 0 , 25 , 25, 25, 25, 0 );
-
-                $BaselineDiaScore = getBaselineFromDia($AVG_Diastolic_Baseline);
-                $BaselineDiaScoreTitleColor = getRiskAndTitleColor( $BaselineDiaScore , 0.1, 2 , 4, 5 , 0 , 25 , 25, 25, 25, 0 );
-
-                $StandingSysScore = getStandingFromSys($AVG_Systolic_Standing);
-                $StandingSysScoreTitleColor = getRiskAndTitleColor( $StandingSysScore , 1, 3 , 4, 5 , 0 , 25 , 25, 25, 25, 0 );
-
-                $StandingDiaScore = getStandingFromDia($AVG_Diastolic_Standing);                
-                $StandingDiaScoreTitleColor = getRiskAndTitleColor( $StandingDiaScore , 0.1, 2 , 4, 5 , 0 , 25 , 25, 25, 25, 0 );
-
-                $SPRV_Score = getValsalvaScore($SPRV);
-                $SPRV_ScoreTitleColor = getRiskAndTitleColor( $SPRV_Score , 1, 3 , 4, 5 , 0 , 25 , 25, 25, 25, 0 );                
-
-                $SPRS = $step3Data[Config::get('constants.options.avg_systolic')] - $step6Data[Config::get('constants.options.avg_systolic')];
-                $SPRS_Score = getSPRSScore($SPRS);
-                $SPRS_ScoreTitleColor = getRiskAndTitleColor( $SPRS_Score , 1, 3 , 4, 5 , 0 , 25 , 25, 25, 25, 0 );
-
-                $DPRS =  $step3Data[Config::get('constants.options.avg_diastolic')] - $step6Data[Config::get('constants.options.avg_diastolic')];
-                $DPRS_Score = getDPRSScore($DPRS);
-                $DPRS_ScoreTitleColor = getRiskAndTitleColor( $DPRS_Score , 1, 3 , 4, 5 , 0 , 25 , 25, 25, 25, 0 );
-               
-                $AdrenergicScore = $BaselineSysScore + $BaselineDiaScore + $StandingSysScore + $StandingDiaScore + $SPRV_Score + $SPRS_Score + $DPRS_Score ;
-                $adrenergic = getRiskAndTitleColor($AdrenergicScore, 7, 15, 23, 30, 0, 24, 26, 26, 24 , 0);
-
-                return view('doctor.review.sub_adrenergic')
-                ->with('page_type', $request->input('page_type'))
-                ->with('allocation', $allocation->first())
-                ->with('patient', $patient)
-                ->with('bmi', $bmiData[0])->with('weight_status', $bmiData[1])->with('color', $bmiData[2])
-                ->with('adrenergic', [$AdrenergicScore, $adrenergic[0] , $adrenergic[1] , $adrenergic[2]])
-                ->with('BaselineSys', [$BaselineSysScore, $BaselineSysScoreTitleColor[0] , $BaselineSysScoreTitleColor[1], $BaselineSysScoreTitleColor[2], round($AVG_Systolic_Baseline,2) ])
-                ->with('BaselineDia', [$BaselineDiaScore, $BaselineDiaScoreTitleColor[0] , $BaselineDiaScoreTitleColor[1], $BaselineDiaScoreTitleColor[2], round($AVG_Diastolic_Baseline, 2) ])
-                ->with('StandingSys', [$StandingSysScore, $StandingSysScoreTitleColor[0] , $StandingSysScoreTitleColor[1], $StandingSysScoreTitleColor[2], round($AVG_Systolic_Standing, 2) ])
-                ->with('StandingDia', [$StandingDiaScore, $StandingDiaScoreTitleColor[0] , $StandingDiaScoreTitleColor[1], $StandingDiaScoreTitleColor[2], round($AVG_Diastolic_Standing,2) ])
-                ->with('SPRV', [$SPRV_Score, $SPRV_ScoreTitleColor[0] , $SPRV_ScoreTitleColor[1], $SPRV_ScoreTitleColor[2] , round($SPRV,2)])
-                ->with('SPRS', [$SPRS_Score, $SPRS_ScoreTitleColor[0] , $SPRS_ScoreTitleColor[1], $SPRS_ScoreTitleColor[2] , round($SPRS,2)])
-                ->with('DPRS', [$DPRS_Score, $DPRS_ScoreTitleColor[0] , $DPRS_ScoreTitleColor[1], $DPRS_ScoreTitleColor[2] , round($DPRS,2)]);
-                // ->with('EIR', [$EIR_Score, $EIR_ScoreTitleColor[0] , $EIR_ScoreTitleColor[1], $EIR_ScoreTitleColor[2] , $EIR])
-                // ->with('VRC4', [$VRC4_Score, $VRC4_ScoreTitleColor[0] , $VRC4_ScoreTitleColor[1], $VRC4_ScoreTitleColor[2] , $VRC4])
-                // ->with('VRC6', [$VRC6_Score, $VRC6_ScoreTitleColor[0] , $VRC6_ScoreTitleColor[1], $VRC6_ScoreTitleColor[2] , $VRC6]);
-            }
-        }
-        redirect()->back();
-    }
-    
-    
-    public function getPara($id = '', Request $request = null){
-
-        $allocation_id = $id;// $request->input('patient_id');
-        if($allocation_id == null || $allocation_id == ''){
-            $allocation_id = $request->input('allocation_id');
-        }
-
-        $allocation = Allocation::where('auto_num', $allocation_id)->get();
-        if($allocation->first()){            
-            $patient_id = $allocation->first()->user_num;            
-            $patient = Users::where('id', $patient_id)->get()->first();
-            if($patient){
-                $bmiData = $this->getBMI($patient->weight, $patient->user_height);          
-                
+                // para 
                 // para                               
-                $step5RRData = $this->getOximeterRR($allocation_id, $this->DEEPBREADING);
+                //$step5RRData = $this->getOximeterRR($allocation_id, $this->DEEPBREADING);
                 $EIR_Score = 0;$EIR = 0;
                 if( count($step5RRData[0])  > 0){
                     $MaxMin = getLongShortRR($step5RRData[0]); 
@@ -650,63 +532,171 @@ class SubreportController extends Controller
                     $VRC6_Score = 1;
                 }
                 $VRC6_ScoreTitleColor = getParaTitleColor( $VRC6_Score , "sub");
-
                 $ParaScore = $EIR_Score + $VRC4_Score + $VRC6_Score;
                 $para = getParaTitleColor($ParaScore, "overall");
 
-                return view('doctor.review.sub_para')
-                ->with('page_type', $request->input('page_type'))
-                ->with('allocation', $allocation->first())
-                ->with('patient', $patient)
-                ->with('bmi', $bmiData[0])->with('weight_status', $bmiData[1])->with('color', $bmiData[2])
-                ->with('para', [$ParaScore, $para[0] , $para[1] , $para[2]])                                
-                ->with('EIR', [$EIR_Score, $EIR_ScoreTitleColor[0] , $EIR_ScoreTitleColor[1], $EIR_ScoreTitleColor[2] , round($EIR,2)])
-                ->with('VRC4', [$VRC4_Score, $VRC4_ScoreTitleColor[0] , $VRC4_ScoreTitleColor[1], $VRC4_ScoreTitleColor[2] , round($VRC4,2 )])
-                ->with('VRC6', [$VRC6_Score, $VRC6_ScoreTitleColor[0] , $VRC6_ScoreTitleColor[1], $VRC6_ScoreTitleColor[2] , round($VRC6, 2)]);
+                
 
-            }
-        }
-        redirect()->back();
-    }
+                $para_res = array('para' =>[$ParaScore, $para[0] , $para[1] , $para[2]],
+                    'EIR' => [$EIR_Score, $EIR_ScoreTitleColor[0] , $EIR_ScoreTitleColor[1], $EIR_ScoreTitleColor[2] , round($EIR,2)],
+                    'VRC4' => [$VRC4_Score, $VRC4_ScoreTitleColor[0] , $VRC4_ScoreTitleColor[1], $VRC4_ScoreTitleColor[2] , round($VRC4,2 )],
+                    'VRC6' => [$VRC6_Score, $VRC6_ScoreTitleColor[0] , $VRC6_ScoreTitleColor[1], $VRC6_ScoreTitleColor[2] , round($VRC6, 2)]
+                );
 
 
-     
-    public function getCardiac($id = '', Request $request = null){
+                // Skin 
+                $GSR = $this->getGSR($allocation_id, $this->BASELINE);
+                
+                $Hand_Score = 0; $Feet_Score = 0;
+                if($patient->sex == "Male"){
+                    $Hand_Score = getMaleHandScore($patient->age, $GSR[0]);
+                    $Feet_Score = getMaleFeetScore($patient->age, $GSR[1]);
+                }else{
+                    $Hand_Score = getFemaleHandScore($patient->age, $GSR[0]);
+                    $Feet_Score = getFemaleFeetScore($patient->age, $GSR[1]);                    
+                }
 
-        $allocation_id = $id;// $request->input('patient_id');
-        if($allocation_id == null || $allocation_id == ''){
-            $allocation_id = $request->input('allocation_id');
-        }
-        $allocation = Allocation::where('auto_num', $allocation_id)->get();
-        if($allocation->first()){            
-            $patient_id = $allocation->first()->user_num;            
-            $patient = Users::where('id', $patient_id)->get()->first();
-            if($patient){
+                $HandTitleColor = getSkinTitleColor($Hand_Score,"sub");
+                $FeetTitleColor = getSkinTitleColor($Feet_Score,"sub");
+                $SkinTitleColor = getSkinTitleColor($Hand_Score + $Feet_Score,"overall");
 
-                $bmiData = $this->getBMI($patient->weight, $patient->user_height);
-
-                $step3RRData = getRR($allocation_id, $this->BASELINE);            
-                $step6RRData = getRR($allocation_id, $this->STANDING);
-                $step3Data =  getLevelBood($allocation_id, $this->BASELINE);
-                //$step4Data =  getLevelBood($allocation_id, $this->VALSA);
-                $step4RRData =  getRR($allocation_id, $this->VALSA);
-                $step6Data =  getLevelBood($allocation_id, $this->STANDING); 
-                $step6RRData =  getRR($allocation_id, $this->STANDING);
+               
+                $skin_res = array('skin' => [$Hand_Score + $Feet_Score, $SkinTitleColor[0] , $SkinTitleColor[1] , $SkinTitleColor[2]],
+                    'hand' => [ $GSR[0], $Hand_Score , $HandTitleColor[0] , $HandTitleColor[1] , $HandTitleColor[2]],
+                    'feet' => [ $GSR[1], $Feet_Score , $FeetTitleColor[0] , $FeetTitleColor[1] , $FeetTitleColor[2]]
+                );
+                if($patient->placemaker == 1){
+                    $skin_res = array('skin' => [$Hand_Score + $Feet_Score, $SkinTitleColor[0] , $SkinTitleColor[1] , $SkinTitleColor[2]],
+                        'hand' => [ "NA", "NA" , "NA", "NA" , "red-color"],
+                        'feet' => [ "NA", "NA" , "NA", "NA" , "red-color"]
+                    );
+                }
 
 
+                // ans 
+                
+                $HR = $step3Data[Config::get('constants.options.avg_heart_rate')]; // mean heard rate during step 3.
+
+                $ANS_Score = 0;
+                $HR_Score =  getANSHeartScore($patient->sex, $patient->age, $HR);
+                $ANS_Score += $HR_Score;
+                $HR_Per_Title_Color =  getRiskAndTitleColor($HR_Score, 1, 2, 3, 4, 5, 20, 20, 20, 20 , 20);
+                               
+                $SDNN = $this->getSDNN($allocation_id, $this->BASELINE);        // Get SDNN Value
+                $SDNN_SCORE = getSDNNScore($patient->age, $SDNN);    // Get SDNN Score 
+                $ANS_Score  +=  $SDNN_SCORE;
+                $SDNN_Per_Title_Color =  getRiskAndTitleColor($SDNN_SCORE, 0.1, 1, 3, 0, 0, 33.3, 33.3, 33.4, 0, 0);                
+ 
+                $RMSSD = $this->getRMSSD($allocation_id, $this->BASELINE);      // Get RMSSD Value
+                $RMSSD_SCORE = getRMSSDScore($patient->age, $RMSSD);  // Get RMSSD Score  
+                $ANS_Score  +=  $RMSSD_SCORE;
+                $RMSSD_Per_Title_Color =  getRiskAndTitleColor($RMSSD_SCORE, 0.1, 1, 3, 0, 0, 33.3, 33.3, 33.4, 0, 0);
+                              
+                 $step3RRData = getRR($allocation_id, $this->BASELINE);    
+                 $AVG_RR  = $step3RRData[2];                 // Get Avg RR Value
+                 $AVG_RR_Score = getAvgRRScore($AVG_RR);            // Get Avg RR Score 
+                 $ANS_Score += $AVG_RR_Score;
+                 $AVGRR_Per_Title_Color =  getRiskAndTitleColor($AVG_RR_Score, 0.1, 1, 3, 0, 0, 33.3, 33.3, 33.4, 0, 0);
+                
+                 $PERCENT_MORE_THAN_50 = $step3RRData[3];                            // Get Vale
+                 $PERCENT_MORE_THAN_50_Score = get50Score($PERCENT_MORE_THAN_50);    // Get Score 
+                 $ANS_Score += $PERCENT_MORE_THAN_50_Score;
+                 $More50_Per_Title_Color =  getRiskAndTitleColor($PERCENT_MORE_THAN_50_Score, 0.1, 1, 3, 0, 0, 33.3, 33.3, 33.4, 0, 0);
+                              
+                 $AVG_OXYGEN = $step3RRData[1];   
+                 $AVG_OXYGEN_Score = 0;
+                 $Oxygen_Per = 0; $Oxygen_Title = "Low"; $Oxygen_Color = "green-color";
+                 if($AVG_OXYGEN < 94 ){
+                     $AVG_OXYGEN_Score += 1;
+                     $Oxygen_Per = 100; $Oxygen_Title = "High"; $Oxygen_Color = "red-color";
+                 }
+                 $ANS_Score += $AVG_OXYGEN_Score;
+                 $ans_dysfunction = getRiskAndTitleColor($ANS_Score, 5, 9, 14, 18, 0, 28, 22, 28, 22 , 0);
+
+
+
+                $ans_res = array('heart_rate' => [round($HR,2), $HR_Score, $HR_Per_Title_Color[0] , $HR_Per_Title_Color[1] ,  $HR_Per_Title_Color[2] ],
+                    'SDNN' => [round($SDNN , 2),  $SDNN_SCORE, $SDNN_Per_Title_Color[0] , $SDNN_Per_Title_Color[1] ,  $SDNN_Per_Title_Color[2] ],
+                    'RMSSD' => [round($RMSSD, 2), $RMSSD_SCORE, $RMSSD_Per_Title_Color[0] , $RMSSD_Per_Title_Color[1] ,  $RMSSD_Per_Title_Color[2] ],
+                    'AVG_RR' => [round($AVG_RR, 2), $AVG_RR_Score, $AVGRR_Per_Title_Color[0] , $AVGRR_Per_Title_Color[1] ,  $AVGRR_Per_Title_Color[2] ],
+                    'More50' => [round($PERCENT_MORE_THAN_50, 2) , $PERCENT_MORE_THAN_50_Score, $More50_Per_Title_Color[0] , $More50_Per_Title_Color[1] ,  $More50_Per_Title_Color[2] ],
+                    'SPO2' => [ round($AVG_OXYGEN, 2) ,$AVG_OXYGEN_Score,  $Oxygen_Per , $Oxygen_Title ,  $Oxygen_Color ],
+                    'ans' => [ $ANS_Score ,  $ans_dysfunction[0] , $ans_dysfunction[1] ,  $ans_dysfunction[2] ]                
+                );
+
+
+                // adrenergic
+
+                if($step4Data[Config::get('constants.options.min_heart_rate')] != 0){
+                    $VRC4 = $step4Data[Config::get('constants.options.max_heart_rate')] / $step4Data[Config::get('constants.options.min_heart_rate')];
+                }else{
+                    $VRC4 = 0;
+                }                
+                if( $step6Data[Config::get('constants.options.min_heart_rate')] != 0){
+                    $VRC6 = $step6Data[Config::get('constants.options.max_heart_rate')] / $step6Data[Config::get('constants.options.min_heart_rate')];
+                }else{
+                    $VRC6 = 0;
+                }
+                $SPRV = ($step3Data[Config::get('constants.options.avg_systolic')] - $step4Data[ Config::get('constants.options.avg_systolic') ]);
+
+                // Adrenergic 
+                $AVG_Systolic_Baseline = $step3Data[Config::get('constants.options.avg_systolic')];
+                $AVG_Diastolic_Baseline = $step3Data[Config::get('constants.options.avg_diastolic')];                
+                $AVG_Systolic_Standing = $step6Data[Config::get('constants.options.avg_systolic')];
+                $AVG_Diastolic_Standing = $step6Data[Config::get('constants.options.avg_diastolic')];                
+
+                $BaselineSysScore = getBaselineFromSys($AVG_Systolic_Baseline);
+                $BaselineSysScoreTitleColor = getRiskAndTitleColor( $BaselineSysScore , 1, 3 , 4, 5 , 0 , 25 , 25, 25, 25, 0 );
+
+                $BaselineDiaScore = getBaselineFromDia($AVG_Diastolic_Baseline);
+                $BaselineDiaScoreTitleColor = getRiskAndTitleColor( $BaselineDiaScore , 0.1, 2 , 4, 5 , 0 , 25 , 25, 25, 25, 0 );
+
+                $StandingSysScore = getStandingFromSys($AVG_Systolic_Standing);
+                $StandingSysScoreTitleColor = getRiskAndTitleColor( $StandingSysScore , 1, 3 , 4, 5 , 0 , 25 , 25, 25, 25, 0 );
+
+                $StandingDiaScore = getStandingFromDia($AVG_Diastolic_Standing);                
+                $StandingDiaScoreTitleColor = getRiskAndTitleColor( $StandingDiaScore , 0.1, 2 , 4, 5 , 0 , 25 , 25, 25, 25, 0 );
+
+                $SPRV_Score = getValsalvaScore($SPRV);
+                $SPRV_ScoreTitleColor = getRiskAndTitleColor( $SPRV_Score , 1, 3 , 4, 5 , 0 , 25 , 25, 25, 25, 0 );                
+
+                $SPRS = $step3Data[Config::get('constants.options.avg_systolic')] - $step6Data[Config::get('constants.options.avg_systolic')];
+                $SPRS_Score = getSPRSScore($SPRS);
+                $SPRS_ScoreTitleColor = getRiskAndTitleColor( $SPRS_Score , 1, 3 , 4, 5 , 0 , 25 , 25, 25, 25, 0 );
+
+                $DPRS =  $step3Data[Config::get('constants.options.avg_diastolic')] - $step6Data[Config::get('constants.options.avg_diastolic')];
+                $DPRS_Score = getDPRSScore($DPRS);
+                $DPRS_ScoreTitleColor = getRiskAndTitleColor( $DPRS_Score , 1, 3 , 4, 5 , 0 , 25 , 25, 25, 25, 0 );
+               
+                $AdrenergicScore = $BaselineSysScore + $BaselineDiaScore + $StandingSysScore + $StandingDiaScore + $SPRV_Score + $SPRS_Score + $DPRS_Score ;
+                $adrenergic = getRiskAndTitleColor($AdrenergicScore, 7, 15, 23, 30, 0, 24, 26, 26, 24 , 0);
+               
+                $adr_res = array(
+                    'adrenergic' => [$AdrenergicScore, $adrenergic[0] , $adrenergic[1] , $adrenergic[2]],
+                    'BaselineSys' => [$BaselineSysScore, $BaselineSysScoreTitleColor[0] , $BaselineSysScoreTitleColor[1], $BaselineSysScoreTitleColor[2], round($AVG_Systolic_Baseline,2) ],
+                    'BaselineDia' => [$BaselineDiaScore, $BaselineDiaScoreTitleColor[0] , $BaselineDiaScoreTitleColor[1], $BaselineDiaScoreTitleColor[2], round($AVG_Diastolic_Baseline, 2) ],
+                    'StandingSys' => [$StandingSysScore, $StandingSysScoreTitleColor[0] , $StandingSysScoreTitleColor[1], $StandingSysScoreTitleColor[2], round($AVG_Systolic_Standing, 2) ],
+                    'StandingDia' => [$StandingDiaScore, $StandingDiaScoreTitleColor[0] , $StandingDiaScoreTitleColor[1], $StandingDiaScoreTitleColor[2], round($AVG_Diastolic_Standing,2) ],
+                    'SPRV' =>  [$SPRV_Score, $SPRV_ScoreTitleColor[0] , $SPRV_ScoreTitleColor[1], $SPRV_ScoreTitleColor[2] , round($SPRV,2)],
+                    'SPRS' =>  [$SPRS_Score, $SPRS_ScoreTitleColor[0] , $SPRS_ScoreTitleColor[1], $SPRS_ScoreTitleColor[2] , round($SPRS,2)],
+                    'DPRS' =>  [$DPRS_Score, $DPRS_ScoreTitleColor[0] , $DPRS_ScoreTitleColor[1], $DPRS_ScoreTitleColor[2] , round($DPRS,2)]
+                );
+
+
+
+                // card 
                 $AVG_RR  = $step3RRData[2];                 // Get Avg RR Value
                 $AVG_RR_Score = getAvgRRScore($AVG_RR);            // Get Avg RR Score      
                 $RR = getRiskAndTitleColor( $AVG_RR_Score , 0.1, 1 , 3, 0 , 0 , 33.3 , 33.3, 33.4, 0, 0 );
 
                 $VRC4 = 0;
-                if($step4RRData[5] != 0){
-                    $VRC4 = $step4RRData[6] / $step4RRData[5];
+                if($step4Data[Config::get('constants.options.min_heart_rate')] != 0){
+                    $VRC4 = $step4Data[Config::get('constants.options.max_heart_rate')] / $step4Data[Config::get('constants.options.min_heart_rate')];
                 }
                 
                 $VRC6 = 0;
-                if($step6RRData[5] != 0){
-                    //$VRC6 = $step6Data[Config::get('constants.options.max_heart_rate')] / $step6Data[Config::get('constants.options.min_heart_rate')];
-                    $VRC6 = $step6RRData[6] / $step6RRData[5];
+                if($step6Data[Config::get('constants.options.min_heart_rate')] != 0){
+                    $VRC6 = $step6Data[Config::get('constants.options.max_heart_rate')] / $step6Data[Config::get('constants.options.min_heart_rate')];
                 }
                 
                 $VRC4_Score = 0;
@@ -746,26 +736,29 @@ class SubreportController extends Controller
                 $CardScore = $AVG_RR_Score + $VRC4_Score + $VRC6_Score + $SPRS_Score + $DPRS_Score + $SPRS7_Score;
                 $card = getRiskAndTitleColor($CardScore, 4, 9, 13, 18, 0, 22, 28, 22, 28 , 0);
 
-                return view('doctor.review.sub_cardiac')
-                ->with('page_type', $request->input('page_type'))
-                ->with('allocation', $allocation->first())
-                ->with('patient', $patient)
-                ->with('bmi', $bmiData[0])->with('weight_status', $bmiData[1])->with('color', $bmiData[2])
-                ->with('card', [$CardScore, $card[0] , $card[1] , $card[2]])        
-                ->with('RR', [$AVG_RR_Score, $RR[0] , $RR[1], $RR[2] , round($AVG_RR, 2)])
-                ->with('VRC4', [$VRC4_Score, $VRC4_Title_Color[0] , $VRC4_Title_Color[1], $VRC4_Title_Color[2] , round($VRC4, 2)])
-                ->with('VRC6', [$VRC6_Score, $VRC6_Title_Color[0] , $VRC6_Title_Color[1], $VRC6_Title_Color[2] , round($VRC6, 2)])
-                ->with('SPRS', [$SPRS_Score, $SPRS_Title_Color[0] , $SPRS_Title_Color[1], $SPRS_Title_Color[2] , round($SPRS, 2)])
-                ->with('DPRS', [$DPRS_Score, $DPRS_Title_Color[0] , $DPRS_Title_Color[1], $DPRS_Title_Color[2] , round($DPRS, 2)])
-                ->with('SPRS7', [$SPRS7_Score, $SPRS7_Title_Color[0] , $SPRS7_Title_Color[1], $SPRS7_Title_Color[2] , round($SPRS7, 2)]);
+            
 
-            }
+                $card_res = array(
+                    'card' => [$CardScore, $card[0] , $card[1] , $card[2]],
+                    'RR' => [$AVG_RR_Score, $RR[0] , $RR[1], $RR[2] , round($AVG_RR, 2)],
+                    'VRC4' =>  [$VRC4_Score, $VRC4_Title_Color[0] , $VRC4_Title_Color[1], $VRC4_Title_Color[2] , round($VRC4, 2)],
+                    'VRC6' =>  [$VRC6_Score, $VRC6_Title_Color[0] , $VRC6_Title_Color[1], $VRC6_Title_Color[2] , round($VRC6, 2)],
+                    'SPRS' =>  [$SPRS_Score, $SPRS_Title_Color[0] , $SPRS_Title_Color[1], $SPRS_Title_Color[2] , round($SPRS, 2)],
+                    'DPRS' => [$DPRS_Score, $DPRS_Title_Color[0] , $DPRS_Title_Color[1], $DPRS_Title_Color[2] , round($DPRS, 2)],
+                    'SPRS7' =>  [$SPRS7_Score, $SPRS7_Title_Color[0] , $SPRS7_Title_Color[1], $SPRS7_Title_Color[2] , round($SPRS7, 2)]
+                );
+
+                $a = array('results'=>200, 'diabet'=>$a, 'blood'=>$blood_res
+                 , 'para' => $para_res , 'skin' => $skin_res , 'ans' => $ans_res, 'adr'=>$adr_res, 'card' =>$card_res);  
+                return Response::json($a);
+            }                
         }
-        redirect()->back();
+
+        $a = array('results'=>300,'msg'=>"failed");
+        return Response::json($a);
+        
     }
     
-
-    
-
-
 }
+
+

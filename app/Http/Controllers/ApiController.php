@@ -24,11 +24,10 @@ use App\AllocationVisitForm;
 use DateTime;
 use Config;
 
-
 class ApiController extends BaseController
 {
     use AuthorizesRequests, DispatchesJobs, ValidatesRequests;
-
+    
     // login api from device
     public function login(Request $request){       
         $email = $request->input('email');        
@@ -37,15 +36,21 @@ class ApiController extends BaseController
         
         if($user->first()){
 
-            $allocation = Allocation::where('administer_num',$user->first()->id)->where('is_allocated', '1');              
+            $allocation = Allocation::where('administer_num',$user->first()->id)
+            ->where('is_allocated', '1')
+            ->orderBy('auto_num', 'DESC')
+            ->get();
+                               
             if($allocation->first()){
 
                 $id = "00000000".$user->first()->id;
                 $patient_id = "00000000".$allocation->first()->user_num;
 
+                $patient = Users::where('id', $allocation->first()->user_num)->get();
+
                 $key1 = substr($id, -8);
                 $key2 = substr($patient_id, -8);
-                $a = array('results'=>200, 'apikey'=>"DS".$key1.$key2.date('Ymd'));
+                $a = array('results'=>200, 'apikey'=>"DS".$key1.$key2.date('Ymd'), 'allocation_id'=>$allocation->first()->auto_num, 'pacemaker'=>$patient->first()->placemaker);
                 
                 return Response::json($a);
             }else{
@@ -69,7 +74,7 @@ class ApiController extends BaseController
         ->get();           
         $n = 0; $sys = 0; $dia = 0; $bpm = 0;
         $max_tmp = 0; $min_tmp = 0; $max = 0; $min = 0;
-        foreach($blood as $item){            
+        foreach($blood as $item){
             $value  = json_decode($item["raw_data"], true);
             foreach($value as $v){                              
                 $sys = $sys + $v["systolic"];
@@ -198,6 +203,18 @@ class ApiController extends BaseController
             
             if(strpos($tracking, "1") !== false){ // disable/endalble the device                                
             }else{
+
+                
+                $check = Oximeter::where('allocation_id', $allocation_id)
+                ->where('step_id', $step_id)                
+                ->get();
+
+                if($check->first()){
+                    $res1 = Oximeter::where('allocation_id',$allocation_id)
+                        ->where('step_id',$step_id)
+                        ->delete();
+                }
+
                 $oximeter = new Oximeter();
                 $oximeter->device_serial_num = $device_id;
                 $oximeter->o2_percent = 0;
@@ -205,13 +222,48 @@ class ApiController extends BaseController
                 $oximeter->user_num = $patient_id;
                 $oximeter->administer_num = $administer_id;
                 $oximeter->allocation_id = $allocation_id;            
-                $oximeter->raw_data = json_encode($device1);                
-                $oximeter->step_id = $step_id;
-                $oximeter->save();  
-            }
-                                                 
+                $raw_data = json_encode($device1); 
+                $value  = json_decode($raw_data, true);                        
+                $SPO2bpm = 0;
+                $OxygenSat = 0;
+                $n = 0;
+                $RR = []; $tmp = 0;
+                $min = 0;
+                $max = 0;
+                foreach($value as $v){
+
+                    $SPO2bpm = $SPO2bpm + $v["S"];
+                    $OxygenSat = $OxygenSat + $v["O"];
+                    if($n > 0){
+                        $RR[] = $v["T"] - $tmp;
+                    }
+                    $tmp = $v["T"];
+
+
+                    if($n == 0){
+                        $min = $v["S"];
+                    }
+
+                    if($max < $v["S"]){
+                        $max = $v["S"];
+                    }
+                    if($min > $v["S"]){
+                        $min = $v["S"];
+                    }                    
+
+                    $n++;
+                }             
+                if($n > 0){
+                    $a = array('Min' =>$min, 'Max'=>$max, 'SPO2bpm'=> $SPO2bpm/$n , 'OxygenSat'=>$OxygenSat/$n, 'RR' => $RR);                 
+                    $oximeter->raw_data = json_encode(array($a));
+                    $oximeter->step_id = $step_id;
+                    $oximeter->save();
+                }
+                  
+            }                                                 
         }
         
+
         //Blood Sensor
         $blood  = $request->input('blood');
         $device2 = json_decode($blood, TRUE);
@@ -221,6 +273,18 @@ class ApiController extends BaseController
             if(strpos($tracking, "2") !== false){
                 
             }else{
+
+                $check = Blood::where('allocation_id', $allocation_id)
+                ->where('step_id', $step_id)                
+                ->get();
+
+                if($check->first()){
+                    $res1 = Blood::where('allocation_id',$allocation_id)
+                        ->where('step_id',$step_id)
+                        ->delete();
+                }
+
+
                 $blood = new Blood();
                 $blood->device_serial_num = $device_id;
                 $blood->systolic_value = 0;
@@ -245,6 +309,17 @@ class ApiController extends BaseController
             if(strpos($tracking, "3") !== false){
                 
             }else{
+
+                $check = GSR::where('allocation_id', $allocation_id)
+                ->where('step_id', $step_id)                
+                ->get();
+
+                if($check->first()){
+                    $res1 = GSR::where('allocation_id',$allocation_id)
+                        ->where('step_id',$step_id)
+                        ->delete();
+                }                
+
                 $gsr = new GSR();
                 $gsr->device_serial_num = $device_id;
                 $gsr->conductance = 0;
@@ -262,7 +337,7 @@ class ApiController extends BaseController
         $a = array('results'=> 200 );
         return Response::json($a);    
     }else{
-        $a = array('results'=> 300 , 'data'=>'Not Allocated');
+        $a = array('results'=> 300 , 'data'=>'Not Allocated','pid'=>$patient_id, 'uid'=>$administer_id);
         return Response::json($a); 
     }                                        
 } 
@@ -411,26 +486,47 @@ class ApiController extends BaseController
       
             if($patient_id != null && $device_id != null && $id != null){
 
-                $oxymeter = $request->input('oxymeter') == true? "1" :"";
-                $blood = $request->input('blood') == true? "2" :"";
-                $gsr = $request->input('gsr') == true? "3" :"";
+                $check = Allocation::where('administer_num',$id)
+                    ->where('is_allocated', '1')
+                    ->where('user_num', $patient_id)    
+                    ->latest('created_at')                
+                    ->get();
+                if($check->first()){
 
-                $allocation = new Allocation();               
-                $allocation->serial_num = $device_id;
-                $allocation->administer_num = $id;
-                $allocation->user_num = $patient_id;
-                $allocation->company_id = $company_id;
-                $allocation->is_allocated = "1";
-                $allocation->allocation_name = $allocation_name;
-                $allocation->step = $step;
-                $allocation->tracking = $oxymeter.$blood.$gsr;
-                $allocation->visit_form_id = $visit_form_id;
-                $allocation->diabet_risk_id = $diabet_risk_id;
-                $allocation->save();
+                    $allocation_id = $check->first()->auto_num;
+                    $aaa = array('results'=>200, 'id'=>$allocation_id);
+                    return Response::json($aaa);   
+                    
+                }else{
 
-                $allocation_id = Allocation::where('administer_num',$id)->where('is_allocated', '1')->get()->first()->auto_num;                
-                $aaa = array('results'=>200, 'id'=>$allocation_id);
-                return Response::json($aaa);            
+                    $oxymeter = $request->input('oxymeter') == true? "1" :"";
+                    $blood = $request->input('blood') == true? "2" :"";
+                    $gsr = $request->input('gsr') == true? "3" :"";
+
+                    $allocation = new Allocation();               
+                    $allocation->serial_num = $device_id;
+                    $allocation->administer_num = $id;
+                    $allocation->user_num = $patient_id;
+                    $allocation->company_id = $company_id;
+                    $allocation->is_allocated = "1";
+                    $allocation->allocation_name = $allocation_name;
+                    $allocation->step = "0";
+                    $allocation->tracking = $oxymeter.$blood.$gsr;
+                    $allocation->visit_form_id = $visit_form_id;
+                    $allocation->diabet_risk_id = $diabet_risk_id;
+                    $allocation->save();
+
+                    $allocation_id = Allocation::where('administer_num',$id)
+                        ->where('is_allocated', '1')
+                        ->where('user_num', $patient_id)    
+                        ->latest('created_at')                
+                        ->get()->first()->auto_num;
+
+                    $aaa = array('results'=>200, 'id'=>$allocation_id);
+                    return Response::json($aaa);   
+                    
+                }
+                         
             }
         }else{            
            

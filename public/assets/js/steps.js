@@ -141,6 +141,92 @@ var updateStep = function (stepV){
     });
 }
 
+// var updateStepNew = function (stepV){         
+//     var patient_id = $("#patient_id").val();
+//     var device_id = $("#device_id").val();
+//     var user_id = $("#user_id").val();
+//     var company_id = $("#company_id").val();
+//     var visit_form_id = $("#visit_form_id").val();
+//     var diabet_risk_id = $("#diabet_risk_id").val();
+
+//     var base_url = window.location.origin;    
+//     var allocation_name = user_id + patient_id + device_id + "";
+//     var stepValue = Math.abs(stepV).toString(16);// step.toString();
+    
+//     var oxymeter = $('#oxymeter').is(':checked');
+//     var blood = $('#blood').is(':checked');
+//     var gsr = $('#gsr').is(':checked');
+    
+//     oxymeter_val = oxymeter == true ? "1" : "0";
+//     blood_val = blood == true ? "2" : "0";
+//     gsr_val = gsr == true ? "3" : "0";
+
+//     allocation_id = $("#allocation_id").val();
+//     $.ajaxSetup({
+//     headers: {
+//         'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+//     }
+//     });
+//     $.ajax({
+//       type: 'POST',
+//       data: { patient_id:patient_id, device_id:device_id, 
+//         id:user_id, company_id:company_id , allocation_name:allocation_name ,stepValue:stepValue 
+//         , allocation_id:allocation_id, oxymeter:oxymeter_val, blood:blood_val, gsr:gsr_val , visit_form_id:visit_form_id, diabet_risk_id:diabet_risk_id},
+//       url: base_url + "/phd/api/updateStep",
+//       success: function(result) {     
+//             var res = result.results;
+//             if(res == 200){ 
+
+//                 if(stepV == 1){
+//                     callPeriodically();
+//                     var id = result.id;
+//                     $("#allocation_id").val(id);
+//                 }else{
+//                     var id = result.id;
+//                     $("#allocation_id").val(id);
+//                     //clearData();                
+//                     $("#abort").show();   
+//                     //initButtons(PAGE_STATUS, STEP);    
+//                 }
+//             }else{
+//                 alert("Failed");
+//             }
+//       }
+//     });
+// }
+
+// var callPeriodically = function(){
+//     var intervalID = setInterval(function(){        
+//             var allocation_id = $("#allocation_id").val();
+//             $.ajaxSetup({
+//             headers: {
+//                 'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+//             }
+//             });
+//             $.ajax({
+//             type: 'POST',
+//             data: {allocation_id:allocation_id},
+//             url: base_url + "api/checkStep",
+//             success: function(result) {     
+//                     var res = result.results;
+//                     if(res == 200){ 
+//                         //alert("ok");
+//                         var step_id = result.step_id;
+//                         if(step_id == "1"){
+//                             $("#img_loading").show();
+//                             $('#step_title').text('Receiving Data for Step 1 - Calibration');   
+//                             $("#step_id").val(step_id);
+
+//                         }
+//                     }else{
+//                         alert("Failed");
+//                     }
+//             }
+//             });
+//     }, 5000);
+    
+// }
+
 
 var ID_OXYGEN = "0";
 var ID_BLOOD = "0";

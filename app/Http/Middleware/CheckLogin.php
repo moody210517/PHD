@@ -31,7 +31,7 @@ class CheckLogin
             return $next($request);
         }
 
-        if (Session::get('user_id') == null) {            
+        if (Session::get('user_id') == null  || Session::get('user_id') == "") {            
             return redirect('login');
         }
 

@@ -9,7 +9,7 @@
 			<div class="bg-white pt-4 pb-5">
 
 				<div class="page-title padding pb-0 ">
-					<h2 class="text-md mb-0">Skin Microcirculation </h2>
+					<h2 class="text-md mb-0">Galvanic Skin Response </h2>
 				</div>
 								
 				<form data-plugin="parsley" data-option="{}"  method="post" action="{{ url('doctor/prestep3') }}" enctype="multipart/form-data">
@@ -106,7 +106,7 @@
 
 					<div class="col-md-4">						
 						<div class="col-md-12 blue-border">
-							<label class="col-form-label report_sub_title"> <h6 class="mb-0"> Skin Microcirculation </h6> </label>
+							<label class="col-form-label report_sub_title"> <h6 class="mb-0"> Galvanic Skin Response </h6> </label>
 							<div class="row" >
 								<div class="form-control text-center no-border pt-3 pb-3 canvas_container" >	
 									<div id="preview">
@@ -124,7 +124,7 @@
 
 
 				<div class="page-title padding pb-0 ">
-					<h2 class="text-md mb-0"> Skin Microcirculation Results </h2>
+					<h2 class="text-md mb-0"> Galvanic Skin Response Results </h2>
 				</div>
 
 				<div class="padding">				
@@ -132,7 +132,7 @@
 						<div class="row px-3 pt-2" >
 							
 							<div class="col-md-4 blue-border">
-								<label class="col-form-label report_sub_title"> <h6 class="mb-0"> Skin Microcirculation - Hands </h6> </label>
+								<label class="col-form-label report_sub_title"> <h6 class="mb-0"> Galvanic Skin Response - Hands </h6> </label>
 								<div class="row">
 									<div class="form-control text-center  pt-3 pb-3 canvas_container">
 										
@@ -161,7 +161,7 @@
 
 
 							<div class="col-md-4 blue-border">
-								<label class="col-form-label report_sub_title"> <h6 class="mb-0"> Skin Microcirculation - Feet  </h6> </label>
+								<label class="col-form-label report_sub_title"> <h6 class="mb-0"> Galvanic Skin Response - Feet  </h6> </label>
 								<div class="row">
 									<div class="form-control text-center  pt-3 pb-3 canvas_container">
 										
@@ -241,6 +241,7 @@
 <form id="backReport" data-plugin="parsley" data-option="{}"  method="post" action="{{ url('report/review') }}" enctype="multipart/form-data">
 	@csrf
 	<input type="hidden" id="" value="{{$allocation->auto_num}}"  name="allocation_id"/>
+	<input type="hidden" id="" value="{{$page_type}}"  name="page_type"/>
 </form>
 
 

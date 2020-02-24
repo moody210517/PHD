@@ -258,6 +258,7 @@
 <form id="backReport" data-plugin="parsley" data-option="{}"  method="post" action="{{ url('report/review') }}" enctype="multipart/form-data">
 	@csrf
 	<input type="hidden" id="" value="{{$allocation->auto_num}}"  name="allocation_id"/>
+	<input type="hidden" id="" value="{{$page_type}}"  name="page_type"/>
 </form>
 
 

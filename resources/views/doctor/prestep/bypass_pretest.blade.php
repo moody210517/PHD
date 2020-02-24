@@ -15,23 +15,23 @@
 					<input type = "hidden" value="exist" name="user_type" />				
 
 					<div class="page-title padding pb-0 ">
-						<h2 class="text-md mb-0"> Do you wish to bypass the pre-test questions </h2>
+						<h2 class="text-md mb-0"> Do Pre-Test Questions need to updated? </h2>
 					</div>
 
 					<div class="padding">																	
 						<div class="col-md-12 mt-4 text-center">
-							<button type="button" class="btn col-md-2 mb-1 btn-primary" onclick="back()"> Back </button>		
-							<button type="button" class="btn col-md-2 mb-1 btn-primary" onclick="goToStep()"> Yes </button>		
-							<button type="button" class="btn col-md-2 mb-1 btn-primary" onclick="goToPreTest()"> No </button>									
+						<button type="button" class="btn col-md-2 mb-1 btn-primary" onclick="goToPreTest()"> Yes </button>									
+							<button type="button" class="btn col-md-2 mb-1 btn-primary" onclick="goToStep()"> No </button>							
+							<button type="button" class="btn col-md-2 mb-1 btn-primary" onclick="back()"> Cancel </button>
+
 						</div>
-					</div>												
+					</div>									
 				</form>
-				
+
 			<div>		
 		</div>
 	
 </div>
-
 
 
 <form id="pretest" data-plugin="parsley" data-option="{}"  method="post" action="{{ url('doctor/gopretest') }}" enctype="multipart/form-data">
@@ -40,7 +40,7 @@
 </form>
 
 
-<form id="steps" data-plugin="parsley" data-option="{}"  method="post" action="{{ url('doctor/steps') }}" enctype="multipart/form-data">
+<form id="steps" data-plugin="parsley" data-option="{}"  method="post" action="{{ url('doctor/waiting') }}" enctype="multipart/form-data">
 
 	@csrf
 	<input type="hidden" id="pid" value="{{$patient->id}}"  name="pid"/>

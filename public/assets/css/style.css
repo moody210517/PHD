@@ -8,6 +8,8 @@ Custom css
 :root{
     --phd_device_color:#25aae1;    
     --text_background:#e9ecef;
+    -webkit-print-color-adjust: exact;
+
 }
 
 .text-black{
@@ -36,7 +38,7 @@ select:focus{
         content: url("images/menu2.png");
     }
 }
-@media (max-width: 768px){
+@media (max-width: 1028px){
     .img_login{
         width:180px;
         height:100px;
@@ -49,10 +51,10 @@ span.payment_text{
 }
 
 .green-color{
-    color:#05bc14 !important;
+    color:#5c8541 !important;
 }
 .yellow-color{
-    color:#FFFF00 !important;
+    color:#ffff00 !important;
 }
 .orange-color{
     color:#FFA500 !important;
@@ -61,6 +63,13 @@ span.payment_text{
     color:#FF0000 !important;
 }
 
+.print_label{
+    color:black !important;
+}
+.print-title-color{
+    font-size: 1.6rem !important;    
+    color:#2f5496 !important;
+}
 
 .blue-border{    
     outline: 1.5px solid black;
@@ -277,3 +286,104 @@ span.payment_text{
     color: white;
   }
   
+  .loader {    
+    border: 16px solid #f3f3f3; /* Light grey */
+    border-top: 16px solid #3498db; /* Blue */
+    border-radius: 50%;
+    width: 100px;
+    height: 100px;
+    animation: spin 2s linear infinite;    
+  }
+  
+  @keyframes spin {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+  }
+
+  .test_header{
+      width:50px !important;
+  }
+
+  #expand-contract {
+    border-bottom: 1px solid white;
+    margin-top: -100% !important;
+    transition: all 0.5s;
+  }
+  
+  #expand-contract.expanded {
+     background-color: white;
+     margin-top: 0 !important;
+  }
+
+
+@media (max-width: 568px){
+    #expand-contract {        
+        margin-top: -200% !important;        
+      }
+}
+@media (max-width: 768px){
+    #expand-contract {        
+        margin-top: -200% !important;        
+      }    
+}
+
+
+  
+#expand-container {
+    overflow: hidden;
+}
+
+
+@media all {
+    #print{
+        display: none;
+        -webkit-print-color-adjust: exact;
+
+    }
+}
+@media print {
+    /* @page{
+        size: 8.27in 11.69in;
+    } */
+    .pagebreak { page-break-before: always; }
+    #print {
+        display: block;
+        margin: 0;
+        padding: 0.5in 0.4in 0.5in 0.4in;
+        width: 100%;
+        height: 100%;
+        -webkit-print-color-adjust: exact;
+
+    }
+    #order-table{
+        width: 100%;
+    }
+    #order-table td, #order-table th{
+        border: solid 1px black;
+        text-align: center;
+    }
+    .card-title{
+        font-size: 72px;
+    }
+    .hide-print {
+        display: none;
+    }     
+}
+
+ th, td {
+    border: 1px solid black;
+    border-collapse: collapse;
+  }
+th, td {
+    padding: 5px;
+    text-align: left;    
+}
+.last_column{
+    background-color: #a6a6a6 !important;
+    width:15% !important;
+    text-align: center !important;   
+}
+.no_border{
+    border: 0px !important;
+    text-align: center;    
+}

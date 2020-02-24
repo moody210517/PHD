@@ -13,7 +13,7 @@
 								
 				<form data-plugin="parsley" data-option="{}"  method="post" action="{{ url('doctor/prestep3') }}" enctype="multipart/form-data">
 				<div class="page-title padding pb-0 ">
-					<h2 class="text-md mb-0">Type II Risk Assessment </h2>
+					<h2 class="text-md mb-0">Pre-Test Patient Information </h2>
 				</div>
 				
 				<div class="col-md-12 mt-2 text-right">
@@ -111,7 +111,7 @@
 				</div>
 
 				<div class="page-title padding pb-0 ">
-					<h2 class="text-md mb-0"> Required Informations for Type II Risk </h2>
+					<h2 class="text-md mb-0"> Type II Assessment Information </h2>
 				</div>
 
 
@@ -249,9 +249,9 @@
 
 		
         $.ajaxSetup({
-        headers: {
-            'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
-        }
+			headers: {
+				'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+			}
         });
 
         $.ajax({

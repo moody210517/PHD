@@ -2,7 +2,6 @@
 
 namespace App\Http\Controllers;
 
-
 use Illuminate\Foundation\Bus\DispatchesJobs;
 use Illuminate\Routing\Controller as BaseController;
 use Illuminate\Foundation\Validation\ValidatesRequests;
@@ -31,7 +30,14 @@ use App\Oximeter;
 class Controller extends BaseController
 {
     use AuthorizesRequests, DispatchesJobs, ValidatesRequests;
-     
+
+    public $BASELINE = 2;
+    public $SKIN = 3;
+    public $VALSA = 4;
+    public $DEEPBREADING = 5;
+    public $STANDING = 6;
+    public $HANDGRIP = 7;
+
     function getBMI($weight, $height){
         $bmi = round(($weight * 703) / ($height * $height), 2) ;
         if($bmi <= 18.5){
@@ -63,30 +69,33 @@ class Controller extends BaseController
         $gsrs = GSR::where('allocation_id', $allocation_id)
         ->where('step_id', $step)
         ->get();           
-        $n = 0; $gsr_value = 0;
-        $foot_index = 0; $gsr_value_foot = 0;
-        foreach($gsrs as $item){            
-            $value  = json_decode($item["raw_data"], true);
-            foreach($value as $vv){     
-                $hand = $vv["hand"];            
-                $foot = $vv["foot"];
-                foreach($hand as $v){                      
-                    $gsr_value += $v;
+        if($gsrs->first()){
+            $n = 0; $gsr_value = 0;
+            $foot_index = 0; $gsr_value_foot = 0;
+            foreach($gsrs as $item){            
+                $value  = json_decode($item["raw_data"], true);
+                foreach($value as $vv){ 
+                    
+                    $gsr_value += $vv;
                     $n++;
-                }
-
-                foreach($foot as $v){                      
-                    $gsr_value_foot += $v;
-                    $foot_index++;
-                }                
-
-            }            
+                    // $hand = $vv["hand"];            
+                    // $foot = $vv["foot"];
+                    // foreach($hand as $v){                   
+                    // }
+                    // foreach($foot as $v){                      
+                    //     $gsr_value_foot += $v;
+                    //     $foot_index++;
+                    // }                
+    
+                }            
+            }
+    
+            if($n > 0 ){
+                return [$gsr_value/$n , $gsr_value/$n];
+            }  
         }
-        if($n > 0 && $foot_index > 0){
-            return [$gsr_value/$n , $gsr_value_foot/$foot_index];
-        }
 
-        return [0, 0];
+        return [0, 0];        
     }
 
 

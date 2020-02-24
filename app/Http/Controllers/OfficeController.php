@@ -146,7 +146,7 @@ class OfficeController extends BaseController
                     $user->user_type_id = $request->input('user_type_id');
                     $user->emr_ehr_id = $request->input('emrid');
                     $user->ethnicity = $request->input('ethnicity');
-                    $user->placemaker = $request->input('placemaker');
+                    $user->placemaker = $request->input('placemaker_value');
                                         
                     // $shipping_id = "";
                     // foreach ($request->input('shipping_id') as $cId)
@@ -245,9 +245,7 @@ class OfficeController extends BaseController
             // foreach ($request->input('shipping_id') as $cId)
             //         $shipping_id = $shipping_id.":".$cId;                       
             // 'user_height' => $user_height,  'weight' => $weight, 'home_email' => $home_email ,  'age' => $age,                                    
-
            
-
                 $mobile_num = $request->input('mobile_num'); 
                 $fax_num = $request->input('fax_num'); 
                 //$home_email = $request->input('home_email'); 
@@ -261,6 +259,7 @@ class OfficeController extends BaseController
 
                 $sex = $request->input('sex');
                 $emrid = $request->input('emrid');
+                
                 //$age = $request->input('age');            
 
                 //'office_num' => $request->input('office_num') ,
@@ -278,9 +277,8 @@ class OfficeController extends BaseController
                 'company_id' => $request->input('company_id') , 'user_type_id' => $request->input('user_type_id'), 
                 'mobile_num' => $mobile_num , 
                 'date_of_birth' => $date_of_birth,'emr_ehr_id' => $emrid,'age'=>$age,
-                'sex' => $sex ,'user_height' => $user_height,  'weight' => $weight,
+                'sex' => $sex ,'user_height' => $user_height,  'weight' => $weight, 'placemaker' => $request->input('placemaker_value'),
                 'shipping_id' => $request->input('shipping_id')  , 'billing_id' => $request->input('billing_id')]);
-
 
                 DB::table('tbl_user_billing')
                 ->where('auto_num', $request->input('billing_id'))
@@ -580,9 +578,7 @@ class OfficeController extends BaseController
             'email_address' => $request->input('email_address') , 'user_password' => $request->input('user_password'),
             'office_num' => $request->input('office_num') , 'home_num' => $request->input('home_num'),
             'company_id' => $request->input('company_id') , 'user_type_id' => $request->input('user_type_id') ]);
-
             //'shipping_id' => $shipping_id  , 'billing_id' => $request->input('billing_id')
-
             return redirect('office/editUser/'.$id);
 
         }else{

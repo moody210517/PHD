@@ -15,20 +15,20 @@ use App\Blood;
 use App\AllocationVisitForm;
 use App\UserDiabet;
 use App\Oximeter;
-
+use App\VisitPurpose;
 use Config;
 use Session;
+use App\Http\Requests\POST_Caller;
 
 class ReportController extends Controller
 {
 
     use AuthorizesRequests, DispatchesJobs, ValidatesRequests;      
-    private $BASELINE = 3;
-    private $VALSA = 4;
-    private $DEEPBREADING = 5;
-    private $STANDING = 6;
-    private $HANDGRIP = 7;
-    
+    // private $BASELINE = 3;
+    // private $VALSA = 4;
+    // private $DEEPBREADING = 5;
+    // private $STANDING = 6;
+    // private $HANDGRIP = 7;    
 
     public function getTest(){
         //$data = $this->getOximeterRR(42,4);       
@@ -39,9 +39,61 @@ class ReportController extends Controller
 
     }
 
+    public function getNote($id = '', Request $request = null){
+        $allocation_id = $id;
+        $allocation = Allocation::where('auto_num', $allocation_id)->get();
+        if($allocation->first()){
+        
+            $patient_id = $allocation->first()->user_num;
+            $patient = Users::where('id', $patient_id)->get()->first();
+            if($patient){
+                $bmiData = $this->getBMI($patient->weight, $patient->user_height); // val, weight status, color, score
+                $bmi = $bmiData[0];
+                $weight_status = $bmiData[1];
+                $color = $bmiData[2];
+
+                return view('doctor.test.note')
+                ->with('allocation_id', $allocation_id)
+                ->with('notes', $allocation->first()->notes)
+                ->with('patient', $patient)
+                ->with('bmi', $bmi)
+                ->with('weight_status', $weight_status)
+                ->with('color', $color);
+            }                                    
+        }
+        return redirect('doctor/testland');                
+    }
+
+    public function getSavenote($id = '', Request $request = null){
+        $allocation_id = $request->input('allocation_id');
+        $notes = $request->input('notes');
+        DB::table('tbl_allocation')
+        ->where('auto_num', $allocation_id)
+        ->update(['notes' => $notes]);                       
+
+        $post = new POST_Caller(
+            ReportController::class,
+            'getReview',
+            '',
+            Request::class,
+            [
+                'allocation_id' => $allocation_id,
+                'page_type' => 'review',
+            ]
+        );
+        $response = $post->call();
+        return $response;// redirect('report/review/'.$allocation_id); 
+    }
+
     public function getReview($id = '', Request $request = null){
 
+
         $allocation_id = $id;// $request->input('patient_id');
+        $page_type = $request->input('page_type');
+        if($page_type == null || $page_type == ""){
+            $page_type = "review";
+        }
+       
         if($allocation_id == null || $allocation_id == ''){
             $allocation_id = $request->input('allocation_id');
         }
@@ -144,7 +196,7 @@ class ReportController extends Controller
                    $overall_blood_score = $overall_blood_score + 4;
                }
 
-                $step5RRData = $this->getOximeterRR($allocation_id, 5);                
+                $step5RRData = $this->getOximeterRR($allocation_id, $this->DEEPBREADING);                
                 $VRC5 = 0;
                 if( count($step5RRData[0])  > 0){
                     $MaxMin = getLongShortRR($step5RRData[0]); 
@@ -159,7 +211,7 @@ class ReportController extends Controller
                 }
                                
                 $VRC4 = 0;
-                $step4RRData = $this->getOximeterRR($allocation_id, 4);
+                $step4RRData = $this->getOximeterRR($allocation_id, $this->VALSA);
                 if( count($step4RRData[0])  > 0){
                     $MaxMin = getLongShortRR($step4RRData[0]); 
                     if($MaxMin[1] != 0){
@@ -172,7 +224,7 @@ class ReportController extends Controller
                }
 
                $VRC6 = 0;
-                $step6RRData = $this->getOximeterRR($allocation_id, 6);
+                $step6RRData = $this->getOximeterRR($allocation_id, $this->STANDING);
                 if( count($step6RRData[0])  > 0){
                     $MaxMin = getLongShortRR($step6RRData[0]); 
                     if($MaxMin[1] != 0){
@@ -186,20 +238,21 @@ class ReportController extends Controller
                
 
 
-               // ANS Dysfunction Rist                
-               $HR = $step3Data[Config::get('constants.options.avg_heart_rate')]; // mean heard rate during step 3.
+               // ANS Dysfunction Rist     
+               $step3RRData = getRR($allocation_id, $this->BASELINE);    
+               $HR = $step3RRData[0];// $step3Data[Config::get('constants.options.avg_heart_rate')]; // mean heard rate during step 3.
                $ANS_Score = getANSHeartScore($patient->sex, $patient->age, $HR);
 
                $step3OximeterData = 
-               $SDNN = $this->getSDNN($allocation_id, 3);      // Get SDNN Value
+               $SDNN = $this->getSDNN($allocation_id, $this->BASELINE);      // Get SDNN Value
                $SDNN_SCORE = getSDNNScore($patient->age, $SDNN);    // Get SDNN Score 
                $ANS_Score  +=  $SDNN_SCORE;
 
-               $RMSSD = $this->getRMSSD($allocation_id, 3);      // Get RMSSD Value
+               $RMSSD = $this->getRMSSD($allocation_id, $this->BASELINE);      // Get RMSSD Value
                $RMSSD_SCORE = getRMSSDScore($patient->age, $RMSSD);  // Get RMSSD Score  
                $ANS_Score  +=  $RMSSD_SCORE;
                              
-                $step3RRData = getRR($allocation_id, 3);    
+                
                 $AVG_RR  = $step3RRData[2];                 // Get Avg RR Value
                 $AVG_RR_Score = getAvgRRScore($AVG_RR);            // Get Avg RR Score 
                 $ANS_Score += $AVG_RR_Score;
@@ -215,7 +268,7 @@ class ReportController extends Controller
                 $ans_dysfunction = getRiskAndTitleColor($ANS_Score, 5, 9, 14, 18, 0, 28, 22, 28, 22 , 0);
 
                 // Skin Report 
-                $GSR = $this->getGSR($allocation_id, 3);
+                $GSR = $this->getGSR($allocation_id, $this->SKIN);
                 //$Female_Hand_Score = 0; $Female_Feet_Score = 0;
                 $Hand_Score = 0; $Feet_Score = 0;
                 if($patient->sex == "Male"){
@@ -267,8 +320,7 @@ class ReportController extends Controller
 
                 
                 // Para 
-                $step5RRData = $this->getOximeterRR($allocation_id, 5);                
-                //$RR = getRR($allocation_id, 5);
+                $step5RRData = $this->getOximeterRR($allocation_id, $this->DEEPBREADING);                                
                 $EIR_Score = 0;$EIR = 0;
                 if( count($step5RRData[0])  > 0){
                     $MaxMin = getLongShortRR($step5RRData[0]); 
@@ -282,7 +334,7 @@ class ReportController extends Controller
 
 
                 $VRC4 = 0;
-                $step4RRData = $this->getOximeterRR($allocation_id, 4);
+                $step4RRData = $this->getOximeterRR($allocation_id, $this->VALSA);
                 if( count($step4RRData[0])  > 0){
                     $MaxMin = getLongShortRR($step4RRData[0]); 
                     if($MaxMin[1] != 0){
@@ -296,7 +348,7 @@ class ReportController extends Controller
                 }
 
                 $VRC6 = 0;
-                $step6RRData = $this->getOximeterRR($allocation_id, 6);
+                $step6RRData = $this->getOximeterRR($allocation_id, $this->STANDING);
                 if( count($step6RRData[0])  > 0){
                     $MaxMin = getLongShortRR($step6RRData[0]); 
                     if($MaxMin[1] != 0){
@@ -317,6 +369,7 @@ class ReportController extends Controller
                 $AVG_RR_Score = getAvgRRScore($AVG_RR);            // Get Avg RR Score               
                 // $VRC4 = $step4Data[Config::get('constants.options.max_heart_rate')] / $step4Data[Config::get('constants.options.min_heart_rate')];
                 // $VRC6 = $step6Data[Config::get('constants.options.max_heart_rate')] / $step6Data[Config::get('constants.options.min_heart_rate')];
+
                 $step7Data =  getLevelBood($allocation_id, $this->HANDGRIP);
                 $SPRS7 = $step3Data[Config::get('constants.options.avg_systolic')] - $step7Data[Config::get('constants.options.avg_systolic')];
                 $SPRS7_Score = 0;                
@@ -330,28 +383,104 @@ class ReportController extends Controller
                 $card = getRiskAndTitleColor($CardScore, 4, 9, 13, 18, 0, 22, 28, 22, 28 , 0);
                               
                 
-                return view('doctor.review.gauge')
-                ->with('allocation', $allocation->first())
-                ->with('patient', $patient)
-                ->with('bmi', $bmi)
-                ->with('weight_status', $weight_status)                
-                ->with('color', $color)                
-                ->with('diabet_risk_score', $diabet_risk_score)
-                ->with('diabet_risk_percent', $diabet_risk)
-                ->with('diabet_risk_name', $diabet_risk_name)
-                ->with('diabet_risk_color', $diabet_risk_color)
-                ->with('overall_blood_risk_score', $overall_blood_score)
-                ->with('overall_blood_risk_percent', $overall_blood[0])
-                ->with('overall_blood_risk_name', $overall_blood[1])
-                ->with('overall_blood_risk_color', $overall_blood[2])
-                ->with('ans_dysfunction_risk_score', $ANS_Score)
-                ->with('ans_dysfunction_risk_percent', $ans_dysfunction[0])
-                ->with('ans_dysfunction_risk_name', $ans_dysfunction[1])
-                ->with('ans_dysfunction_risk_color', $ans_dysfunction[2])
-                ->with('skin', [$Hand_Score + $Feet_Score, $SkinTitleColor[0] , $SkinTitleColor[1] , $SkinTitleColor[2]])
-                ->with('adrenergic', [$AdrenergicScore, $adrenergic[0] , $adrenergic[1] , $adrenergic[2]])
-                ->with('para', [$ParaScore, $para[0] , $para[1] , $para[2]])
-                ->with('card', [$CardScore, $card[0] , $card[1] , $card[2]]);
+                if($page_type == "test"){
+                    return view('doctor.review.gauge')
+                    ->with('page_type', $page_type)
+                    ->with('allocation', $allocation->first())
+                    ->with('patient', $patient)
+                    ->with('bmi', $bmi)
+                    ->with('weight_status', $weight_status)                
+                    ->with('color', $color)                
+                    ->with('diabet_risk_score', $diabet_risk_score)
+                    ->with('diabet_risk_percent', $diabet_risk)
+                    ->with('diabet_risk_name', $diabet_risk_name)
+                    ->with('diabet_risk_color', $diabet_risk_color)
+                    ->with('overall_blood_risk_score', $overall_blood_score)
+                    ->with('overall_blood_risk_percent', $overall_blood[0])
+                    ->with('overall_blood_risk_name', $overall_blood[1])
+                    ->with('overall_blood_risk_color', $overall_blood[2])
+                    ->with('ans_dysfunction_risk_score', $ANS_Score)
+                    ->with('ans_dysfunction_risk_percent', $ans_dysfunction[0])
+                    ->with('ans_dysfunction_risk_name', $ans_dysfunction[1])
+                    ->with('ans_dysfunction_risk_color', $ans_dysfunction[2])
+                    ->with('skin', [$Hand_Score + $Feet_Score, $SkinTitleColor[0] , $SkinTitleColor[1] , $SkinTitleColor[2]])
+                    ->with('adrenergic', [$AdrenergicScore, $adrenergic[0] , $adrenergic[1] , $adrenergic[2]])
+                    ->with('para', [$ParaScore, $para[0] , $para[1] , $para[2]])
+                    ->with('card', [$CardScore, $card[0] , $card[1] , $card[2]]);
+                }else { // review
+                    
+                    $user_diabet = UserDiabet::where('user_id', $patient->id )->orderBy('id', 'DESC')->get();
+                    $tester_id = Session::get("user_id");   
+
+                    $visit_form = AllocationVisitForm::where('patient_id', $patient_id)->where('tester_id', $tester_id)->orderBy('id', 'DESC')->get()->first();
+
+                    if($visit_form){
+                        $symptoms = $visit_form->symptoms;
+                        $disease = $visit_form->disease;
+                        $treatment = $visit_form->treatment;                                        
+                        $symptoms_list = explode(":", $symptoms);
+                        $disease_list = explode(":", $disease);
+                        $treatment_list = explode(":", $treatment);
+
+                        $symptoms_text = "";
+                        foreach($symptoms_list as $key) {    
+                            $item = VisitPurpose::where('id', $key)->where('type', 'Symptoms')->get();
+                            if($item->first()){
+                                $symptoms_text = $symptoms_text.$item->first()->title.",    ";
+                            }                        
+                        }
+
+                        $disease_text = "";
+                        foreach($disease_list as $key) {    
+                            $item = VisitPurpose::where('id', $key)->where('type', 'Disease')->get();
+                            if($item->first()){
+                                $disease_text = $disease_text.$item->first()->title.",    ";
+                            }                        
+                        }
+
+                        $treatment_text = "";
+                        foreach($treatment_list as $key) {    
+                            $item = VisitPurpose::where('id', $key)->where('type', 'Treatment')->get();
+                            if($item->first()){
+                                $treatment_text = $treatment_text.$item->first()->title.",    ";
+                            }                        
+                        }
+
+
+                        $visit_form->symptoms = substr($symptoms_text, 0, -1);
+                        $visit_form->disease = substr($disease_text , 0, -1 );
+                        $visit_form->treatment = substr($treatment_text , 0, -1 );
+                        
+                        return view('review.gauge')                    
+                        ->with('user_diabet', $user_diabet)
+                        ->with('visit_form', $visit_form)
+                        ->with('page_type', $page_type)
+                        ->with('allocation', $allocation->first())
+                        ->with('patient', $patient)
+                        ->with('bmi', $bmi)
+                        ->with('weight_status', $weight_status)                
+                        ->with('color', $color)                
+                        ->with('diabet_risk_score', $diabet_risk_score)
+                        ->with('diabet_risk_percent', $diabet_risk)
+                        ->with('diabet_risk_name', $diabet_risk_name)
+                        ->with('diabet_risk_color', $diabet_risk_color)
+                        ->with('overall_blood_risk_score', $overall_blood_score)
+                        ->with('overall_blood_risk_percent', $overall_blood[0])
+                        ->with('overall_blood_risk_name', $overall_blood[1])
+                        ->with('overall_blood_risk_color', $overall_blood[2])
+                        ->with('ans_dysfunction_risk_score', $ANS_Score)
+                        ->with('ans_dysfunction_risk_percent', $ans_dysfunction[0])
+                        ->with('ans_dysfunction_risk_name', $ans_dysfunction[1])
+                        ->with('ans_dysfunction_risk_color', $ans_dysfunction[2])
+                        ->with('skin', [$Hand_Score + $Feet_Score, $SkinTitleColor[0] , $SkinTitleColor[1] , $SkinTitleColor[2]])
+                        ->with('adrenergic', [$AdrenergicScore, $adrenergic[0] , $adrenergic[1] , $adrenergic[2]])
+                        ->with('para', [$ParaScore, $para[0] , $para[1] , $para[2]])
+                        ->with('card', [$CardScore, $card[0] , $card[1] , $card[2]]);                        
+                    }else{
+                        return redirect('login');
+                    }                 
+                }
+                
                 
             }                
         }

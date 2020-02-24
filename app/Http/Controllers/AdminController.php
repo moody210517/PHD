@@ -260,9 +260,12 @@ class AdminController extends BaseController
                             $message->subject('Create a new Account');
                             $message->to($request->input('email_address'));
                         });
-                        if( $validate->fails() ){                            
-                        }else{                            
-                        }
+
+                        // if( $validate->fails() ){                            
+
+                        // }else{                            
+
+                        // }
                     }catch(Exception $e){
                         // Never reached
                         return redirect()->back();

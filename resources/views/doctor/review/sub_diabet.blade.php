@@ -9,7 +9,7 @@
 			<div class="bg-white pt-4 pb-5">
 
 				<div class="page-title padding pb-0 ">
-					<h2 class="text-md mb-0">Type II Risk Assessment </h2>
+					<h2 class="text-md mb-0">Pre-Test Patient Information </h2>
 				</div>
 								
 				<form data-plugin="parsley" data-option="{}"  method="post" action="{{ url('doctor/prestep3') }}" enctype="multipart/form-data">
@@ -266,6 +266,7 @@
 <form id="backReport" data-plugin="parsley" data-option="{}"  method="post" action="{{ url('report/review') }}" enctype="multipart/form-data">
 	@csrf
 	<input type="hidden" id="" value="{{$allocation->auto_num}}"  name="allocation_id"/>
+	<input type="hidden" id="" value="{{$page_type}}"  name="page_type"/>
 </form>
 
 

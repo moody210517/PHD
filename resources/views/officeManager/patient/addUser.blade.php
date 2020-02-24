@@ -187,7 +187,6 @@
                         <input type="number" id="weight"  name="weight" class="  form-control" onfocus="check()" placeholder="Weight - pounds">
                         </div>
                     </div> 
-
                     
 
                     <div class="form-group row">
@@ -248,10 +247,13 @@
                             </label>
 
                             <label class="col-form-label mx-2" for="placemaker">
-                                <span id="alert_placemaker" class="text-danger" style=" display: none;"> Do not use GSR sensors. </span>                                
+                                <span id="alert_placemaker" class="text-danger" style=" display: none;"> 
+                                <!-- Do not use GSR sensors.  -->
+                                Do no hook up GSR sensors to patient as their pace maker will affect the results.
+                                </span>                                
                             </label>
 
-                            <input type="hidden" name="placemaker1" class=" form-control" placeholder="Email" id="placemaker_value">
+                            <input type="hidden" name="placemaker_value" value="0" class=" form-control" placeholder="Email" id="placemaker_value">
                         </div>           
                     </div>
                     
